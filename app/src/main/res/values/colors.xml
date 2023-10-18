@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="pink">#F4739E</color>
+    <color name="gray">#FFFFFF</color>
+    <color name="darwer_use_home">#FFCFCF</color>
+    <color name="background_admin">#BBE2F3</color>
+    <color name="background_use">#F6EAEE</color>
 </resources>
