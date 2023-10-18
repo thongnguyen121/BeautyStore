@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">BeautyStore</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="fragment_home">Home</string>
+    <string name="fragment_profile">Profile</string>
+    <string name="fragment_orders">My Orders</string>
+    <string name="fragment_wishlist">My Wishlist</string>
+    <string name="fragment_cart">My Cart</string>
+    <string name="fragment_edit_profile">Edit Profile</string>
+    <string name="fragment_transaction_history">Transaction history</string>
+    <string name="fragment_notification">Thông báo</string>
+    <string name="hang">Hãng</string>
+    <string name="loai">Loại sản phẩm</string>
+    <string name="sanpham">Sản phẩm</string>
+    <string name="add_sanpham">Thêm sản phẩm</string>
+    <string name="edit_text_product_name">Nhập tên sản phẩm</string>
+    <string name="spinner_categories">Chon loại sản phẩm</string>
+    <string name="spinner_brands">Chọn hãng sản phẩm</string>
+    <string name="edit_text_qauntity">Nhập số lượng</string>
+    <string name="edit_text_price">Nhập giá</string>
+    <string name="edit_text_description">Nhập nội dung mô tả</string>
+
+    <string name="chon_anh">Chọn ảnh</string>
+    <string name="btn_them">Thêm</string>
+    <string name="btn_sua">Sửa</string>
+    <string name="add_categories">Thêm loại sản phẩm</string>
+    <string name="add_brand">Thêm hãng</string>
 </resources>

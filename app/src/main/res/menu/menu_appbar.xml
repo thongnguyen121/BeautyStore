@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/appBar_home"
+        android:icon="@drawable/baseline_home_24"
+        android:title="@string/fragment_home"
+        app:showAsAction="always"
+        android:iconTint="@color/pink"
+        ></item>
+    <item
+        android:id="@+id/appBar_notification"
+        android:icon="@drawable/baseline_notifications_24"
+        android:title="@string/fragment_notification"
+        app:showAsAction="always"
+        android:iconTint="@color/pink"
+        ></item>
+
+</menu>
