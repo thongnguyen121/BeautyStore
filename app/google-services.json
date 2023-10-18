@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "282218231897",
+    "firebase_url": "https://beautystore-8082e-default-rtdb.firebaseio.com",
+    "project_id": "beautystore-8082e",
+    "storage_bucket": "beautystore-8082e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282218231897:android:3a8b4b55005a764a9a1948",
+        "android_client_info": {
+          "package_name": "com.example.beautystore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtul4u4UyKWCbqr9m9Fz2b43kBDqZOTvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
