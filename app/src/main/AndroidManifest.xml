@@ -15,6 +15,14 @@
         android:theme="@style/Theme.BeautyStore"
         tools:targetApi="31">
         <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false">
+
+        </activity>
+        <activity
             android:name=".Activity_add_Brands"
             android:exported="false" />
         <activity

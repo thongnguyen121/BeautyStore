@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignUpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:layout_marginTop="18dp"
+            android:fontFamily="@font/acmeregular"
+            android:text="@string/welcome"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/notiLogin"
+            android:textColor="#6A798A"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:layout_marginTop="35dp"
+            android:text="@string/fullname"
+            android:textSize="@dimen/button_textsize" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/enter_name"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize"
+            android:paddingLeft="13dp"
+            android:id="@+id/edtFullname"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/email_address"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:id="@+id/edtEmailDK"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/enter_email"
+            android:maxLines="1"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="13dp"
+            android:textSize="@dimen/button_textsize" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/phonenum"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/enter_phonenum"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize"
+            android:paddingLeft="13dp"
+            android:id="@+id/edtPhoneNum"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/create_password"
+            android:textSize="@dimen/button_textsize" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="9"
+                android:background="@null"
+                android:hint="@string/enter_password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:paddingLeft="13dp"
+                android:id="@+id/edtPassDK"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/view"
+                android:id="@+id/ivShowHideSignupPass"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/margin_login_layout"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/btn_login_bg_mt"
+        android:text="@string/signUp"
+        android:enabled="false"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_textsize"
+        app:layout_constraintBottom_toTopOf="@+id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_margin="@dimen/margin_login_layout"
+        android:background="@drawable/btnback_login_bg"
+        android:text="@string/back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/button_textsize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

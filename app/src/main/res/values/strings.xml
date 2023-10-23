@@ -28,4 +28,24 @@
     <string name="btn_sua">Sửa</string>
     <string name="add_categories">Thêm loại sản phẩm</string>
     <string name="add_brand">Thêm hãng</string>
+
+    <string name="welcome">Xin chào!</string>
+    <string name="notiLogin">Đăng kí hoặc đăng nhập vào tài khoản của bạn</string>
+    <string name="email_address">Email</string>
+    <string name="enter_email">Nhập Email của bạn</string>
+    <string name="password">Mật khẩu</string>
+    <string name="enter_password">Nhập mật khẩu</string>
+    <string name="forgotpassword"><u>Quên mật khẩu?</u></string>
+    <string name="loginWith">Hoặc đăng nhập bằng:</string>
+    <string name="signupnow"> <u><i>Đăng kí ngay</i></u></string>
+    <string name="donthaveaccount">Chưa có tài khoản</string>
+    <string name="login">Đăng nhập</string>
+    <string name="back">Quay lại</string>
+    <string name="signUp">Đăng kí</string>
+    <string name="fullname">Họ tên</string>
+    <string name="enter_name">Nhập tên của bạn</string>
+    <string name="phonenum">Số điện thoại</string>
+    <string name="enter_phonenum">Nhập số điện thoại của bạn</string>
+    <string name="create_password">Mật khẩu</string>
+    <string name="enter_create_password">Nhập mật khẩu</string>
 </resources>
