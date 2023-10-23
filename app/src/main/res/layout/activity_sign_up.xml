@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".SignUpActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignUp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -38,9 +38,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_login_layout"
-            android:layout_marginTop="73dp"
+            android:layout_marginTop="35dp"
+            android:text="@string/fullname"
+            android:textSize="@dimen/button_textsize" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/enter_name"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize"
+            android:paddingLeft="13dp"
+            android:id="@+id/edtFullname"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
             android:fontFamily="@font/abeezeeregular"
             android:text="@string/email_address"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:id="@+id/edtEmailDK"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/enter_email"
+            android:maxLines="1"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="13dp"
+            android:textSize="@dimen/button_textsize" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/phonenum"
             android:textSize="@dimen/button_textsize" />
 
         <EditText
@@ -49,21 +87,19 @@
             android:layout_margin="@dimen/margin_login_layout"
             android:background="@drawable/edt_login_background"
             android:fontFamily="@font/abeezeeregular"
-            android:hint="@string/enter_email"
-            android:inputType="textEmailAddress"
+            android:hint="@string/enter_phonenum"
+            android:inputType="number"
             android:singleLine="true"
             android:textSize="@dimen/button_textsize"
             android:paddingLeft="13dp"
-            android:id="@+id/edtEmailDN"/>
-
+            android:id="@+id/edtPhoneNum"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_login_layout"
             android:fontFamily="@font/abeezeeregular"
-            android:text="@string/password"
+            android:text="@string/create_password"
             android:textSize="@dimen/button_textsize" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,7 +117,7 @@
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:paddingLeft="13dp"
-                android:id="@+id/edtPassDN"/>
+                android:id="@+id/edtPassDK"/>
 
             <ImageView
                 android:layout_width="25dp"
@@ -89,103 +125,37 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:src="@drawable/view"
-                android:id="@+id/ivShowHideLoginPass"
+                android:id="@+id/ivShowHideSignupPass"
                 />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="@dimen/margin_login_layout"
-            android:fontFamily="@font/abeezeeregular"
-            android:text="@string/forgotpassword"
-            android:textSize="@dimen/button_textsize"
-            android:id="@+id/tvForgetPassword"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:fontFamily="@font/abeezeeregular"
-                android:text="@string/loginWith"
-                android:textSize="@dimen/button_textsize"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="#123456"
-                android:fontFamily="@font/abeezeeregular" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:background="@drawable/other_login_background"
-                android:padding="15dp"
-                android:src="@drawable/google" />
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:background="@drawable/other_login_background"
-                android:padding="15dp"
-                android:src="@drawable/facebook" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/abeezeeregular"
-                android:text="@string/donthaveaccount"
-                android:textSize="@dimen/button_textsize" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/signupnow"
-                android:textSize="@dimen/button_textsize"
-                android:id="@+id/tvSignUP"/>
         </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnSignUp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:textSize="@dimen/button_textsize"
-        android:layout_gravity="fill_vertical"
         android:layout_margin="@dimen/margin_login_layout"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/btn_login_bg_mt"
+        android:text="@string/signUp"
         android:enabled="false"
-        android:fontFamily="@font/abeezeeregular"
-        android:text="@string/login"
         android:textAllCaps="false"
         android:textColor="@color/white"
+        android:textSize="@dimen/button_textsize"
+        app:layout_constraintBottom_toTopOf="@+id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_margin="@dimen/margin_login_layout"
+        android:background="@drawable/btnback_login_bg"
+        android:text="@string/back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/button_textsize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
