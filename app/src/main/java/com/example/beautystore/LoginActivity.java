@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     String email, pass, uid;
+    public static final String SHARE_PREFS = "sharedPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,38 +76,58 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = edtEmail.getText().toString().trim();
-                pass = edtPass.getText().toString().trim();
-                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            uid = firebaseAuth.getCurrentUser().getUid();
-                            databaseReference.child("Customer").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.hasChild(uid)) {
-                                        Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();
+                login();
+            }
+        });
+        rememberLogin();
+    }
+
+    private void rememberLogin() {
+    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+    String check = sharedPreferences.getString("check","");
+    if (check.equals("true")){
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    }
+
+    private void login() {
+
+
+        email = edtEmail.getText().toString().trim();
+        pass = edtPass.getText().toString().trim();
+        firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    uid = firebaseAuth.getCurrentUser().getUid();
+                    databaseReference.child("Customer").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.hasChild(uid)) {
+                                SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("check","true");
+                                editor.apply();
+                                Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();
 //                                        checkRole(uid);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Khong thanh cong", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                } else {
+                    Toast.makeText(LoginActivity.this, "Khong thanh cong", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -168,10 +190,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void hide(EditText edtPass, ImageView ivShowHidePassword) {
         edtPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-        ivShowHidePassword.setImageResource(R.drawable.hide);
+        ivShowHidePassword.setImageResource(R.drawable.view);
     }
 
-    private void show(EditText edtPass, ImageView ivShowHidePassword) {
+    private void show(@NonNull EditText edtPass, ImageView ivShowHidePassword) {
         edtPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
         ivShowHidePassword.setImageResource(R.drawable.hide);
 

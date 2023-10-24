@@ -1,5 +1,7 @@
 package com.example.beautystore.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.beautystore.R;
@@ -42,7 +45,6 @@ public class Fragment_home extends Fragment  {
     ArrayList<Categories>data_categories = new ArrayList<>();
     ArrayList<Brands>data_brands = new ArrayList<>();
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class Fragment_home extends Fragment  {
 
         setControl(view);
         khoiTao();
+
 //        setDrawerLayout();
         RunWiewLipper();
         //Display products list
@@ -147,4 +150,5 @@ public class Fragment_home extends Fragment  {
         viewFlipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
 
     }
+
 }
