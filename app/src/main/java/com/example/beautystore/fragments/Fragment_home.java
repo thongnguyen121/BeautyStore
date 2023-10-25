@@ -1,5 +1,7 @@
 package com.example.beautystore.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -68,7 +70,6 @@ public class Fragment_home extends Fragment {
     TextView tvTitle_brands, tvTitle_categories, tvTitle_products;
     private boolean isSearchViewExpanded = false;
     boolean isPopupMenuOpen = false;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -320,7 +321,6 @@ public class Fragment_home extends Fragment {
         viewFlipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
 
     }
-
 
     private void getFilter_price(View view)
     {

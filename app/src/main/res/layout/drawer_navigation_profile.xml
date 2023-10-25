@@ -25,7 +25,7 @@
         android:id="@+id/tvProfile_name_drawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uc Van Binh"
+        android:text="Guess"
         android:gravity="center"
         android:layout_marginTop="5dp"
         android:textSize="20dp"
@@ -35,8 +35,9 @@
         android:id="@+id/tvEmail_drawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ucvanbinh.tdc2020@gmail.com"
+        android:visibility="gone"
         android:gravity="center"
+
         android:layout_marginTop="5dp"
         android:textSize="15dp"
 

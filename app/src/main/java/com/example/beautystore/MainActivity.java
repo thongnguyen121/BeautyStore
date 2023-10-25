@@ -10,11 +10,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+
 import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.beautystore.fragments.Fragment_cart;
@@ -24,19 +30,29 @@ import com.example.beautystore.fragments.Fragment_order;
 import com.example.beautystore.fragments.Fragment_profile;
 import com.example.beautystore.fragments.Fragment_transaction_history;
 import com.example.beautystore.fragments.Fragment_wishlist;
+import com.example.beautystore.model.Customer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
    public static BottomNavigationView bottomNavigationView;
 
+    TextView tvProfile_name, tvProfile_email;
     DrawerLayout drawerLayout;
    public static Toolbar toolbar;
     FragmentManager fragmentManager;
 
     NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
+    String email="", name="";
     private final int Fragment_home = 3;
     private final int Fragment_profile = 2;
     private final int Fragment_order = 1;
@@ -48,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int currentFragment = Fragment_home;
     private Menu menu;
     private MenuItem menuItem;
+    public static final String SHARE_PREFS = "sharedPrefs";
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +75,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = findViewById(R.id.idDrawer);
         toolbar = findViewById(R.id.toolbar);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         bottomNavigationView = findViewById(R.id.idbottomNavigation);
+        if (isUserLoggedin()) {
+            Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
+            bottomNavigationView.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(this, "Chuaw dang nhap", Toast.LENGTH_SHORT).show();
+            bottomNavigationView.setVisibility(View.GONE);
+        }
+
 
         setSupportActionBar(toolbar);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,11 +95,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        View header = navigationView.getHeaderView(0);
+        tvProfile_name = header.findViewById(R.id.tvProfile_name_drawer);
+        tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
         bottomNavigationView.setBackground(null);
 
 
 
+        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -164,18 +201,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.menu_appbar, menu);
 
         this.menu = menu;
+        if (isUserLoggedin()) {
+            navigationView.getMenu().findItem(R.id.Login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            databaseReference = firebaseDatabase.getReference("Customer");
+            databaseReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Customer customer = snapshot.getValue(Customer.class);
+                    name = customer.getUsername();
+                    email = customer.getEmail();
+
+                    if (customer != null) {
+                        Log.e("TAG", "onDataChange: "+customer.getUsername() );
+                        tvProfile_name.setVisibility(View.VISIBLE);
+                        tvProfile_name.setText(name);
+                        tvProfile_email.setVisibility(View.VISIBLE);
+                        tvProfile_email.setText(email);
+                    }
+                    else{
+                            tvProfile_name.setText("Guess");
+                            tvProfile_email.setVisibility(View.GONE);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(MainActivity.this, "cant", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            navigationView.getMenu().findItem(R.id.Edit_profile).setVisible(false);
+            navigationView.getMenu().findItem(R.id.Transaction_history).setVisible(false);
+            navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
+        }
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.appBar_home) {
-//            item.setVisible(false); // Ẩn mục có ID "appbar"
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
     private void hideMenuItem(int itemId) {
         if (menu != null) {
             MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
@@ -228,8 +293,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             displayMenuItem(R.id.appBar_home);
             refreshMenuItem(R.id.appBar_home);
         } else if (idItem == R.id.Logout) {
+
+            FirebaseAuth.getInstance().signOut();
+            SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("check", "");
+            editor.apply();
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intent);
             finish();
         }
+        if (idItem == R.id.Login) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+
+            startActivity(intent);
+
+        } else if (idItem == R.id.Signup) {
+            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+            startActivity(intent);
+        }
+
+
         setTitle();
         drawerLayout.closeDrawer(GravityCompat.START);
 
@@ -283,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (currentFragment != Fragment_editprofile) {
             openFragment(new Fragment_editProfile());
             currentFragment = Fragment_editprofile;
+
         }
     }
 
@@ -340,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.framelayout, fragment);
-
         transaction.commit();
     }
 
@@ -350,4 +434,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    private boolean isUserLoggedin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
+        String check = sharedPreferences.getString("check", "");
+        return check.equals("true");
+    }
+
+    ;
 }
