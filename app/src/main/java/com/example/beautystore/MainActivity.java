@@ -1,7 +1,5 @@
 package com.example.beautystore;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+
+import android.graphics.drawable.Drawable;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,8 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
 
 import com.example.beautystore.fragments.Fragment_cart;
 import com.example.beautystore.fragments.Fragment_editProfile;
@@ -44,10 +42,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    BottomNavigationView bottomNavigationView;
+
+   public static BottomNavigationView bottomNavigationView;
+
     TextView tvProfile_name, tvProfile_email;
     DrawerLayout drawerLayout;
-    Toolbar toolbar;
+   public static Toolbar toolbar;
     FragmentManager fragmentManager;
 
     NavigationView navigationView;
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private int currentFragment = Fragment_home;
     private Menu menu;
+    private MenuItem menuItem;
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
         bottomNavigationView.setBackground(null);
 
-        hideMenuItem(R.id.appBar_home);
+
 
         actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
@@ -115,15 +116,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (idItem == R.id.appBar_home) {
                     replaceFragment_home();
                     setTitle();
-                    hideMenuItem(R.id.appBar_home);
+                    refreshMenuItem_back(R.id.appBar_home);
                     bottomNavigationView.setVisibility(View.VISIBLE);
                     bottomNavigationView.getMenu().findItem(R.id.menu_tap3).setChecked(true);
                     navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
                     navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
+                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.framelayout);
+                    if (currentFragment instanceof Fragment_home) {
+                        ((Fragment_home) currentFragment).refreshFragment();
+                    }
 
-
-                } else if (idItem == R.id.appBar_notification) {
-                    Toast.makeText(MainActivity.this, "Notification", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
@@ -138,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
                     navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
                     hideMenuItem(R.id.appBar_home);
-
                     setTitle();
                     return true;
                 } else if (idItem == R.id.menu_tap2) {
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     replaceFragment_home();
                     navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
                     navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    hideMenuItem(R.id.appBar_home);
+                    displayMenuItem(R.id.appBar_home);
                     setTitle();
                     return true;
                 } else if (idItem == R.id.menu_tap4) {
@@ -186,6 +187,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
+//    private void actionMenuItem(int itemId) {
+//        if (menu != null) {
+//            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
+//            if (itemToHide != null) {
+//                itemToHide.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); // Ẩn mục cụ thể
+//            }
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -232,16 +241,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.appBar_home) {
-            item.setVisible(false); // Ẩn mục có ID "appbar"
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void hideMenuItem(int itemId) {
         if (menu != null) {
             MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
@@ -259,6 +258,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+    private void refreshMenuItem(int itemId) {
+
+        if (menu != null) {
+            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
+            if (itemToHide != null) {
+                itemToHide.setIcon(R.drawable.baseline_home_24);
+            }
+        }
+    }
+    private void refreshMenuItem_back(int itemId) {
+
+        if (menu != null) {
+            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
+            if (itemToHide != null) {
+                itemToHide.setIcon(R.drawable.baseline_refresh_24);
+            }
+        }
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -267,12 +285,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             replaceFragment_editprofile();
             bottomNavigationView.setVisibility(View.GONE);
             displayMenuItem(R.id.appBar_home);
+            refreshMenuItem(R.id.appBar_home);
 
         } else if (idItem == R.id.Transaction_history) {
             replaceFragment_transaction_history();
             bottomNavigationView.setVisibility(View.GONE);
             displayMenuItem(R.id.appBar_home);
-
+            refreshMenuItem(R.id.appBar_home);
         } else if (idItem == R.id.Logout) {
 
             FirebaseAuth.getInstance().signOut();
@@ -307,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             openFragment(new Fragment_home());
             currentFragment = Fragment_home;
 
+
         }
 
     }
@@ -315,6 +335,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (currentFragment != Fragment_profile) {
             openFragment(new Fragment_profile());
             currentFragment = Fragment_profile;
+            if (currentFragment ==  Fragment_profile)
+            {
+                hideMenuItem(R.id.appBar_home);
+            }
         }
     }
 
@@ -391,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
+
         }
 
 

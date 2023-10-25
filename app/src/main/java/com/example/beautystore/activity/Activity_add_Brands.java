@@ -1,8 +1,10 @@
-package com.example.beautystore;
+package com.example.beautystore.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.beautystore.R;
 
 public class Activity_add_Brands extends AppCompatActivity {
 
