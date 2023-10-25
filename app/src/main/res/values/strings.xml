@@ -5,7 +5,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="fragment_home">Home</string>
-    <string name="fragment_profile">Notification</string>
+    <string name="fragment_profile">Profile</string>
     <string name="fragment_orders">My Orders</string>
     <string name="fragment_wishlist">My Wishlist</string>
     <string name="fragment_cart">My Cart</string>
@@ -28,8 +28,6 @@
     <string name="btn_sua">Sửa</string>
     <string name="add_categories">Thêm loại sản phẩm</string>
     <string name="add_brand">Thêm hãng</string>
-    <string name="name_brand">Nhập tên hãng</string>
-    <string name="name_categories">Nhập tên loại</string>
 
     <string name="welcome">Xin chào!</string>
     <string name="notiLogin">Đăng kí hoặc đăng nhập vào tài khoản của bạn</string>

@@ -30,7 +30,7 @@
             android:textColor="@color/pink"
             ></TextView>
     </LinearLayout>
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:layout_marginTop="10dp"
         android:id="@+id/idsearchview"
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
         android:gravity="center"
         android:queryHint="Search">
 
-    </SearchView>
+    </androidx.appcompat.widget.SearchView>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"

@@ -25,21 +25,17 @@
                 android:layout_marginTop="10dp"
                 >
 
-                <SearchView
-                    android:id="@+id/idsearchview_Home_user"
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/idsearchview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="9"
                     android:background="@drawable/bg_searchview"
                     android:gravity="center"
-                    android:queryHint="Search"
-                    android:focusable="false"
-                    android:clickable="true"
-                    >
+                    android:queryHint="Search">
 
-                </SearchView>
-
+                </androidx.appcompat.widget.SearchView>
 
                 <ImageView
                     android:id="@+id/btnFileter"
@@ -53,12 +49,6 @@
                     ></ImageView>
 
             </LinearLayout>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rc_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                ></androidx.recyclerview.widget.RecyclerView>
 
             <ViewFlipper
                 android:id="@+id/viewflipper"
@@ -87,20 +77,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="9"
                     android:text="@string/hang"
-                    android:id="@+id/title_brands"
                     android:textColor="#F4739E"
                     android:textSize="25dp"></TextView>
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/btnBackhome"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="end"-->
-<!--                    android:layout_marginLeft="10dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:src="@drawable/refresh">-->
+                <ImageView
+                    android:id="@+id/btnBackhome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/refresh">
 
-<!--                </ImageView>-->
+                </ImageView>
             </LinearLayout>
 
             <LinearLayout
@@ -115,7 +104,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/title_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -137,7 +125,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/title_products"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"

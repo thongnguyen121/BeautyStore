@@ -13,19 +13,16 @@
     app:cardUseCompatPadding="false"
     >
     <LinearLayout
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_margin="10dp"
 
         >
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="100dp"
-            android:layout_gravity="center"
-            android:id="@+id/img_card_categories"
-            app:strokeWidth="1dp"
             >
             <ImageView
                 android:id="@+id/imgCategories"
@@ -37,7 +34,7 @@
                 >
 
             </ImageView>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tvCategoriesname"
@@ -45,8 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Son môi on môi on môi on môi"
-            android:singleLine="false"
+            android:text="Son môi"
             ></TextView>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

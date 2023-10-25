@@ -4,11 +4,17 @@
 
     <item
         android:id="@+id/appBar_home"
-        android:icon="@drawable/baseline_refresh_24"
+        android:icon="@drawable/baseline_home_24"
         android:title="@string/fragment_home"
         app:showAsAction="always"
-
+        android:iconTint="@color/pink"
         ></item>
-
+    <item
+        android:id="@+id/appBar_notification"
+        android:icon="@drawable/baseline_notifications_24"
+        android:title="@string/fragment_notification"
+        app:showAsAction="always"
+        android:iconTint="@color/pink"
+        ></item>
 
 </menu>

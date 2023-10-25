@@ -36,7 +36,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:hint="@string/name_categories"
+        android:hint="@string/edit_text_product_name"
         android:paddingLeft="15dp"
         android:layout_margin="10dp"
         android:fontFamily="@font/abeezeeregular"

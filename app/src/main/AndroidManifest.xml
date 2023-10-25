@@ -23,7 +23,7 @@
 
         </activity>
         <activity
-            android:name=".activity.Activity_add_Brands"
+            android:name=".Activity_add_Brands"
             android:exported="false" />
         <activity
             android:name=".activity.Activity_add_Categories"

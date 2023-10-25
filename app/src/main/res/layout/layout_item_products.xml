@@ -1,32 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="20dp"
     android:layout_marginTop="10dp"
-    android:layout_marginBottom="7dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-
-    app:strokeColor="@color/pink"
-
-    >
-
+    android:layout_marginRight="5dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
         android:orientation="vertical"
+        android:layout_margin="10dp"
 
         >
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="20sp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:cardUseCompatPadding="false"
-            android:layout_margin="10dp"
             >
             <ImageView
                 android:layout_width="match_parent"
@@ -34,16 +29,9 @@
                 android:id="@+id/imgPrducts"
                 android:src="@color/pink"
 
-
                 ></ImageView>
         </androidx.cardview.widget.CardView>
-        <View
 
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-
-            android:background="@color/pink"
-            ></View>
         <TextView
             android:id="@+id/tvProductname"
             android:layout_marginTop="10dp"
@@ -52,68 +40,63 @@
             android:text="Thuốc trị mụn"
             android:textColor="#000"
             android:textSize="20dp"
-            android:layout_marginLeft="10dp"
             ></TextView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
             >
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
-
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Giá: "
 
-                    android:textSize="15sp"
+                    android:textSize="15dp"
                     ></TextView>
                 <TextView
                     android:id="@+id/tvPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="200.000đ"
-                    android:textSize="15sp"
+                    android:textSize="15dp"
 
                     ></TextView>
             </LinearLayout>
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:gravity="end"-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
 
-<!--                >-->
-<!--                <ImageView-->
-<!--                    android:layout_width="15dp"-->
-<!--                    android:layout_height="15dp"-->
-<!--                    android:id="@+id/imgStar"-->
-<!--                    android:src="@drawable/star"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    ></ImageView>-->
-<!--                <TextView-->
-<!--                    android:id="@+id/tvTotalRating"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="4.5"-->
-<!--                    android:layout_marginLeft="5dp"-->
-<!--                    android:textColor="#000"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:textSize="15dp"-->
-<!--                    ></TextView>-->
-<!--            </LinearLayout>-->
+                >
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:id="@+id/imgStar"
+                    android:src="@drawable/star"
+                    android:layout_gravity="center"
+                    ></ImageView>
+                <TextView
+                    android:id="@+id/tvTotalRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.5"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#000"
+                    android:layout_gravity="center"
+                    android:textSize="15dp"
+                    ></TextView>
+            </LinearLayout>
 
         </LinearLayout>
         <TextView
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
@@ -121,4 +104,4 @@
             android:text="Mỹ phẩm chỉ dành cho người lớn..."
             ></TextView>
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

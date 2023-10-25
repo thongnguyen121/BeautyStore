@@ -1,25 +1,21 @@
 package com.example.beautystore.model;
 
 public class Products {
-    String products_id, products_name, categories_id, brands_id, quantity, price, description, create_at;
-    String imgProducts_1, imgProducts_2, imgProducts_3;
+    String products_id, products_name, prototypes_id, brands_id, quantity, price, description;
+    int imgProducts;
 
     public Products() {
     }
 
-    public Products(String products_id, String products_name, String categories_id, String brands_id, String quantity,
-                    String price, String description, String create_at, String imgProducts_1, String imgProduct_2, String imgProduct_3) {
+    public Products(String products_id, String products_name, String prototypes_id, String brands_id, String quantity, String price, String description, int imgProducts) {
         this.products_id = products_id;
         this.products_name = products_name;
-        this.categories_id = categories_id;
+        this.prototypes_id = prototypes_id;
         this.brands_id = brands_id;
         this.quantity = quantity;
         this.price = price;
         this.description = description;
-        this.create_at = create_at;
-        this.imgProducts_1 = imgProducts_1;
-        this.imgProducts_2 = imgProduct_2;
-        this.imgProducts_3 = imgProduct_3;
+        this.imgProducts = imgProducts;
     }
 
     public String getProducts_id() {
@@ -38,12 +34,12 @@ public class Products {
         this.products_name = products_name;
     }
 
-    public String getCategories_id() {
-        return categories_id;
+    public String getPrototypes_id() {
+        return prototypes_id;
     }
 
-    public void setCategories_id(String categories_id) {
-        this.categories_id = categories_id;
+    public void setPrototypes_id(String prototypes_id) {
+        this.prototypes_id = prototypes_id;
     }
 
     public String getBrands_id() {
@@ -78,35 +74,11 @@ public class Products {
         this.description = description;
     }
 
-    public String getCreate_at() {
-        return create_at;
+    public int getImgProducts() {
+        return imgProducts;
     }
 
-    public void setCreate_at(String create_at) {
-        this.create_at = create_at;
-    }
-
-    public String getImgProducts_1() {
-        return imgProducts_1;
-    }
-
-    public void setImgProducts_1(String imgProducts_1) {
-        this.imgProducts_1 = imgProducts_1;
-    }
-
-    public String getImgProducts_2() {
-        return imgProducts_2;
-    }
-
-    public void setImgProducts_2(String imgProduct_2) {
-        this.imgProducts_2 = imgProduct_2;
-    }
-
-    public String getImgProduct_3() {
-        return imgProducts_3;
-    }
-
-    public void setImgProduct_3(String imgProduct_3) {
-        this.imgProducts_3 = imgProduct_3;
+    public void setImgProducts(int imgProducts) {
+        this.imgProducts = imgProducts;
     }
 }
