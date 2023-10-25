@@ -5,7 +5,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="fragment_home">Home</string>
-    <string name="fragment_profile">Profile</string>
+    <string name="fragment_profile">Notification</string>
     <string name="fragment_orders">My Orders</string>
     <string name="fragment_wishlist">My Wishlist</string>
     <string name="fragment_cart">My Cart</string>

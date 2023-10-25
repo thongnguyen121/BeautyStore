@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity_add_Brands"
+    tools:context=".activity.Activity_add_Brands"
     android:orientation="vertical"
     android:background="@color/background_admin"
     >

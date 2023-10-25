@@ -110,6 +110,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="#ffffff"
+                app:itemIconTint="@color/color_1"
+                app:itemTextColor="@color/pink"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -122,8 +124,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="#ffffff"
-            app:itemIconTint="@color/pink"
-            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"
             app:headerLayout="@layout/drawer_navigation_profile"
             app:menu="@menu/menu_drawer"
 

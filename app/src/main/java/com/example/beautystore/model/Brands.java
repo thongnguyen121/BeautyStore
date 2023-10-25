@@ -1,15 +1,24 @@
 package com.example.beautystore.model;
 
 public class Brands {
-    String Brands_name;
-    int Img_brands;
+    String Brands_id,Brands_name;
+    String Img_brands;
 
     public Brands() {
     }
 
-    public Brands(String brands_name, int img_brands) {
+    public Brands(String brands_id, String brands_name, String img_brands) {
+        Brands_id = brands_id;
         Brands_name = brands_name;
         Img_brands = img_brands;
+    }
+
+    public String getBrands_id() {
+        return Brands_id;
+    }
+
+    public void setBrands_id(String brands_id) {
+        Brands_id = brands_id;
     }
 
     public String getBrands_name() {
@@ -20,11 +29,11 @@ public class Brands {
         Brands_name = brands_name;
     }
 
-    public int getImg_brands() {
+    public String getImg_brands() {
         return Img_brands;
     }
 
-    public void setImg_brands(int img_brands) {
+    public void setImg_brands(String img_brands) {
         Img_brands = img_brands;
     }
 }
