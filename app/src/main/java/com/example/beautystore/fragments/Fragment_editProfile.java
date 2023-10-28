@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -23,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -78,12 +81,14 @@ public class Fragment_editProfile extends Fragment {
     Uri imageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
     private ProgressBar progressBar;
-    ActivityResultLauncher<Intent> resultLaucher;
+        ActivityResultLauncher<Intent> resultLaucher;
     String[] required_permissions;
     boolean is_storage_image_permitted = false;
     boolean is_camera_access_permitted = false;
     String TAG = "Permission";
     Button btnSave;
+    FragmentManager fragmentManage;
+    ActivityResultLauncher<Intent> cameraResultLauncher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,8 +108,10 @@ public class Fragment_editProfile extends Fragment {
         //lay uid cua nguoi dung dang dang nhap
         uid = mAuth.getCurrentUser().getUid();
         //lay thong tin nguoi dung dua tren uid
+//        onResume();
         getUser(uid);
         registerResult();
+        getCameraResult();
         cvAnh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,29 +126,25 @@ public class Fragment_editProfile extends Fragment {
                 saveInfo();
             }
         });
-
-
         return view;
-
-
     }
 
     private void saveInfo() {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProfile").child(uid+"."+extention);
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProfile").child(uid);
         Log.d(TAG, "storage hinha nh: " + storageReference);
         storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while (!uriTask.isComplete());
+                while (!uriTask.isComplete()) ;
                 imageUri = uriTask.getResult();
                 updateAccountIntoFirebase();
-                Toast.makeText(getContext(), "co the"+imageUri, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "co the" + imageUri, Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "khong the", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "khong the" + e, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -165,13 +168,10 @@ public class Fragment_editProfile extends Fragment {
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
                     Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
@@ -202,12 +202,24 @@ public class Fragment_editProfile extends Fragment {
                 } else {
                     requestPermissionCameraAccress();
                 }
+//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+//                    ContentValues contentValues = new ContentValues();
+//                    contentValues.put(MediaStore.Images.Media.TITLE, "Captured");
+//                    contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Captured image");
+//                    imageUri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//                    cameraResultLauncher.launch(intent);
+//                    Toast.makeText(getContext(), "dc" + imageUri, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Log.d(TAG, "khong dc: ");
+//                }
             }
         });
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.Dialog;
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialoAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
@@ -248,6 +260,7 @@ public class Fragment_editProfile extends Fragment {
         });
     }
 
+
     private void getUser(String uid) {
         reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -260,7 +273,7 @@ public class Fragment_editProfile extends Fragment {
                 address = customer.getAddress();
                 password = customer.getPassword();
                 status = customer.getStatus();
-                Glide.with(getContext()).load(imageUri).into(imageView);
+                    Glide.with(requireContext()).load(imageUri).into(imageView);
                 tvEmail.setText(email);
                 edtTen.setText(name);
                 edtSDT.setText(phoneNum);
@@ -273,6 +286,21 @@ public class Fragment_editProfile extends Fragment {
             }
         });
     }
+
+    private void getCameraResult() {
+        cameraResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult o) {
+                if (o.getResultCode() == RESULT_OK && o.getData() != null) {
+//                    imageView.setImageURI(imageUri);
+//                    imageUri = o.getData().getData();
+                    imageView.setImageURI(imageUri);
+                    Log.d(TAG, "uri hinh anh: " + imageUri);
+                }
+            }
+        });
+    }
+
     // camera laucher
 
     public void openCamera() {
@@ -280,6 +308,10 @@ public class Fragment_editProfile extends Fragment {
         contentValues.put(MediaStore.Images.Media.TITLE, "Captured");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Captured image");
         imageUri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
+//        FragmentTransaction transaction = fragmentManage.beginTransaction();
+//        transaction.add(R.id.framelayout, Fragment_editProfile.this);
+//        transaction.commit();
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         laucher_for_camera.launch(intent);
@@ -294,16 +326,14 @@ public class Fragment_editProfile extends Fragment {
                             if (result.getResultCode() == RESULT_OK) {
                                 //set uri in here
                                 imageView.setImageURI(imageUri);
-                                String a = getFileExtention(imageUri);
-                                File f = new File(String.valueOf(imageUri));
-                                String b = f.getName();
-                                Log.d("TAG", "hinh anh: " + b + "." + a);
+//                            Glide.with(requireContext()).load(imageUri).into(imageView);
                             }
+
                         }
                     });
 
 
-    //code xin quyen
+//    code xin quyen
     public void requestPermissionStorageImages() {
         if (ContextCompat.checkSelfPermission(getContext(), required_permissions[0]) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, required_permissions[0] + "Granted");
