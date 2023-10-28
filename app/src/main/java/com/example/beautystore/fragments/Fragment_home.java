@@ -70,6 +70,7 @@ public class Fragment_home extends Fragment {
     TextView tvTitle_brands, tvTitle_categories, tvTitle_products;
     private boolean isSearchViewExpanded = false;
     boolean isPopupMenuOpen = false;
+    public static final String SHARE_PREFS = "sharedPrefs";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -446,16 +447,38 @@ public class Fragment_home extends Fragment {
 
     }
 
-    private void setVisibityhome() {
-        rcBrans.setVisibility(View.VISIBLE);
-        rcCategories.setVisibility(View.VISIBLE);
-        rcProducts.setVisibility(View.VISIBLE);
-        viewFlipper.setVisibility(View.VISIBLE);
-        tvTitle_products.setVisibility(View.VISIBLE);
-        tvTitle_categories.setVisibility(View.VISIBLE);
-        tvTitle_brands.setVisibility(View.VISIBLE);
+//    private void setVisibityhome() {
+//        rcBrans.setVisibility(View.VISIBLE);
+//        rcCategories.setVisibility(View.VISIBLE);
+//        rcProducts.setVisibility(View.VISIBLE);
+//        viewFlipper.setVisibility(View.VISIBLE);
+//        tvTitle_products.setVisibility(View.VISIBLE);
+//        tvTitle_categories.setVisibility(View.VISIBLE);
+//        tvTitle_brands.setVisibility(View.VISIBLE);
+//        MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+//        MainActivity.toolbar.setVisibility(View.VISIBLE);
+//    }
+private void setVisibityhome() {
+    rcBrans.setVisibility(View.VISIBLE);
+    rcCategories.setVisibility(View.VISIBLE);
+    rcProducts.setVisibility(View.VISIBLE);
+    viewFlipper.setVisibility(View.VISIBLE);
+    tvTitle_products.setVisibility(View.VISIBLE);
+    tvTitle_categories.setVisibility(View.VISIBLE);
+    tvTitle_brands.setVisibility(View.VISIBLE);
+    if (isUserLoggedin()){
         MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
-        MainActivity.toolbar.setVisibility(View.VISIBLE);
     }
+    else {
+        MainActivity.bottomNavigationView.setVisibility(View.GONE);
+    }
+    MainActivity.toolbar.setVisibility(View.VISIBLE);
+}
+    private boolean isUserLoggedin() {
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
+        String check = sharedPreferences.getString("check", "");
+        return check.equals("true");
+    }
+
 
 }
