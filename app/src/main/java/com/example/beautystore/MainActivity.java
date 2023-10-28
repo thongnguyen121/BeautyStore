@@ -20,9 +20,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.beautystore.fragments.Fragment_cart;
 import com.example.beautystore.fragments.Fragment_editProfile;
 import com.example.beautystore.fragments.Fragment_home;
@@ -52,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    String email="", name="";
+//    String email="", name="";
+    String email="", name="", uri="";
     private final int Fragment_home = 3;
     private final int Fragment_profile = 2;
     private final int Fragment_order = 1;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int currentFragment = Fragment_home;
     private Menu menu;
     private MenuItem menuItem;
+    ImageView ivProfileImg;
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View header = navigationView.getHeaderView(0);
         tvProfile_name = header.findViewById(R.id.tvProfile_name_drawer);
         tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
+        ivProfileImg = header.findViewById(R.id.ivProfileImg);
         bottomNavigationView.setBackground(null);
 
 
@@ -117,7 +122,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     replaceFragment_home();
                     setTitle();
                     refreshMenuItem_back(R.id.appBar_home);
-                    bottomNavigationView.setVisibility(View.VISIBLE);
+                    if (isUserLoggedin()){
+                        bottomNavigationView.setVisibility(View.VISIBLE);
+                    }else {
+                        bottomNavigationView.setVisibility(View.GONE);
+                    }
+//                    bottomNavigationView.setVisibility(View.VISIBLE);
                     bottomNavigationView.getMenu().findItem(R.id.menu_tap3).setChecked(true);
                     navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
                     navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
@@ -212,13 +222,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Customer customer = snapshot.getValue(Customer.class);
                     name = customer.getUsername();
                     email = customer.getEmail();
-
+                    uri = customer.getProfileImage();
                     if (customer != null) {
                         Log.e("TAG", "onDataChange: "+customer.getUsername() );
                         tvProfile_name.setVisibility(View.VISIBLE);
                         tvProfile_name.setText(name);
                         tvProfile_email.setVisibility(View.VISIBLE);
                         tvProfile_email.setText(email);
+                        Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
                     }
                     else{
                             tvProfile_name.setText("Guess");

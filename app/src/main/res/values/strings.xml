@@ -50,4 +50,13 @@
     <string name="enter_phonenum">Nhập số điện thoại của bạn</string>
     <string name="create_password">Mật khẩu</string>
     <string name="enter_create_password">Nhập mật khẩu</string>
+
+    <string name="setup_now">Thiết lập ngay</string>
+    <string name="address">Địa chỉ</string>
+    <string name="save_change">Lưu thay đổi</string>
+    <string name="title_activity_admin_main">AdminMainActivity</string>
+
+    <string name="employees">Nhân viên</string>
+    <string name="warehouse">Kho</string>
+    <string name="statistic">Thống kê</string>
 </resources>
