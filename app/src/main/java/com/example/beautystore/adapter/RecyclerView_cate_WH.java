@@ -1,9 +1,11 @@
 package com.example.beautystore.adapter;
 
 import android.graphics.Color;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -76,9 +78,39 @@ public class RecyclerView_cate_WH extends RecyclerView.Adapter<RecyclerView_cate
                 filterProductsAndCategories_BransID(cate_id_wh, RecyclerView_Brands_WH.brand_id_wh);
             }
         });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopupMenu(v);
+                return false;
+            }
+        });
     }
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_function_edit_delete, popupMenu.getMenu());
+        popupMenu.show();
 
-    private void filterProductsAndCategories_BransID(String id, String brandId) {
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.Edit){
+
+                }
+                else if (id == R.id.Delete)
+                {
+
+                }
+
+
+                return true;
+            }
+        });
+
+
+    }
+        private void filterProductsAndCategories_BransID(String id, String brandId) {
         DatabaseReference databaseReferenceProducts = FirebaseDatabase.getInstance().getReference("Products");
 
 

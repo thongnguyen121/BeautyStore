@@ -59,4 +59,7 @@
     <string name="employees">Nhân viên</string>
     <string name="warehouse">Kho</string>
     <string name="statistic">Thống kê</string>
+    <string name="Edit">Sửa</string>
+    <string name="Delete">Xóa</string>
+
 </resources>
