@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +7,8 @@
     android:layout_marginTop="10dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
+    app:strokeColor="@color/pink"
+    app:strokeWidth="1dp"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +25,7 @@
         <ImageView
             android:layout_width="130dp"
             android:layout_height="130dp"
-
+            android:id="@+id/imgProduct_wh"
             android:src="@color/pink"
             ></ImageView>
         </androidx.cardview.widget.CardView>
@@ -35,6 +37,25 @@
             android:layout_marginTop="13dp"
             android:layout_marginBottom="13dp"
             >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:textSize="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mã SP: "
+                    ></TextView>
+                <TextView
+                    android:id="@+id/tv_products_id_wh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="SP01"
+                    ></TextView>
+            </LinearLayout>
            <LinearLayout
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
@@ -44,9 +65,10 @@
                    android:textSize="16dp"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:text="Tên sản phẩm: "
+                   android:text="Tên SP: "
                    ></TextView>
                <TextView
+                   android:id="@+id/tv_products_name_wh"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:textSize="16dp"
@@ -68,7 +90,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:id="@+id/tv_products_price_wh"
                     android:text="200.000đ"
                     ></TextView>
             </LinearLayout>
@@ -86,7 +108,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:id="@+id/tv_products_quantity_wh"
                     android:text="7"
                     ></TextView>
             </LinearLayout>
@@ -94,11 +116,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="20dp"
+
                 android:layout_gravity="end"
                 android:layout_marginRight="25dp"
                 >
                <ImageButton
+                   android:id="@+id/imb_Delete_products_wh"
                    android:layout_width="75dp"
                    android:layout_height="37dp"
                    android:src="@drawable/delete"
@@ -106,6 +129,7 @@
                    android:layout_marginRight="10dp"
                    ></ImageButton>
                <ImageButton
+                   android:id="@+id/imb_Edit_products_wh"
                    android:layout_width="75dp"
                    android:layout_height="37dp"
                    android:src="@drawable/pencil"
@@ -116,4 +140,4 @@
         </LinearLayout>
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

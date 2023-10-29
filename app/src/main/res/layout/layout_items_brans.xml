@@ -24,6 +24,8 @@
             app:cardCornerRadius="100dp"
             app:strokeWidth="1dp"
             android:id="@+id/img_card_brands"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false"
             >
             <ImageView
                 android:id="@+id/imgBrand"

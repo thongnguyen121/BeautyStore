@@ -1,74 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="130dp"
+    android:layout_height="130dp"
     android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
+    android:layout_gravity="center"
+    app:cardBackgroundColor="@color/background_admin"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="false"
+    android:id="@+id/img_card_categories_wh"
+    app:cardCornerRadius="20dp"
+    app:strokeWidth="1dp"
     >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:layout_gravity="center"
         >
-
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
-            android:layout_margin="13dp"
+            app:cardCornerRadius="10dp"
+            app:strokeWidth="1dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false"
             >
-
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:id="@+id/imgCategories_wh"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
                 android:src="@color/pink"
 
-                ></ImageView>
-        </androidx.cardview.widget.CardView>
-        <LinearLayout
+                >
+
+            </ImageView>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvCategories_wh"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Loại son"
-                android:textSize="25dp"
-                android:layout_gravity="center"
-                ></TextView>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-
-                >
-                <ImageButton
-                    android:layout_width="75dp"
-                    android:layout_height="37dp"
-                    android:src="@drawable/pencil"
-                    android:background="@drawable/bg_btn"
-                    android:layout_gravity="end"
-                    android:layout_marginRight="5dp"
-                    ></ImageButton>
-                <ImageButton
-                    android:layout_marginTop="20dp"
-                    android:layout_width="75dp"
-                    android:layout_height="37dp"
-                    android:src="@drawable/delete"
-                    android:background="@drawable/bg_btn"
-                    android:layout_gravity="end"
-                    android:layout_marginRight="5dp"
-                    ></ImageButton>
-            </LinearLayout>
-        </LinearLayout>
-
-
+            android:gravity="center"
+            android:text="Alibaba"
+            ></TextView>
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

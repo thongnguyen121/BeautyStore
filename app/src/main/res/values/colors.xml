@@ -6,5 +6,6 @@
     <color name="gray">#716C6C</color>
     <color name="darwer_use_home">#FFCFCF</color>
     <color name="background_admin">#BBE2F3</color>
+    <color name="blue">#3F51B5</color>
     <color name="background_use">#F6EAEE</color>
 </resources>
