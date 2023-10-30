@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -96,10 +97,13 @@ public class Fragment_editProfile extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         setControl(view);
+        FragmentManager fragmentManager =getActivity().getSupportFragmentManager();
+        setUpOnBackPress();
         //khoi tao firebase
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("Customer");
+
         //yeu cau quyen cho camera
         required_permissions = new String[]{
                 Manifest.permission.READ_MEDIA_IMAGES,
@@ -127,6 +131,17 @@ public class Fragment_editProfile extends Fragment {
             }
         });
         return view;
+    }
+
+    private void setUpOnBackPress() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()){
+                    fragmentManage.popBackStack();
+                }
+            }
+        });
     }
 
     private void saveInfo() {
@@ -374,6 +389,7 @@ public class Fragment_editProfile extends Fragment {
             is_camera_access_permitted = false;
         }
     });
+
 
 
     private void setControl(View view) {

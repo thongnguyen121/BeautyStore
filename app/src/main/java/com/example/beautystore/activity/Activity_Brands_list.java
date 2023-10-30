@@ -3,6 +3,9 @@ package com.example.beautystore.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.beautystore.R;
 
