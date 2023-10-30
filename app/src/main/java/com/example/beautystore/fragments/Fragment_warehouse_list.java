@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,7 +59,8 @@ public class Fragment_warehouse_list extends Fragment {
     View view1, view2,view3, view4,view5;
     ImageView imgFiterprice, imgAdd_products, imgCate_add, imgBrans_add;
     TextView tvTitle_brands, tvTitle_cate, tvTitle_producst;
-
+    public static  boolean statusCate = true;
+    String cateName, imgCate;
     View view;
 
     @Override
@@ -78,6 +80,13 @@ public class Fragment_warehouse_list extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Activity_Add_Products.class);
                 startActivity(intent);
+            }
+        });
+        imgCate_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_fragment_warehouse_list_to_activity_add_Categories);
+                statusCate = true;
             }
         });
         return view;
