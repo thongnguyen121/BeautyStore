@@ -46,5 +46,14 @@
         android:id="@+id/fragment_warehouse_list"
         android:name="com.example.beautystore.fragments.Fragment_warehouse_list"
         android:label="@string/warehouse"
-        tools:layout="@layout/fragment_warehouse_list" />
+        tools:layout="@layout/fragment_warehouse_list" >
+        <action
+            android:id="@+id/action_fragment_warehouse_list_to_activity_add_Categories"
+            app:destination="@id/activity_add_Categories" />
+    </fragment>
+    <activity
+        android:id="@+id/activity_add_Categories"
+        android:name="com.example.beautystore.activity.Activity_add_Categories"
+        android:label="activity_add_categories"
+        tools:layout="@layout/activity_add_categories" />
 </navigation>
