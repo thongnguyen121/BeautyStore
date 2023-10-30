@@ -1,5 +1,6 @@
 package com.example.beautystore.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
 import com.example.beautystore.adapter.RecyclerView_Products_WH;
@@ -68,6 +70,13 @@ public class Fragment_warehouse_list extends Fragment {
         getData_categories();
         setSearchView();
         getFilter_price(view);
+        imgAdd_products.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Activity_Add_Products.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
