@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,15 +20,13 @@ import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Add_Products;
+import com.example.beautystore.activity.Activity_add_Brands;
 import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
-import com.example.beautystore.adapter.RecyclerView_Products_WH;
 import com.example.beautystore.adapter.RecyclerView_cate_WH;
-import com.example.beautystore.adapter.RecyclerView_search_products;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
@@ -58,7 +57,9 @@ public class Fragment_warehouse_list extends Fragment {
     View view1, view2,view3, view4,view5;
     ImageView imgFiterprice, imgAdd_products, imgCate_add, imgBrans_add;
     TextView tvTitle_brands, tvTitle_cate, tvTitle_producst;
-
+    private NestedScrollView scrollView;
+    public static boolean statusBrands = true;
+    public static boolean statusProducts = true;
     View view;
 
     @Override
@@ -73,11 +74,14 @@ public class Fragment_warehouse_list extends Fragment {
         getData_categories();
         setSearchView();
         getFilter_price(view);
+        getIntent_Categories_add();
         imgAdd_products.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Activity_Add_Products.class);
                 startActivity(intent);
+                statusProducts = true;
+
             }
         });
         return view;
@@ -87,6 +91,16 @@ public class Fragment_warehouse_list extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_appbar, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+    private void getIntent_Categories_add(){
+        imgBrans_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Activity_add_Brands.class);
+                startActivity(intent);
+                statusBrands = true;
+            }
+        });
     }
 
     private void setControl(View view) {
@@ -106,6 +120,7 @@ public class Fragment_warehouse_list extends Fragment {
         tvTitle_producst = view.findViewById(R.id.tiltle_products_wh);
         tvTitle_brands = view.findViewById(R.id.tiltle_brands_wh);
         tvTitle_cate = view.findViewById(R.id.tiltle_categories_wh);
+//        scrollView = view.findViewById(R.id.id_scrollView_warehouse_list);
 
 
     }
@@ -298,6 +313,7 @@ public class Fragment_warehouse_list extends Fragment {
 
 
     }
+
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(requireContext(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_price, popupMenu.getMenu());
@@ -378,12 +394,10 @@ public class Fragment_warehouse_list extends Fragment {
         view2.setVisibility(View.GONE);
         view3.setVisibility(View.GONE);
         view4.setVisibility(View.GONE);
-
         imgCate_add.setVisibility(View.GONE);
         imgBrans_add.setVisibility(View.GONE);
         imgAdd_products.setVisibility(View.GONE);
         tvTitle_cate.setVisibility(View.GONE);
-
         tvTitle_brands.setVisibility(View.GONE);
         Admin_MainActivity.bottomNavigationView.setVisibility(View.GONE);
 
@@ -395,15 +409,11 @@ public class Fragment_warehouse_list extends Fragment {
         view2.setVisibility(View.VISIBLE);
         view3.setVisibility(View.VISIBLE);
         view4.setVisibility(View.VISIBLE);
-
         imgCate_add.setVisibility(View.VISIBLE);
         imgBrans_add.setVisibility(View.VISIBLE);
         imgAdd_products.setVisibility(View.VISIBLE);
         tvTitle_cate.setVisibility(View.VISIBLE);
-
         tvTitle_brands.setVisibility(View.VISIBLE);
         Admin_MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
-
     }
-
 }

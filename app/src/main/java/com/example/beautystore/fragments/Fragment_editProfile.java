@@ -288,7 +288,7 @@ public class Fragment_editProfile extends Fragment {
                 address = customer.getAddress();
                 password = customer.getPassword();
                 status = customer.getStatus();
-                    Glide.with(requireContext()).load(imageUri).into(imageView);
+                Glide.with(requireContext()).load(imageUri).into(imageView);
                 tvEmail.setText(email);
                 edtTen.setText(name);
                 edtSDT.setText(phoneNum);

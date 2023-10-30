@@ -21,12 +21,6 @@ public class Fragment_admin_home extends Fragment {
         // Inflate the layout for this fragment
                View view =  inflater.inflate(R.layout.fragment_admin_home, container, false);
         Button button = view.findViewById(R.id.btnNutBam);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_fragment_admin_home_to_activity_add_Brands);
-            }
-        });
                return  view;
     }
 }

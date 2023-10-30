@@ -69,7 +69,6 @@ public class RecyclerView_cate_WH extends RecyclerView.Adapter<RecyclerView_cate
             public void onClick(View v) {
                 cate_id_wh = categories.getCategories_id();
                 selectedPosition_cate = holder.getAdapterPosition();
-//                RecyclerViewBrands.selectedPosition_brands = -1;
                 int previousSelectedPosition = selectedPosition_cate;
                 // Thông báo Adapter cập nhật lại giao diện để vẽ lại màu nền và màu chữ
                 notifyItemChanged(previousSelectedPosition);

@@ -7,8 +7,7 @@ public class Products {
     public Products() {
     }
 
-    public Products(String products_id, String products_name, String categories_id, String brands_id, String quantity,
-                    String price, String description, String create_at, String imgProducts_1, String imgProduct_2, String imgProduct_3) {
+    public Products(String products_id, String products_name, String categories_id, String brands_id, String quantity, String price, String description, String create_at, String imgProducts_1, String imgProducts_2, String imgProducts_3) {
         this.products_id = products_id;
         this.products_name = products_name;
         this.categories_id = categories_id;
@@ -18,8 +17,8 @@ public class Products {
         this.description = description;
         this.create_at = create_at;
         this.imgProducts_1 = imgProducts_1;
-        this.imgProducts_2 = imgProduct_2;
-        this.imgProducts_3 = imgProduct_3;
+        this.imgProducts_2 = imgProducts_2;
+        this.imgProducts_3 = imgProducts_3;
     }
 
     public String getProducts_id() {
@@ -98,15 +97,15 @@ public class Products {
         return imgProducts_2;
     }
 
-    public void setImgProducts_2(String imgProduct_2) {
-        this.imgProducts_2 = imgProduct_2;
+    public void setImgProducts_2(String imgProducts_2) {
+        this.imgProducts_2 = imgProducts_2;
     }
 
-    public String getImgProduct_3() {
+    public String getImgProducts_3() {
         return imgProducts_3;
     }
 
-    public void setImgProduct_3(String imgProduct_3) {
-        this.imgProducts_3 = imgProduct_3;
+    public void setImgProducts_3(String imgProducts_3) {
+        this.imgProducts_3 = imgProducts_3;
     }
 }
