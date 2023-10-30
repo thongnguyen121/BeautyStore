@@ -10,11 +10,7 @@
         android:name="com.example.beautystore.fragments.Fragment_admin_employees"
         android:label="@string/employees"
         tools:layout="@layout/fragment_admin_employees" />
-    <fragment
-        android:id="@+id/fragment_admin_warehouse"
-        android:name="com.example.beautystore.fragments.Fragment_admin_warehouse"
-        android:label="@string/warehouse"
-        tools:layout="@layout/fragment_admin_warehouse" />
+
     <fragment
         android:id="@+id/fragment_admin_home"
         android:name="com.example.beautystore.fragments.Fragment_admin_home"
@@ -46,4 +42,9 @@
         android:label="activity_add_brands"
         tools:layout="@layout/activity_add_brands" >
     </activity>
+    <fragment
+        android:id="@+id/fragment_warehouse_list"
+        android:name="com.example.beautystore.fragments.Fragment_warehouse_list"
+        android:label="@string/warehouse"
+        tools:layout="@layout/fragment_warehouse_list" />
 </navigation>

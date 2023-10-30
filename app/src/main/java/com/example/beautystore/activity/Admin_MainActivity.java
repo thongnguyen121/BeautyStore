@@ -42,7 +42,7 @@ public class Admin_MainActivity extends AppCompatActivity {
         NavigationView navigation = findViewById(R.id.id_navigationviewAdmin);
 
         DrawerLayout drawerLayout = findViewById(R.id.dwLayout);
-        appBarConfiguration = new AppBarConfiguration.Builder(R.id.fragment_admin_home, R.id.fragment_admin_employees,R.id.fragment_admin_statistic, R.id.fragment_admin_warehouse, R.id.fragment_admin_transaction ).setOpenableLayout(drawerLayout).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.fragment_admin_home, R.id.fragment_admin_employees,R.id.fragment_admin_statistic, R.id.fragment_warehouse_list, R.id.fragment_admin_transaction ).setOpenableLayout(drawerLayout).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         navController.addOnDestinationChangedListener((controller, navDestination, bundle) -> {
