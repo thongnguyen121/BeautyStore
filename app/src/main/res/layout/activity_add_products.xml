@@ -245,8 +245,8 @@
                 >
             <ImageView
                 android:id="@+id/img_products_add_1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:src="@color/pink"
                 ></ImageView>
             </com.google.android.material.card.MaterialCardView>
@@ -262,8 +262,8 @@
                 >
                 <ImageView
                     android:id="@+id/img_products_add_2"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     android:src="@color/pink"
                     ></ImageView>
             </com.google.android.material.card.MaterialCardView>
@@ -280,8 +280,8 @@
 
                 <ImageView
                     android:id="@+id/img_products_add_3"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     android:src="@color/pink"></ImageView>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -295,18 +295,18 @@
             >
             <Button
                 android:id="@+id/btnAdd_products"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
                 android:layout_marginRight="30dp"
                 android:text="@string/btn_them"
-                android:textSize="25dp"
+                android:textSize="20dp"
                 android:fontFamily="@font/abeezeeregular"
                 android:background="@drawable/bg_btn_add_products"
                 ></Button>
             <Button
                 android:id="@+id/btnEdit_products"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
                 android:text="@string/btn_sua"
                 android:textSize="25dp"
                 android:fontFamily="@font/abeezeeregular"
