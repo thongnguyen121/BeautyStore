@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_add_Brands;
 import com.example.beautystore.fragments.Fragment_home;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
@@ -78,7 +80,6 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
                 int previousSelectedPosition = selectedPosition_brands;
                 selectedPosition_brands = holder.getAdapterPosition();
                 RecyclerView_cate_WH.selectedPosition_cate = -1;
-
                 // Thông báo Adapter cập nhật lại giao diện để vẽ lại màu nền và màu chữ
                 notifyItemChanged(previousSelectedPosition);
                 notifyItemChanged(selectedPosition_brands);
@@ -90,12 +91,14 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                brand_id_wh = brands.getBrands_id();
                 showPopupMenu(v);
                 return false;
             }
         });
 
     }
+
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_function_edit_delete, popupMenu.getMenu());
@@ -105,11 +108,12 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
-                if (id == R.id.Edit){
-
-                }
-                else if (id == R.id.Delete)
-                {
+                if (id == R.id.Edit) {
+                    Intent intent = new Intent(view.getContext(), Activity_add_Brands.class);
+                    intent.putExtra("brands_id", brand_id_wh);
+                    context.startActivity(intent);
+                    Fragment_warehouse_list.statusBrands = false;
+                } else if (id == R.id.Delete) {
 
                 }
 
