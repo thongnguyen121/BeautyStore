@@ -31,6 +31,7 @@ import com.example.beautystore.fragments.Fragment_home;
 import com.example.beautystore.fragments.Fragment_order;
 import com.example.beautystore.fragments.Fragment_profile;
 import com.example.beautystore.fragments.Fragment_transaction_history;
+import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.fragments.Fragment_wishlist;
 import com.example.beautystore.model.Customer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -355,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void replaceFragment_orders() {
         if (currentFragment != Fragment_order) {
-            openFragment(new Fragment_order());
+            openFragment(new Fragment_warehouse_list());
             currentFragment = Fragment_order;
         }
     }
