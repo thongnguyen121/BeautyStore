@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +65,7 @@ public class Fragment_warehouse_list extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_warehouse_list, container, false);
-
+        setHasOptionsMenu(true);
         setControl(view);
         getProducts();
         getData_brands();
@@ -78,6 +80,12 @@ public class Fragment_warehouse_list extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_appbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void setControl(View view) {
