@@ -26,18 +26,20 @@ public class Admin_MainActivity extends AppCompatActivity {
     NavController navController;
     AppBarConfiguration appBarConfiguration;
     Menu menu;
+    public static BottomNavigationView bottomNavigationView;
+    public static  MaterialToolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationAdminMenu);
+        bottomNavigationView = findViewById(R.id.bottomNavigationAdminMenu);
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_container);
         navController = navHostFragment.getNavController();
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbarAdmin);
+        toolbar = findViewById(R.id.toolbarAdmin);
         setSupportActionBar(toolbar);
         NavigationView navigation = findViewById(R.id.id_navigationviewAdmin);
 

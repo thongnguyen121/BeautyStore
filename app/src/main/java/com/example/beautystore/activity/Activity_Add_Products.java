@@ -57,17 +57,22 @@ public class Activity_Add_Products extends AppCompatActivity {
         setControl();
         getSpinnerCategories();
         getSpinnerBrands();
-
         condition_edtProducts_price();
         condition_edtProducts_quantity();
         condition_edtProducts_description();
         condition_edtProducts_name();
         setFocus_spinner();
         focusOut();
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
     }
     private void setControl() {
-//        imgBack = findViewById(R.id.img_back_add_products);
+        imgBack = findViewById(R.id.img_back_addProducts_screen);
         spinner_categories = findViewById(R.id.spn_Cate_name);
         spinner_brands = findViewById(R.id.spn_Brands_name);
         edt_products_name = findViewById(R.id.edt_products_name);
@@ -368,7 +373,6 @@ public class Activity_Add_Products extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String inputText = s.toString().trim();
@@ -450,7 +454,6 @@ public class Activity_Add_Products extends AppCompatActivity {
                 edt_products_price.clearFocus();
                 edt_products_price.clearFocus();
                 spinner_brands.requestFocus();
-
             }
 
             @Override

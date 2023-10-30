@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Add_Products;
+import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
 import com.example.beautystore.adapter.RecyclerView_Products_WH;
@@ -384,8 +385,8 @@ public class Fragment_warehouse_list extends Fragment {
         tvTitle_cate.setVisibility(View.GONE);
 
         tvTitle_brands.setVisibility(View.GONE);
-        MainActivity.bottomNavigationView.setVisibility(View.GONE);
-        MainActivity.toolbar.setVisibility(View.GONE);
+        Admin_MainActivity.bottomNavigationView.setVisibility(View.GONE);
+
     }
     private void setVisibityhome(){
         rcBrands.setVisibility(View.VISIBLE);
@@ -401,8 +402,8 @@ public class Fragment_warehouse_list extends Fragment {
         tvTitle_cate.setVisibility(View.VISIBLE);
 
         tvTitle_brands.setVisibility(View.VISIBLE);
-        MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
-        MainActivity.toolbar.setVisibility(View.VISIBLE);
+        Admin_MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+
     }
 
 }
