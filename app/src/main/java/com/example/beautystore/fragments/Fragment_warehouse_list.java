@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.activity.Activity_add_Brands;
+import com.example.beautystore.activity.Activity_add_Categories;
 import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
@@ -90,7 +91,8 @@ public class Fragment_warehouse_list extends Fragment {
         imgCate_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_fragment_warehouse_list_to_activity_add_Categories);
+                Intent intent = new Intent(getActivity(), Activity_add_Categories.class);
+                startActivity(intent);
                 statusCate = true;
             }
         });
