@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,6 +61,8 @@ public class Fragment_warehouse_list extends Fragment {
     private NestedScrollView scrollView;
     public static boolean statusBrands = true;
     public static boolean statusProducts = true;
+    public static  boolean statusCate = true;
+    String cateName, imgCate;
     View view;
 
     @Override
@@ -82,6 +85,13 @@ public class Fragment_warehouse_list extends Fragment {
                 startActivity(intent);
                 statusProducts = true;
 
+            }
+        });
+        imgCate_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_fragment_warehouse_list_to_activity_add_Categories);
+                statusCate = true;
             }
         });
         return view;

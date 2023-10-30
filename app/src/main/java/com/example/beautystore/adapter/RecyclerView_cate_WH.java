@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_add_Categories;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
@@ -80,6 +83,7 @@ public class RecyclerView_cate_WH extends RecyclerView.Adapter<RecyclerView_cate
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                cate_id_wh = categories.getCategories_id();
                 showPopupMenu(v);
                 return false;
             }
@@ -95,7 +99,11 @@ public class RecyclerView_cate_WH extends RecyclerView.Adapter<RecyclerView_cate
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.Edit){
-
+//                    Navigation.findNavController(view).navigate(R.id.action_fragment_warehouse_list_to_activity_add_Categories);
+                    Intent i = new Intent(view.getContext(), Activity_add_Categories.class);
+                    i.putExtra("id_category", cate_id_wh);
+                    context.startActivity(i);
+                    Fragment_warehouse_list.statusCate = false;
                 }
                 else if (id == R.id.Delete)
                 {
