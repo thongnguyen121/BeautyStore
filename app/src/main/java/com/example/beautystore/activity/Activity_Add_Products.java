@@ -45,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -78,6 +79,9 @@ public class Activity_Add_Products extends AppCompatActivity {
     Uri imageUri_1, imageUri_2, imageUri_3;
     String id_cate_spn = "";
     String id_brands_spn = "";
+    String brands_postion = "";
+    String cate_postion = "";
+    int vt_cate = -1;
 
     private String products_id = "", categories_id = "", brands_id = "", autoId_products;
 
@@ -88,7 +92,7 @@ public class Activity_Add_Products extends AppCompatActivity {
 
         setControl();
         getSpinnerCategories();
-        getSpinnerBrands();
+        getSpiner_brands();
         condition_edtProducts_price();
         condition_edtProducts_quantity();
         condition_edtProducts_description();
@@ -164,7 +168,6 @@ public class Activity_Add_Products extends AppCompatActivity {
                     data_categories.clear();
                     data_categories.add(0, "chọn danh mục loại");
                 }
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Categories categories = dataSnapshot.getValue(Categories.class);
                     String cate_name = categories.getCategories_name();
@@ -176,19 +179,20 @@ public class Activity_Add_Products extends AppCompatActivity {
                     }
 
                 }
-
                 adapter_categories.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Xử lý lỗi (nếu cần)
             }
         });
+
+
     }
 
-    private void getSpinnerBrands() {
 
+    private void getSpiner_brands()
+    {
         adapter_brands = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data_brands);
         adapter_brands.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_brands.setAdapter(adapter_brands);
@@ -198,11 +202,11 @@ public class Activity_Add_Products extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 if (data_brands != null) {
                     data_brands.clear();
-                    data_brands.add(0, "chọn danh mục hãng");
+                    data_brands.add(0, "chọn danh mục hang");
                 }
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Brands brands = dataSnapshot.getValue(Brands.class);
                     String brands_name = brands.getBrands_name();
@@ -212,6 +216,7 @@ public class Activity_Add_Products extends AppCompatActivity {
                     if (brands.getBrands_id().equals(brands_id)) {
                         spinner_brands.setSelection(pos);
                     }
+
                 }
 
                 adapter_brands.notifyDataSetChanged();
@@ -520,11 +525,14 @@ public class Activity_Add_Products extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // Khi bạn chọn một mục trong Spinner, gọi clearFocus trên EditText
+                // Lấy giá trị của mục đã chọn
+                cate_postion = (String) parentView.getItemAtPosition(position);
                 edt_products_quantity.clearFocus();
                 edt_products_name.clearFocus();
                 edt_products_price.clearFocus();
                 edt_products_price.clearFocus();
                 spinner_categories.requestFocus();
+
             }
 
             @Override
@@ -752,10 +760,10 @@ public class Activity_Add_Products extends AppCompatActivity {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products/" + products_id);
                 StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(products_id);
 
-                // Create a map to store the updated field values.
+
                 Map<String, Object> updates = new HashMap<>();
 
-                // Update the fields that have been changed.
+
                 if (!TextUtils.isEmpty(edt_products_name.getText())) {
                     updates.put("products_name", edt_products_name.getText().toString());
                 }
@@ -769,13 +777,13 @@ public class Activity_Add_Products extends AppCompatActivity {
                     updates.put("description", edt_products_description.getText().toString());
                 }
                 if (id_cate_spn != null) {
-                    updates.put("categories_id", id_cate_spn);
+                    updates.put("categories_id", categories_id);
                 }
                 if (id_brands_spn != null) {
-                    updates.put("brands_id", id_brands_spn);
+                    updates.put("brands_id", brands_id);
                 }
 
-                // Update the images if they have been changed.
+
                 if (imageUri_1 != null) {
                     StorageReference imageRef1 = storageReference.child("image_1.jpg");
                     imageRef1.putFile(imageUri_1).addOnSuccessListener(taskSnapshot -> {
@@ -783,7 +791,7 @@ public class Activity_Add_Products extends AppCompatActivity {
                             String imageUrl1 = uri.toString();
                             updates.put("imgProducts_1", imageUrl1);
 
-                            // Check if image 2 needs to be updated.
+
                             if (imageUri_2 != null) {
                                 StorageReference imageRef2 = storageReference.child("image_2.jpg");
                                 imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
@@ -791,7 +799,7 @@ public class Activity_Add_Products extends AppCompatActivity {
                                         String imageUrl2 = uri2.toString();
                                         updates.put("imgProducts_2", imageUrl2);
 
-                                        // Check if image 3 needs to be updated.
+
                                         if (imageUri_3 != null) {
                                             StorageReference imageRef3 = storageReference.child("image_3.jpg");
                                             imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
@@ -799,24 +807,24 @@ public class Activity_Add_Products extends AppCompatActivity {
                                                     String imageUrl3 = uri3.toString();
                                                     updates.put("imgProducts_3", imageUrl3);
 
-                                                    // Update the product in the Firebase Database once.
+
                                                     updateProductInDatabase(databaseReference, updates);
                                                 });
                                             });
                                         } else {
-                                            // No need to update image 3, update the product in the Firebase Database.
+
                                             updateProductInDatabase(databaseReference, updates);
                                         }
                                     });
                                 });
                             } else {
-                                // No need to update image 2 and 3, update the product in the Firebase Database.
+
                                 updateProductInDatabase(databaseReference, updates);
                             }
                         });
                     });
                 } else {
-                    // If image 1 is not updated, check if image 2 and 3 need to be updated.
+
                     if (imageUri_2 != null) {
                         StorageReference imageRef2 = storageReference.child("image_2.jpg");
                         imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
@@ -836,13 +844,13 @@ public class Activity_Add_Products extends AppCompatActivity {
                                         });
                                     });
                                 } else {
-                                    // No need to update image 3, update the product in the Firebase Database.
+
                                     updateProductInDatabase(databaseReference, updates);
                                 }
                             });
                         });
                     } else {
-                        // If image 1 and 2 are not updated, check if image 3 needs to be updated.
+
                         if (imageUri_3 != null) {
                             StorageReference imageRef3 = storageReference.child("image_3.jpg");
                             imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
@@ -850,12 +858,12 @@ public class Activity_Add_Products extends AppCompatActivity {
                                     String imageUrl3 = uri3.toString();
                                     updates.put("imgProducts_3", imageUrl3);
 
-                                    // Update the product in the Firebase Database once.
+
                                     updateProductInDatabase(databaseReference, updates);
                                 });
                             });
                         } else {
-                            // No need to update image 1, image 2, and image 3, update the product in the Firebase Database.
+
                             updateProductInDatabase(databaseReference, updates);
                         }
                     }
@@ -866,7 +874,7 @@ public class Activity_Add_Products extends AppCompatActivity {
     private void updateProductInDatabase(DatabaseReference databaseReference, Map<String, Object> updates) {
         databaseReference.updateChildren(updates).addOnSuccessListener(unused -> {
             Toast.makeText(Activity_Add_Products.this, "Chỉnh sửa sản phẩm thành công", Toast.LENGTH_SHORT).show();
-            onBackPressed();
+
         });
     }
 
