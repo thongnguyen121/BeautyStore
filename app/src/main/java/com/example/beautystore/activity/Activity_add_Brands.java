@@ -262,10 +262,11 @@ public class Activity_add_Brands extends AppCompatActivity {
                 }
                 String[] temp = dsUser.get(dsUser.size() - 1).split("BD");
                 String id = "";
-                if (Integer.parseInt(temp[1]) < 10) {
-                    id = "BD0" + (Integer.parseInt(temp[1]) + 1);
+                int idNumber = Integer.parseInt(temp[1])+1;
+                if (idNumber < 10) {
+                    id = "BD0" + idNumber;
                 } else {
-                    id = "BD" + (Integer.parseInt(temp[1]) + 1);
+                    id = "BD" + idNumber;
                 }
                 autoId_brands = id;
             }

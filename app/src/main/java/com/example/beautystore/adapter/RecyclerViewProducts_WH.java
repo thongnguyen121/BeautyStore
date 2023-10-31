@@ -51,8 +51,13 @@ public class RecyclerViewProducts_WH extends RecyclerView.Adapter<RecyclerViewPr
         Products products = data.get(position);
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        if(products.getProducts_name().length() < 13)
+        {
+            holder.tvProducts_name.setText(products.getProducts_name());
+        }else {
+            holder.tvProducts_name.setText(products.getProducts_name().substring(0,12) + "...");
+        }
 
-        holder.tvProducts_name.setText(products.getProducts_name().substring(0,12) + "...");
         holder.tvProducts_price.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
         holder.tvProducts_id.setText(products.getProducts_id());
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducs);

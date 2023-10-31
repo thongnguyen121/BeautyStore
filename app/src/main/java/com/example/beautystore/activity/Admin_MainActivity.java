@@ -65,9 +65,7 @@ public class Admin_MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.appBar_home) {
-            // Xử lý sự kiện khi mục Warehouse được chọn
-            // Ví dụ: Chuyển đến fragment warehouse
-            Toast.makeText(this, "moi thu ok roi do", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "dsfghj", Toast.LENGTH_SHORT).show();
             return true;
         }
 
