@@ -18,20 +18,21 @@
         android:theme="@style/Theme.BeautyStore"
         tools:targetApi="31">
         <activity
+            android:name=".activity.Tuvanvien_MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.Shipper_MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.Admin_MainActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false"></activity>
+            android:exported="false"
+            android:noHistory="true" />
         <activity
             android:name=".activity.Activity_add_Brands"
             android:exported="false" />
@@ -49,8 +50,12 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false">
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

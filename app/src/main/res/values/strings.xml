@@ -56,7 +56,7 @@
     <string name="save_change">Lưu thay đổi</string>
     <string name="title_activity_admin_main">AdminMainActivity</string>
 
-    <string name="employees">Nhân viên</string>
+    <string name="members">Nhân viên</string>
     <string name="warehouse">Kho</string>
     <string name="statistic">Thống kê</string>
     <string name="customer_list">Danh sách khách hàng</string>

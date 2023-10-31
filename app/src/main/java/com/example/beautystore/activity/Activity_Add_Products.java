@@ -53,6 +53,7 @@ import com.google.firebase.storage.UploadTask;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Activity_Add_Products extends AppCompatActivity {
@@ -75,6 +76,7 @@ public class Activity_Add_Products extends AppCompatActivity {
     ActivityResultLauncher<Intent> resultLaucher_1, resultLauncher_2, resultLauncher_3;
     Uri imageUri_1, imageUri_2, imageUri_3;
     Uri [] uris = new Uri[3];
+    List<Uri> imageUris = new ArrayList<>();
     private String products_id ="", categories_id ="", brands_id = "", autoId_products;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +114,12 @@ public class Activity_Add_Products extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
     }
     private void setControl() {
         imgBack = findViewById(R.id.img_back_addProducts_screen);
@@ -543,6 +550,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_1 = result.getData().getData();
+                    imageUris.add(imageUri_1);
                     img_products_1.setImageURI(imageUri_1);
                 } catch (Exception e) {
 
@@ -557,6 +565,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_2 = result.getData().getData();
+                    imageUris.add(imageUri_2);
                     img_products_2.setImageURI(imageUri_2);
                 } catch (Exception e) {
 
@@ -571,6 +580,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_3 = result.getData().getData();
+                    imageUris.add(imageUri_3);
                     img_products_3.setImageURI(imageUri_3);
                 } catch (Exception e) {
 

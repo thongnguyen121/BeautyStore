@@ -11,24 +11,29 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.beautystore.LoginActivity;
+import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class Admin_MainActivity extends AppCompatActivity {
+public class Admin_MainActivity extends AppCompatActivity{
     NavController navController;
     AppBarConfiguration appBarConfiguration;
     Menu menu;
     public static BottomNavigationView bottomNavigationView;
     public static  MaterialToolbar toolbar;
-
+    public static final String SHARE_PREFS = "sharedPrefs";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +56,40 @@ public class Admin_MainActivity extends AppCompatActivity {
         if (navDestination.getId() == R.id.fragment_customer_list){
             bottomNavigationView.setVisibility(View.GONE);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        }else{
+
+        } else{
             bottomNavigationView.setVisibility(View.VISIBLE);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
         });
+
         NavigationUI.setupWithNavController(navigation, navController);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int idItem = item.getItemId();
+                if (idItem == R.id.AdminLogout) {
+                    FirebaseAuth.getInstance().signOut();
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("check", "");
+                    editor.apply();
+                    Intent intent = new Intent(Admin_MainActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                    Toast.makeText(Admin_MainActivity.this, "da logout", Toast.LENGTH_SHORT).show();
+                }
+                else if (idItem == R.id.fragment_customer_list){
+                    navController.navigate(R.id.fragment_customer_list);
+                    return  true;
+                }
+                    return false;
+
+
+            }
+        });
     }
 
     @Override
@@ -80,4 +112,5 @@ public class Admin_MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
+
 }

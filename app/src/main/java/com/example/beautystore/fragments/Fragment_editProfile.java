@@ -79,7 +79,7 @@ public class Fragment_editProfile extends Fragment {
     DatabaseReference reference;
     StorageReference storageReference;
     String uid = "", email = "", name = "", phoneNum = "", address = "", password = "", status = "", extention = "";
-    Uri imageUri;
+    Uri  imageUri = Uri.parse("");
     private static final int PICK_IMAGE_REQUEST = 1;
     private ProgressBar progressBar;
         ActivityResultLauncher<Intent> resultLaucher;
@@ -90,6 +90,7 @@ public class Fragment_editProfile extends Fragment {
     Button btnSave;
     FragmentManager fragmentManage;
     ActivityResultLauncher<Intent> cameraResultLauncher;
+    boolean seletedImage = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,8 +98,6 @@ public class Fragment_editProfile extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         setControl(view);
-        FragmentManager fragmentManager =getActivity().getSupportFragmentManager();
-        setUpOnBackPress();
         //khoi tao firebase
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -127,21 +126,19 @@ public class Fragment_editProfile extends Fragment {
             @Override
             public void onClick(View view) {
 //                updateAccountIntoFirebase(uid);
-                saveInfo();
-            }
-        });
-        return view;
-    }
-
-    private void setUpOnBackPress() {
-        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (isEnabled()){
-                    fragmentManage.popBackStack();
+//                saveInfo();
+                if (seletedImage == false) {
+                    Toast.makeText(getContext(), "Chua co chon cai con me gi het "+imageUri, Toast.LENGTH_SHORT).show();
+                    updateAccountIntoFirebaseWithoutImg();
+                }
+                else {
+                    Toast.makeText(getContext(), "da chon hinh anh", Toast.LENGTH_SHORT).show();
+                    saveInfo();
+                    seletedImage = false;
                 }
             }
         });
+        return view;
     }
 
     private void saveInfo() {
@@ -155,11 +152,13 @@ public class Fragment_editProfile extends Fragment {
                 imageUri = uriTask.getResult();
                 updateAccountIntoFirebase();
                 Toast.makeText(getContext(), "co the" + imageUri, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "co the: "+imageUri );
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getContext(), "khong the" + e, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "khong the: " +e);
             }
         });
     }
@@ -183,6 +182,37 @@ public class Fragment_editProfile extends Fragment {
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
                     Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateAccountIntoFirebaseWithoutImg() {
+        name = edtTen.getText().toString();
+        phoneNum = edtSDT.getText().toString();
+        address = edtDiaChi.getText().toString();
+        DatabaseReference databaseReference = database.getReference("Customer").child(uid);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Tạo đối tượng chứa các trường cần cập nhật
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("username", name);
+                    updates.put("address", address);
+                    updates.put("phoneNumber", phoneNum);
+
+                    // Cập nhật dữ liệu
+                    databaseReference.updateChildren(updates);
+                    Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+
                 } else {
                     Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
                 }
@@ -266,6 +296,7 @@ public class Fragment_editProfile extends Fragment {
                 try {
                     imageUri = result.getData().getData();
                     imageView.setImageURI(imageUri);
+                    seletedImage = true;
                     extention = getFileExtention(imageUri);
                     Log.d("TAG", "hinh anh: " + "." + extention);
                 } catch (Exception e) {
@@ -341,6 +372,7 @@ public class Fragment_editProfile extends Fragment {
                             if (result.getResultCode() == RESULT_OK) {
                                 //set uri in here
                                 imageView.setImageURI(imageUri);
+                                seletedImage = true;
 //                            Glide.with(requireContext()).load(imageUri).into(imageView);
                             }
 
@@ -349,26 +381,26 @@ public class Fragment_editProfile extends Fragment {
 
 
 //    code xin quyen
-    public void requestPermissionStorageImages() {
-        if (ContextCompat.checkSelfPermission(getContext(), required_permissions[0]) == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, required_permissions[0] + "Granted");
-            is_storage_image_permitted = true;
-            requestPermissionCameraAccress();
-        } else {
-            request_permission_laucher_storage_image.launch(required_permissions[0]);
-        }
-    }
+//    public void requestPermissionStorageImages() {
+//        if (ContextCompat.checkSelfPermission(getContext(), required_permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+//            Log.d(TAG, required_permissions[0] + "Granted");
+//            is_storage_image_permitted = true;
+//            requestPermissionCameraAccress();
+//        } else {
+//            request_permission_laucher_storage_image.launch(required_permissions[0]);
+//        }
+//    }
 
-    private ActivityResultLauncher<String> request_permission_laucher_storage_image = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if (isGranted) {
-            Log.d(TAG, required_permissions[0] + "Granted");
-            is_storage_image_permitted = true;
-        } else {
-            Log.d(TAG, required_permissions[0] + "not Granted");
-            is_storage_image_permitted = false;
-        }
-        requestPermissionCameraAccress();
-    });
+//    private ActivityResultLauncher<String> request_permission_laucher_storage_image = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+//        if (isGranted) {
+//            Log.d(TAG, required_permissions[0] + "Granted");
+//            is_storage_image_permitted = true;
+//        } else {
+//            Log.d(TAG, required_permissions[0] + "not Granted");
+//            is_storage_image_permitted = false;
+//        }
+//        requestPermissionCameraAccress();
+//    });
 
 
     public void requestPermissionCameraAccress() {

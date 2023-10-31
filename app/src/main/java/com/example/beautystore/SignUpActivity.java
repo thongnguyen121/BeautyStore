@@ -3,6 +3,7 @@ package com.example.beautystore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.beautystore.model.Customer;
+import com.example.beautystore.model.Members;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -139,11 +140,15 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Customer customer = new Customer(name,email,pass,phoneNum,"","","");
+                    Members members = new Members(name,email,pass,phoneNum,"","","","","2");
                     databaseReference.child("Customer").child(firebaseAuth.getCurrentUser().getUid()).setValue(customer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
                                 Toast.makeText(SignUpActivity.this, "Thành công", Toast.LENGTH_SHORT).show();
+                                Intent i  = new Intent(SignUpActivity.this, LoginActivity.class);
+                                startActivity(i);
+                                finish();
                             }else {
                                 Toast.makeText(SignUpActivity.this, "Không thanh công", Toast.LENGTH_SHORT).show();
                             }
