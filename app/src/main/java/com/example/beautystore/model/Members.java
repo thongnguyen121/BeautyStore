@@ -1,9 +1,9 @@
 package com.example.beautystore.model;
 
-public class Employees {
+public class Members {
     String username, email, password, phoneNumber, profileImage, hinhCCCDMatTruoc, hinhCCCDMatSau, status, role;
 
-    public Employees(String username, String email, String password, String phoneNumber, String profileImage, String hinhCCCDMatTruoc, String hinhCCCDMatSau, String status, String role) {
+    public Members(String username, String email, String password, String phoneNumber, String profileImage, String hinhCCCDMatTruoc, String hinhCCCDMatSau, String status, String role) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -15,7 +15,7 @@ public class Employees {
         this.role = role;
     }
 
-    public Employees() {
+    public Members() {
     }
 
     public String getUsername() {

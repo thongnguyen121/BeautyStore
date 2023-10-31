@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/fragment_admin_employees"
         android:name="com.example.beautystore.fragments.Fragment_admin_employees"
-        android:label="@string/employees"
+        android:label="@string/members"
         tools:layout="@layout/fragment_admin_employees" />
 
     <fragment
@@ -49,4 +49,9 @@
         android:name="com.example.beautystore.activity.Activity_add_Categories"
         android:label="activity_add_categories"
         tools:layout="@layout/activity_add_categories" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.beautystore.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>

@@ -121,7 +121,12 @@ public class Activity_Add_Products extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
     }
 
     private void setControl() {
@@ -564,6 +569,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_1 = result.getData().getData();
+                    imageUris.add(imageUri_1);
                     img_products_1.setImageURI(imageUri_1);
                 } catch (Exception e) {
 
@@ -579,6 +585,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_2 = result.getData().getData();
+                    imageUris.add(imageUri_2);
                     img_products_2.setImageURI(imageUri_2);
                 } catch (Exception e) {
 
@@ -594,6 +601,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 try {
                     imageUri_3 = result.getData().getData();
+                    imageUris.add(imageUri_3);
                     img_products_3.setImageURI(imageUri_3);
                 } catch (Exception e) {
 

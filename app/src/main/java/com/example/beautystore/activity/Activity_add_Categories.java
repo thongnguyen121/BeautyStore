@@ -229,10 +229,11 @@ public class Activity_add_Categories extends AppCompatActivity {
                 }
                 String[] temp = dsUser.get(dsUser.size() - 1).split("CT");
                 String id = "";
-                if (Integer.parseInt(temp[1]) < 10) {
-                    id = "CT0" + (Integer.parseInt(temp[1]) + 1);
+                int idNumber = Integer.parseInt(temp[1])+1;
+                if (idNumber < 10) {
+                    id = "CT0" + idNumber;
                 } else {
-                    id = "CT" + (Integer.parseInt(temp[1]) + 1);
+                    id = "CT" + idNumber;
                 }
                 autoId_category = id;
             }

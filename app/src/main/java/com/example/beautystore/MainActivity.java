@@ -25,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.beautystore.activity.Admin_MainActivity;
+import com.example.beautystore.activity.Shipper_MainActivity;
+import com.example.beautystore.activity.Tuvanvien_MainActivity;
 import com.example.beautystore.fragments.Fragment_cart;
 import com.example.beautystore.fragments.Fragment_editProfile;
 import com.example.beautystore.fragments.Fragment_home;
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
         ivProfileImg = header.findViewById(R.id.ivProfileImg);
         bottomNavigationView.setBackground(null);
-
+        rememberLogin();
 
 
         actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
@@ -197,6 +200,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomNavigationView.setSelectedItemId(R.id.menu_tap3);
 
 
+    }
+
+    private void rememberLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+        String check = sharedPreferences.getString("check","");
+        if (check.equals("0")) {
+            Intent intent = new Intent(MainActivity.this, Admin_MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (check.equals("1")) {
+            Intent intent = new Intent(MainActivity.this, Shipper_MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (check.equals("2")) {
+            Intent intent = new Intent(MainActivity.this, Tuvanvien_MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 //    private void actionMenuItem(int itemId) {
 //        if (menu != null) {
