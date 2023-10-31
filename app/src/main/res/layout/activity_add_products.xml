@@ -138,6 +138,7 @@
                 android:background="@drawable/bg_edittext"
                 android:fontFamily="@font/abeezeeregular"
                 android:hint="@string/edit_text_qauntity"
+                android:inputType="number"
                 android:paddingLeft="15dp"></EditText>
         </com.google.android.material.card.MaterialCardView>
 
@@ -169,6 +170,7 @@
                 android:background="@drawable/bg_edittext"
                 android:fontFamily="@font/abeezeeregular"
                 android:hint="@string/edit_text_price"
+                android:inputType="number"
                 android:paddingLeft="15dp"></EditText>
         </com.google.android.material.card.MaterialCardView>
 
