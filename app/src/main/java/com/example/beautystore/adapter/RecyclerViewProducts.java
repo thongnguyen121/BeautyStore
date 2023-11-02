@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_Product_Detail;
 import com.example.beautystore.fragments.Fragment_home;
 import com.example.beautystore.model.Products;
 
@@ -52,6 +54,14 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
         holder.tvdescription.setText(products.getDescription().substring(0,40) + "...");
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducts);
         id = products.getCategories_id();
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Activity_Product_Detail.class);
+                intent.putExtra("products_id", products.getProducts_id());
+                context.startActivity(intent);
+            }
+        });
 
     }
     @Override
