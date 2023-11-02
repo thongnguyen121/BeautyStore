@@ -9,6 +9,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 
 import android.graphics.drawable.Drawable;
@@ -37,6 +42,7 @@ import com.example.beautystore.fragments.Fragment_transaction_history;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.fragments.Fragment_wishlist;
 import com.example.beautystore.model.Customer;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
@@ -47,31 +53,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
-   public static BottomNavigationView bottomNavigationView;
+    public static BottomNavigationView bottomNavigationView;
 
     TextView tvProfile_name, tvProfile_email;
     DrawerLayout drawerLayout;
-   public static Toolbar toolbar;
+    public static MaterialToolbar toolbar;
     FragmentManager fragmentManager;
 
     NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
-//    String email="", name="";
-    String email="", name="", uri="";
-    private final int Fragment_home = 3;
-    private final int Fragment_profile = 2;
-    private final int Fragment_order = 1;
-    private final int Fragment_wishlist = 4;
-    private final int Fragment_cart = 5;
-    private final int Fragment_editprofile = 6;
-    private final int Fragment_transaction_history = 7;
-
-    private int currentFragment = Fragment_home;
+    //    String email="", name="";
+    String email = "", name = "", uri = "";
     private Menu menu;
     private MenuItem menuItem;
     ImageView ivProfileImg;
+    NavController controller;
+    AppBarConfiguration configuration;
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -80,131 +79,116 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        rememberLogin();
         drawerLayout = findViewById(R.id.idDrawer);
         toolbar = findViewById(R.id.toolbar);
         firebaseDatabase = FirebaseDatabase.getInstance();
-
+        navigationView = findViewById(R.id.id_navigationview);
         bottomNavigationView = findViewById(R.id.idbottomNavigation);
+        NavHostFragment hostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_container_user);
+        controller = hostFragment.getNavController();
+        setSupportActionBar(toolbar);
+        configuration = new AppBarConfiguration.Builder(R.id.fragment_cart, R.id.fragment_home, R.id.fragment_profile, R.id.fragment_wishlist, R.id.fragment_order).setOpenableLayout(drawerLayout).build();
+        NavigationUI.setupActionBarWithNavController(this, controller, configuration);
+        controller.addOnDestinationChangedListener((controller, navDestination, bundle) -> {
+            if (navDestination.getId() == R.id.fragment_editProfile){
+                bottomNavigationView.setVisibility(View.GONE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+            } else{
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        });
+        NavigationUI.setupWithNavController(navigationView, controller);
+        NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
             Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.VISIBLE);
+            navigationView.getMenu().findItem(R.id.Login).setVisible(false);
+            navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
+            String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            databaseReference = firebaseDatabase.getReference("Customer");
+            databaseReference.child(UID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Customer customer = snapshot.getValue(Customer.class);
+                    name = customer.getUsername();
+                    email = customer.getEmail();
+                    uri = customer.getProfileImage();
+                    if (customer != null){
+                        tvProfile_name.setVisibility(View.VISIBLE);
+                        tvProfile_name.setText(name);
+                        tvProfile_email.setVisibility(View.VISIBLE);
+                        tvProfile_email.setText(email);
+                        Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
+                    }else{
+                        tvProfile_name.setText("Guess");
+                        tvProfile_email.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(MainActivity.this, "Cant", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             Toast.makeText(this, "Chuaw dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.GONE);
+            navigationView.getMenu().findItem(R.id.fragment_editProfile).setVisible(false);
+            navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
+            navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
         }
-
-
-        setSupportActionBar(toolbar);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-        navigationView = findViewById(R.id.id_navigationview);
-
-        navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int idItem = item.getItemId();
+                if (idItem == R.id.Login) {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else if (idItem == R.id.Logout) {
+                    FirebaseAuth.getInstance().signOut();
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("check", "");
+                    editor.apply();
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else if (idItem == R.id.fragment_editProfile){
+                    controller.navigate(R.id.fragment_editProfile);
+                    return  true;
+                }
+                return false;
+            }
+        });
         View header = navigationView.getHeaderView(0);
         tvProfile_name = header.findViewById(R.id.tvProfile_name_drawer);
         tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
         ivProfileImg = header.findViewById(R.id.ivProfileImg);
-        bottomNavigationView.setBackground(null);
-        rememberLogin();
+    }
 
-
-        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                int idItem = item.getItemId();
-                if (idItem == R.id.appBar_home) {
-                    replaceFragment_home();
-                    setTitle();
-                    refreshMenuItem_back(R.id.appBar_home);
-                    if (isUserLoggedin()){
-                        bottomNavigationView.setVisibility(View.VISIBLE);
-                    }else {
-                        bottomNavigationView.setVisibility(View.GONE);
-                    }
-//                    bottomNavigationView.setVisibility(View.VISIBLE);
-                    bottomNavigationView.getMenu().findItem(R.id.menu_tap3).setChecked(true);
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.framelayout);
-                    if (currentFragment instanceof Fragment_home) {
-                        ((Fragment_home) currentFragment).refreshFragment();
-                    }
-
-                }
+    @Override
+    public boolean onSupportNavigateUp() {
+        controller = Navigation.findNavController(this, R.id.nav_host_fragment_container_user);
+        return NavigationUI.navigateUp(controller, configuration) || super.onSupportNavigateUp();
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.appBar_home){
+                // Thực hiện việc tải lại fragment tại đây
+                // Sử dụng FragmentManager để thay thế fragment hiện tại bằng một instance mới của nó
                 return true;
-            }
-        });
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                int idItem = item.getItemId();
-                if (idItem == R.id.menu_tap1) {
-                    replaceFragment_orders();
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    hideMenuItem(R.id.appBar_home);
-                    setTitle();
-                    return true;
-                } else if (idItem == R.id.menu_tap2) {
-                    replaceFragment_profile();
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    hideMenuItem(R.id.appBar_home);
-                    setTitle();
-                    return true;
-                } else if (idItem == R.id.menu_tap3) {
-                    replaceFragment_home();
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    displayMenuItem(R.id.appBar_home);
-                    setTitle();
-                    return true;
-                } else if (idItem == R.id.menu_tap4) {
-                    replaceFragment_wishlist();
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    hideMenuItem(R.id.appBar_home);
-                    setTitle();
-                    return true;
-                } else if (idItem == R.id.menu_tap5) {
-                    replaceFragment_cart();
-                    navigationView.getMenu().findItem(R.id.Edit_profile).setChecked(false);
-                    navigationView.getMenu().findItem(R.id.Transaction_history).setChecked(false);
-                    hideMenuItem(R.id.appBar_home);
-                    setTitle();
-
-                    return true;
-                }
-
-
-                return false;
-            }
-        });
-
-        setTitle();
-        toolbar.getMenu().findItem(R.id.appBar_home).setVisible(false);
-        fragmentManager = getSupportFragmentManager();
-        openFragment(new Fragment_home());
-
-        bottomNavigationView.setSelectedItemId(R.id.menu_tap3);
-
-
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void rememberLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-        String check = sharedPreferences.getString("check","");
+        String check = sharedPreferences.getString("check", "");
         if (check.equals("0")) {
             Intent intent = new Intent(MainActivity.this, Admin_MainActivity.class);
             startActivity(intent);
@@ -219,254 +203,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
     }
-//    private void actionMenuItem(int itemId) {
-//        if (menu != null) {
-//            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
-//            if (itemToHide != null) {
-//                itemToHide.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); // Ẩn mục cụ thể
-//            }
-//        }
-//    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_appbar, menu);
-
-        this.menu = menu;
-        if (isUserLoggedin()) {
-            navigationView.getMenu().findItem(R.id.Login).setVisible(false);
-            navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            databaseReference = firebaseDatabase.getReference("Customer");
-            databaseReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Customer customer = snapshot.getValue(Customer.class);
-                    name = customer.getUsername();
-                    email = customer.getEmail();
-                    uri = customer.getProfileImage();
-                    if (customer != null) {
-                        Log.e("TAG", "onDataChange: "+customer.getUsername() );
-                        tvProfile_name.setVisibility(View.VISIBLE);
-                        tvProfile_name.setText(name);
-                        tvProfile_email.setVisibility(View.VISIBLE);
-                        tvProfile_email.setText(email);
-                        Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
-                    }
-                    else{
-                            tvProfile_name.setText("Guess");
-                            tvProfile_email.setVisibility(View.GONE);
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(MainActivity.this, "cant", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        } else {
-            navigationView.getMenu().findItem(R.id.Edit_profile).setVisible(false);
-            navigationView.getMenu().findItem(R.id.Transaction_history).setVisible(false);
-            navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
-        }
-        return true;
-    }
-
-    private void hideMenuItem(int itemId) {
-        if (menu != null) {
-            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
-            if (itemToHide != null) {
-                itemToHide.setVisible(false); // Ẩn mục cụ thể
-            }
-        }
-    }
-
-    private void displayMenuItem(int itemId) {
-        if (menu != null) {
-            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
-            if (itemToHide != null) {
-                itemToHide.setVisible(true); // Ẩn mục cụ thể
-            }
-        }
-    }
-    private void refreshMenuItem(int itemId) {
-
-        if (menu != null) {
-            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
-            if (itemToHide != null) {
-                itemToHide.setIcon(R.drawable.baseline_home_24);
-            }
-        }
-    }
-    private void refreshMenuItem_back(int itemId) {
-
-        if (menu != null) {
-            MenuItem itemToHide = menu.findItem(itemId); // Tìm mục cần ẩn
-            if (itemToHide != null) {
-                itemToHide.setIcon(R.drawable.baseline_refresh_24);
-            }
-        }
-    }
-
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int idItem = item.getItemId();
-        if (idItem == R.id.Edit_profile) {
-            replaceFragment_editprofile();
-            bottomNavigationView.setVisibility(View.GONE);
-            displayMenuItem(R.id.appBar_home);
-            refreshMenuItem(R.id.appBar_home);
-
-        } else if (idItem == R.id.Transaction_history) {
-            replaceFragment_transaction_history();
-            bottomNavigationView.setVisibility(View.GONE);
-            displayMenuItem(R.id.appBar_home);
-            refreshMenuItem(R.id.appBar_home);
-        } else if (idItem == R.id.Logout) {
-
-            FirebaseAuth.getInstance().signOut();
-            SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("check", "");
-            editor.apply();
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        if (idItem == R.id.Login) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-
-            startActivity(intent);
-
-        } else if (idItem == R.id.Signup) {
-            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
-            startActivity(intent);
-        }
-
-
-        setTitle();
-        drawerLayout.closeDrawer(GravityCompat.START);
-
-
-        return true;
-    }
-
-    private void replaceFragment_home() {
-        if (currentFragment != Fragment_home) {
-            openFragment(new Fragment_home());
-            currentFragment = Fragment_home;
-
-
-        }
-
-    }
-
-    private void replaceFragment_profile() {
-        if (currentFragment != Fragment_profile) {
-            openFragment(new Fragment_profile());
-            currentFragment = Fragment_profile;
-            if (currentFragment ==  Fragment_profile)
-            {
-                hideMenuItem(R.id.appBar_home);
-            }
-        }
-    }
-
-    private void replaceFragment_orders() {
-        if (currentFragment != Fragment_order) {
-            openFragment(new Fragment_warehouse_list());
-            currentFragment = Fragment_order;
-        }
-    }
-
-    private void replaceFragment_wishlist() {
-        if (currentFragment != Fragment_wishlist) {
-            openFragment(new Fragment_wishlist());
-            currentFragment = Fragment_wishlist;
-        }
-    }
-
-    private void replaceFragment_cart() {
-        if (currentFragment != Fragment_cart) {
-            openFragment(new Fragment_cart());
-            currentFragment = Fragment_cart;
-        }
-    }
-
-    private void replaceFragment_editprofile() {
-        if (currentFragment != Fragment_editprofile) {
-            openFragment(new Fragment_editProfile());
-            currentFragment = Fragment_editprofile;
-
-        }
-    }
-
-    private void replaceFragment_transaction_history() {
-        if (currentFragment != Fragment_transaction_history) {
-            openFragment(new Fragment_transaction_history());
-            currentFragment = Fragment_transaction_history;
-        }
-    }
-
-
-//    private void backToHome() {
-//        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-//            getSupportFragmentManager().popBackStack();
-//            bottomNavigationView.setVisibility(View.VISIBLE);
-//        } else {
-//            finish();
-//        }
-//    }
-
-    private void setTitle() {
-        String title = "";
-        switch (currentFragment) {
-            case Fragment_home:
-                title = getString(R.string.fragment_home);
-                break;
-            case Fragment_profile:
-                title = getString(R.string.fragment_profile);
-                break;
-            case Fragment_order:
-                title = getString(R.string.fragment_orders);
-                break;
-            case Fragment_wishlist:
-                title = getString(R.string.fragment_wishlist);
-                break;
-            case Fragment_cart:
-                title = getString(R.string.fragment_cart);
-                break;
-            case Fragment_editprofile:
-                title = getString(R.string.fragment_edit_profile);
-                break;
-            case Fragment_transaction_history:
-                title = getString(R.string.fragment_transaction_history);
-                break;
-        }
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-
-        }
-
-
-    }
-
-
-    private void openFragment(Fragment fragment) {
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.framelayout, fragment);
-        transaction.commit();
-    }
-
-    private void stackFragment_home(Fragment fragment) {
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.framelayout, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
     private boolean isUserLoggedin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
@@ -474,5 +210,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return check.equals("true");
     }
 
-    ;
+
 }

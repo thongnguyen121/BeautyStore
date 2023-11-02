@@ -82,7 +82,7 @@
 
                 >
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
@@ -91,20 +91,21 @@
                     app:menu="@menu/menu_appbar"
 
                     >
-                </androidx.appcompat.widget.Toolbar>
+                </com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
 
-            <FrameLayout
-                android:id="@+id/framelayout"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+<!--            <FrameLayout-->
+<!--                android:id="@+id/framelayout"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="0dp"-->
 
-                app:layout_constraintBottom_toTopOf="@+id/idbottomNavigation"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
-                app:layout_constraintVertical_bias="1.0"></FrameLayout>
+<!--                app:layout_constraintBottom_toTopOf="@+id/idbottomNavigation"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="0.0"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"-->
+<!--                app:layout_constraintVertical_bias="1.0"></FrameLayout>-->
+
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/idbottomNavigation"
@@ -118,6 +119,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:menu="@menu/menu_navigation"></com.google.android.material.bottomnavigation.BottomNavigationView>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/nav_host_fragment_container_user"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:defaultNavHost="true"
+                app:layout_constraintBottom_toTopOf="@+id/idbottomNavigation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2"
+                app:navGraph="@navigation/nav_user_graph" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView

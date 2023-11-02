@@ -97,7 +97,7 @@ public class Admin_MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         if (id == R.id.appBar_home) {
-            Toast.makeText(this, "dsfghj", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "reload lại fragment này", Toast.LENGTH_SHORT).show();
             return true;
         }
 

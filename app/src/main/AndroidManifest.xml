@@ -25,7 +25,9 @@
             android:exported="false" />
         <activity
             android:name=".activity.Admin_MainActivity"
-            android:exported="false" />
+            android:exported="false" >
+
+        </activity>
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />

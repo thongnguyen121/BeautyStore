@@ -88,6 +88,11 @@ public class Fragment_home extends Fragment {
         return view;
 
     }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_appbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     private void setControl(View view) {
 

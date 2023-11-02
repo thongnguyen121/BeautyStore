@@ -175,7 +175,9 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("check","0");
                     editor.apply();
                     Toast.makeText(LoginActivity.this, "am", Toast.LENGTH_SHORT).show();
+
                     Intent i = new Intent(LoginActivity.this, Admin_MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
                 }
             }
