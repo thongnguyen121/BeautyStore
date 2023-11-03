@@ -175,16 +175,7 @@ public class MainActivity extends AppCompatActivity {
         controller = Navigation.findNavController(this, R.id.nav_host_fragment_container_user);
         return NavigationUI.navigateUp(controller, configuration) || super.onSupportNavigateUp();
     }
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.appBar_home){
-                // Thực hiện việc tải lại fragment tại đây
-                // Sử dụng FragmentManager để thay thế fragment hiện tại bằng một instance mới của nó
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 
     private void rememberLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);

@@ -229,7 +229,7 @@ public class Fragment_home extends Fragment {
         return pattern.matcher(nfdNormalizedString).replaceAll("").toLowerCase();
     }
 
-    private void getData_categories() {
+    public void getData_categories() {
         //Display categories list
 
         recylerViewCategories = new RecyclerViewCategories(this, R.layout.layout_items_categories, data_categories);
@@ -259,6 +259,21 @@ public class Fragment_home extends Fragment {
 
             }
         });
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.appBar_home){
+            RecyclerViewBrands.selectedPosition_brands= -1;
+            RecyclerViewCategories.selectedPosition_cate= -1;
+            getProducts();
+            getData_brands();
+            getData_categories();
+            Fragment_home.recylerViewCategories.notifyDataSetChanged();
+            Fragment_home.recyclerViewBands.notifyDataSetChanged();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getData_brands() {
