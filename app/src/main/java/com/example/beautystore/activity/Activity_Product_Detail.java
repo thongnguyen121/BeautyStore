@@ -3,6 +3,7 @@ package com.example.beautystore.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -36,13 +37,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
-//    RecyclerView_Rating recyclerViewRating;
-//    private RecyclerView ratingList;
-//    private ArrayList<Rating> ratings;
+    RecyclerView_Rating ratingAdapter; //Adapter
+    private RecyclerView ratingRecyclerView;
+    private ArrayList<Rating> ratings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
+
 
         //productId = getIntent().getStringExtra("products_id");
 
@@ -59,6 +61,13 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void createRatingsList(){
+        ratings.add(new Rating("1", "1", "1", "Dep", "4", "12/12/2023"));
+        ratings.add(new Rating("2", "2", "2", "OK", "3", "12/12/2023"));
+        ratings.add(new Rating("3", "3", "3", "Tot", "5", "12/12/2023"));
+        ratings.add(new Rating("4", "4", "4", "Xau", "4", "12/12/2023"));
     }
 
     private void intent_getData(String products_id) {
@@ -122,6 +131,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
 //        layoutManager.setOrientation(RecyclerView.VERTICAL);
 //        ratingList.setLayoutManager(layoutManager);
 //        ratingList.setAdapter(recyclerViewRating);
+
+        //Recyclerview:
+        ratingRecyclerView = findViewById(R.id.reviewList);
+        ratings = new ArrayList<>();
+        createRatingsList();
+        ratingAdapter = new RecyclerView_Rating(ratings, this);
+        ratingRecyclerView.setAdapter(ratingAdapter);
+        ratingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ivBack = findViewById(R.id.ivProductDetailBack);
         ivProductBig = findViewById(R.id.ivProductDetailBigProduct);

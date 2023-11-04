@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -9,19 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Cart_Detail;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.Rating;
 
 import java.util.ArrayList;
 
 public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_Cart_Detail.CartDetailViewHolder> {
-    private int resource;
     private ArrayList<CartDetail> data;
     private Activity_Cart_Detail context;
 
-    public RecyclerView_Cart_Detail(int resource, ArrayList<CartDetail> data, Activity_Cart_Detail context) {
-        this.resource = resource;
+    public RecyclerView_Cart_Detail(ArrayList<CartDetail> data, Activity_Cart_Detail context) {
         this.data = data;
         this.context = context;
     }
@@ -29,13 +30,20 @@ public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_
     @NonNull
     @Override
     public CartDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        CardView cardView = (CardView) context.getLayoutInflater().inflate(viewType, parent, false);
-        return new CartDetailViewHolder(cardView);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View cartDetailView = inflater.inflate(R.layout.layout_item_cart_detail, parent, false);
+        return new CartDetailViewHolder(cartDetailView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CartDetailViewHolder holder, int position) {
-
+        CartDetail cartDetail = data.get(position);
+        Glide.with(context)
+                .load(R.drawable.abc)
+                .into(holder.ivProductImage); //Fix replace image with image in firebase
+        holder.tvProductName.setText(cartDetail.getProduct_id()); //Fix replace product name with firebase
+        holder.tvProductPrice.setText(cartDetail.getProduct_id()); //Fix replace product price with Firebase
+        holder.tvProductQty.setText(cartDetail.getQty());
     }
 
     @Override

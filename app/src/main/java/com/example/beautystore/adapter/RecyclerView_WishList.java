@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -9,20 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Wish_List;
+import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.WishList;
 
 import java.util.ArrayList;
 
 public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_WishList.WishListViewHolder> {
 
-    private int resource;
     private ArrayList<WishList> data;
     private Activity_Wish_List context;
 
-    public RecyclerView_WishList(int resource, ArrayList<WishList> data, Activity_Wish_List context) {
-        this.resource = resource;
+    public RecyclerView_WishList(ArrayList<WishList> data, Activity_Wish_List context) {
         this.data = data;
         this.context = context;
     }
@@ -30,13 +31,18 @@ public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_Wis
     @NonNull
     @Override
     public WishListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        CardView cardView = (CardView) context.getLayoutInflater().inflate(viewType, parent, false);
-        return new WishListViewHolder(cardView);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View wishListView = inflater.inflate(R.layout.layout_item_wish_list, parent, false);
+        return new WishListViewHolder(wishListView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull WishListViewHolder holder, int position) {
-
+        WishList wishList = data.get(position);
+        Glide.with(context)
+                .load(R.drawable.abc)
+                .into(holder.ivProductImage); //Fix replace image with image in firebase
+        holder.tvProductName.setText(wishList.getProduct_id()); //Fix replace product name with firebase
     }
 
     @Override
