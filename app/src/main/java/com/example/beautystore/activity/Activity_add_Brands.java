@@ -6,13 +6,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +33,7 @@ import com.example.beautystore.model.Categories;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +57,10 @@ public class Activity_add_Brands extends AppCompatActivity {
     private EditText edtBrand_name;
     ActivityResultLauncher<Intent> resultLaucher;
     Uri imageUri_Brands;
-    String brands_id = "", autoId_brands,  nameBrand;
+    String brands_id = "", autoId_brands,  nameBrand,  oldImageURI;
+    private MaterialCardView cardView;
+    private  TextView tvCondition_brands;
+    private boolean status;
 
 
     @Override
@@ -62,10 +70,8 @@ public class Activity_add_Brands extends AppCompatActivity {
 
         setControl();
         registerResult();
-        add_Brands();
-        edit_Brands();
+        condition_brands_name();
         brands_id = getIntent().getStringExtra("brands_id");
-        Toast.makeText(this, "id" + brands_id, Toast.LENGTH_SHORT).show();
         if (Fragment_warehouse_list.statusBrands) {
             btnEdit.setVisibility(View.GONE);
         } else {
@@ -73,6 +79,9 @@ public class Activity_add_Brands extends AppCompatActivity {
             edit_getData(brands_id);
 
         }
+        add_Brands();
+        edit_Brands();
+
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +98,8 @@ public class Activity_add_Brands extends AppCompatActivity {
         btnAdd = findViewById(R.id.btnAdd_Brands_screeh);
         btnEdit = findViewById(R.id.btnEdit_Brands_screen);
         edtBrand_name = findViewById(R.id.edt_add_brand_screen);
+        cardView = findViewById(R.id.card_add_brands);
+        tvCondition_brands = findViewById(R.id.tv_addBrands_screen);
     }
 
     private void edit_getData(String brand_id) {
@@ -100,7 +111,8 @@ public class Activity_add_Brands extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Brands brands = snapshot.getValue(Brands.class);
                 edtBrand_name.setText(brands.getBrands_name());
-                Glide.with(Activity_add_Brands.this).load(brands.getImg_brands()).into(imgBrand);
+                Glide.with(getApplicationContext()).load(brands.getImg_brands()).into(imgBrand);
+//                oldImageURI = brands.getImg_brands();
             }
 
             @Override
@@ -111,9 +123,8 @@ public class Activity_add_Brands extends AppCompatActivity {
     }
 
     private void add_Brands() {
-
-
         getIDBrands();
+
         imgBrand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,61 +137,63 @@ public class Activity_add_Brands extends AppCompatActivity {
             public void onClick(View v) {
                 if (imageUri_Brands == null || TextUtils.isEmpty(edtBrand_name.getText())) {
                     Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+
                 } else {
-                   DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands/" + autoId_brands);
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_brands);
-                    storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isComplete()) ;
-                            imageUri_Brands = uriTask.getResult();
-                            Brands brands = new Brands(autoId_brands, edtBrand_name.getText().toString(), imageUri_Brands.toString());
-                            databaseReference.setValue(brands);
-                            onBackPressed();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Brands.this, "ko ther", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    Toast.makeText(Activity_add_Brands.this, "dep chai" + autoId_brands, Toast.LENGTH_SHORT).show();
+                    if (edtBrand_name.length() > 7)
+                    {
+                        Toast.makeText(Activity_add_Brands.this, "Ban nhap ten hang qua 7 ki tu", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
 
-
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands/" + autoId_brands);
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_brands);
+                        storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!uriTask.isComplete()) ;
+                                imageUri_Brands = uriTask.getResult();
+                                Brands brands = new Brands(autoId_brands, edtBrand_name.getText().toString(), imageUri_Brands.toString());
+                                databaseReference.setValue(brands);
+                                onBackPressed();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Activity_add_Brands.this, "ko ther", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Toast.makeText(Activity_add_Brands.this, "dep chai" + autoId_brands, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
     }
-    private void edit_Brands(){
-
+    private void edit_Brands() {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nameBrand = edtBrand_name.getText().toString();
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands").child(brands_id);
 
-                DatabaseReference databaseReference;
-                databaseReference = FirebaseDatabase.getInstance().getReference("Brands").child(brands_id);
-                if (imageUri_Brands == null ){
-                    Toast.makeText(Activity_add_Brands.this, "ko co hinh", Toast.LENGTH_SHORT).show();
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                if (imageUri_Brands == null) {
+                    Toast.makeText(Activity_add_Brands.this, "Không có hình", Toast.LENGTH_SHORT).show();
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("brands_name", nameBrand);
+                    databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()){
-                                Map<String, Object> updates = new HashMap<>();
-                                updates.put("brands_name", nameBrand);
-                                databaseReference.updateChildren(updates);
-                                Toast.makeText(Activity_add_Brands.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
-                            }
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                         }
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(Activity_add_Brands.this, "Ko dc", Toast.LENGTH_SHORT).show();
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }else {
-                    Toast.makeText(Activity_add_Brands.this, "co hinh", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Activity_add_Brands.this, "Có hình", Toast.LENGTH_SHORT).show();
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(brands_id);
                     storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -188,35 +201,32 @@ public class Activity_add_Brands extends AppCompatActivity {
                             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                             while (!uriTask.isComplete()) ;
                             imageUri_Brands = uriTask.getResult();
-                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        Map<String, Object> updatesCategory = new HashMap<>();
-                                        updatesCategory.put("brands_name", nameBrand);
-                                        updatesCategory.put("img_brands",imageUri_Brands.toString());
-                                        databaseReference.updateChildren(updatesCategory);
-                                        Toast.makeText(Activity_add_Brands.this, "update thanh cong", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
 
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("brands_name", nameBrand);
+                            updates.put("img_brands", imageUri_Brands.toString());
+
+                            databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    Toast.makeText(Activity_add_Brands.this, "ko dc", Toast.LENGTH_SHORT).show();
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Brands.this, "ko ther", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-
             }
         });
-
     }
 
 
@@ -278,5 +288,65 @@ public class Activity_add_Brands extends AppCompatActivity {
         });
     }
 
+    private void condition_brands_name() {
+        edtBrand_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String inputText = s.toString().trim();
+                if (!inputText.isEmpty()) {
+                    if (inputText.length() > 7) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.blue));
+                        if (!edtBrand_name.hasFocus()) {
+                            cardView.setStrokeColor(Color.TRANSPARENT);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 7) {
+                    cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+                    tvCondition_brands.setVisibility(View.VISIBLE);
+                    tvCondition_brands.setText("Bạn đã nhập quá 7 kí tự");
+                } else {
+                    if (!edtBrand_name.hasFocus()) {
+                        cardView.setStrokeColor(Color.TRANSPARENT);
+                    }
+                    tvCondition_brands.setVisibility(View.GONE);
+                }
+            }
+        });
+
+//        edtBrand_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                String inputText = edtBrand_name.getText().toString().trim();
+//                if (!hasFocus) {
+//                    if (inputText.isEmpty()) {
+//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+//                        tvBrand_name.setVisibility(View.VISIBLE);
+//                        tvBrand_name.setText("Bạn cần nhập giá của sản phẩm");
+//                    } else if (inputText.length() > 7) {
+//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+//                    } else {
+//                        cardView.setStrokeColor(Color.TRANSPARENT);
+//                    }
+//                } else {
+//                    if (inputText.length() > 7) {
+//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+//                    } else {
+//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.blue));
+//                        tvBrand_name.setVisibility(View.GONE);
+//                    }
+//                }
+//            }
+//        });
+    }
 }

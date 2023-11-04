@@ -37,9 +37,6 @@ import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +46,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,9 +75,9 @@ public class Activity_Add_Products extends AppCompatActivity {
     Uri imageUri_1, imageUri_2, imageUri_3;
     String id_cate_spn = "";
     String id_brands_spn = "";
-    String brands_postion = "";
-    String cate_postion = "";
-    int vt_cate = -1;
+    int pos;
+    String categoryId = "";
+    String brandsID = "";
 
     private String products_id = "", categories_id = "", brands_id = "", autoId_products;
 
@@ -97,7 +93,7 @@ public class Activity_Add_Products extends AppCompatActivity {
         condition_edtProducts_quantity();
         condition_edtProducts_description();
         condition_edtProducts_name();
-        setFocus_spinner();
+//        setFocus_spinner();
         focusOut();
         getImage();
         add_DataProducts();
@@ -173,11 +169,10 @@ public class Activity_Add_Products extends AppCompatActivity {
                     String cate_name = categories.getCategories_name();
                     id_cate_spn = categories.getCategories_id();
                     data_categories.add(cate_name);
-                    int pos = adapter_categories.getPosition(categories.getCategories_name());
+                    pos = adapter_categories.getPosition(categories.getCategories_name());
                     if (categories.getCategories_id().equals(categories_id)) {
                         spinner_categories.setSelection(pos);
                     }
-
                 }
                 adapter_categories.notifyDataSetChanged();
             }
@@ -186,11 +181,26 @@ public class Activity_Add_Products extends AppCompatActivity {
                 // Xử lý lỗi (nếu cần)
             }
         });
+        spinner_categories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedCategory = (String) parentView.getItemAtPosition(position);
+                findCategoryIdByName(selectedCategory);
+                edt_products_quantity.clearFocus();
+                edt_products_name.clearFocus();
+                edt_products_price.clearFocus();
+                edt_products_price.clearFocus();
+                spinner_brands.clearFocus();
+                spinner_categories.requestFocus();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Xử lý khi không có mục nào được chọn (nếu cần).
+            }
+        });
 
     }
-
-
     private void getSpiner_brands()
     {
         adapter_brands = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data_brands);
@@ -227,7 +237,77 @@ public class Activity_Add_Products extends AppCompatActivity {
                 // Xử lý lỗi (nếu cần)
             }
         });
+        spinner_brands.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedBrands = (String) parent.getItemAtPosition(position);
+                findBrandsIdByName(selectedBrands);
+                edt_products_quantity.clearFocus();
+                edt_products_name.clearFocus();
+                edt_products_price.clearFocus();
+                edt_products_price.clearFocus();
+                spinner_categories.clearFocus();
+                spinner_brands.requestFocus();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
+
+    private void findCategoryIdByName(final String categoryName) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Categories");
+        Query query = databaseReference.orderByChild("categories_name").equalTo(categoryName);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        categoryId = dataSnapshot.getKey();
+                        Log.e("tag", "categoryId"+ categoryId );
+                        break;
+                    }
+                } else {
+                    Toast.makeText(Activity_Add_Products.this, "Không tìm thấy danh mục nào", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi (nếu cần).
+            }
+        });
+
+    }
+    private void findBrandsIdByName(final String brandsName) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands");
+        Query query = databaseReference.orderByChild("brands_name").equalTo(brandsName);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        brandsID = dataSnapshot.getKey();
+                        break;
+                    }
+                } else {
+                    Toast.makeText(Activity_Add_Products.this, "Không tìm thấy danh mục nào", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi (nếu cần).
+            }
+        });
+
+    }
+
+
 
     private void focusOut() {
         scrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -296,7 +376,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 7) {
-                    cardView_products_price.setStrokeColor(ContextCompat.getColor(Activity_Add_Products.this, R.color.pink));
+                    cardView_products_price.setStrokeColor(ContextCompat.getColor(Activity_Add_Products.this, R.color.red));
                     tv_products_price.setVisibility(View.VISIBLE);
                     tv_products_price.setText("Bạn đã nhập quá 7 kí tự");
                 } else {
@@ -520,44 +600,6 @@ public class Activity_Add_Products extends AppCompatActivity {
         });
     }
 
-    private void setFocus_spinner() {
-        spinner_categories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Khi bạn chọn một mục trong Spinner, gọi clearFocus trên EditText
-                // Lấy giá trị của mục đã chọn
-                cate_postion = (String) parentView.getItemAtPosition(position);
-                edt_products_quantity.clearFocus();
-                edt_products_name.clearFocus();
-                edt_products_price.clearFocus();
-                edt_products_price.clearFocus();
-                spinner_categories.requestFocus();
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // Để implement theo yêu cầu cụ thể của bạn, nếu cần.
-            }
-        });
-        spinner_brands.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Khi bạn chọn một mục trong Spinner, gọi clearFocus trên EditText
-                edt_products_quantity.clearFocus();
-                edt_products_name.clearFocus();
-                edt_products_price.clearFocus();
-                edt_products_price.clearFocus();
-                spinner_brands.requestFocus();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // Để implement theo yêu cầu cụ thể của bạn, nếu cần.
-            }
-        });
-    }
-
     private void registerResult_img_1() {
         resultLaucher_1 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -657,9 +699,9 @@ public class Activity_Add_Products extends AppCompatActivity {
                 edt_products_quantity.setText(products.getQuantity());
                 edt_products_price.setText(products.getPrice());
                 edt_products_description.setText(products.getDescription());
-                Glide.with(Activity_Add_Products.this).load(products.getImgProducts_1()).into(img_products_1);
-                Glide.with(Activity_Add_Products.this).load(products.getImgProducts_2()).into(img_products_2);
-                Glide.with(Activity_Add_Products.this).load(products.getImgProducts_3()).into(img_products_3);
+                Glide.with(getApplicationContext()).load(products.getImgProducts_1()).into(img_products_1);
+                Glide.with(getApplicationContext()).load(products.getImgProducts_2()).into(img_products_2);
+                Glide.with(getApplicationContext()).load(products.getImgProducts_3()).into(img_products_3);
             }
 
             @Override
@@ -682,8 +724,9 @@ public class Activity_Add_Products extends AppCompatActivity {
 
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_products);
 
-                    String selectedCategory = id_cate_spn;
-                    String selectedBrands = id_brands_spn;
+                    String selectedCategory = categoryId;
+                    Toast.makeText(Activity_Add_Products.this, "id_cate"+categoryId, Toast.LENGTH_SHORT).show();
+                    String selectedBrands = brandsID;
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                     Date currentDate = new Date();
@@ -757,90 +800,65 @@ public class Activity_Add_Products extends AppCompatActivity {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products/" + products_id);
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(products_id);
+                try {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products/" + products_id);
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(products_id);
 
 
-                Map<String, Object> updates = new HashMap<>();
+                    Map<String, Object> updates = new HashMap<>();
 
 
-                if (!TextUtils.isEmpty(edt_products_name.getText())) {
-                    updates.put("products_name", edt_products_name.getText().toString());
-                }
-                if (!TextUtils.isEmpty(edt_products_quantity.getText())) {
-                    updates.put("quantity", edt_products_quantity.getText().toString());
-                }
-                if (!TextUtils.isEmpty(edt_products_price.getText())) {
-                    updates.put("price", edt_products_price.getText().toString());
-                }
-                if (!TextUtils.isEmpty(edt_products_description.getText())) {
-                    updates.put("description", edt_products_description.getText().toString());
-                }
-                if (id_cate_spn != null) {
-                    updates.put("categories_id", categories_id);
-                }
-                if (id_brands_spn != null) {
-                    updates.put("brands_id", brands_id);
-                }
+                    if (!TextUtils.isEmpty(edt_products_name.getText())) {
+                        updates.put("products_name", edt_products_name.getText().toString());
+                    }
+                    if (!TextUtils.isEmpty(edt_products_quantity.getText())) {
+                        updates.put("quantity", edt_products_quantity.getText().toString());
+                    }
+                    if (!TextUtils.isEmpty(edt_products_price.getText())) {
+                        updates.put("price", edt_products_price.getText().toString());
+                    }
+                    if (!TextUtils.isEmpty(edt_products_description.getText())) {
+                        updates.put("description", edt_products_description.getText().toString());
+                    }
+                    if (id_cate_spn != null) {
+                        updates.put("categories_id", categoryId);
+                    }
+                    if (id_brands_spn != null) {
+                        updates.put("brands_id", brandsID);
+                    }
 
 
-                if (imageUri_1 != null) {
-                    StorageReference imageRef1 = storageReference.child("image_1.jpg");
-                    imageRef1.putFile(imageUri_1).addOnSuccessListener(taskSnapshot -> {
-                        imageRef1.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl1 = uri.toString();
-                            updates.put("imgProducts_1", imageUrl1);
+                    if (imageUri_1 != null) {
+                        StorageReference imageRef1 = storageReference.child("image_1.jpg");
+                        imageRef1.putFile(imageUri_1).addOnSuccessListener(taskSnapshot -> {
+                            imageRef1.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String imageUrl1 = uri.toString();
+                                updates.put("imgProducts_1", imageUrl1);
 
 
-                            if (imageUri_2 != null) {
-                                StorageReference imageRef2 = storageReference.child("image_2.jpg");
-                                imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
-                                    imageRef2.getDownloadUrl().addOnSuccessListener(uri2 -> {
-                                        String imageUrl2 = uri2.toString();
-                                        updates.put("imgProducts_2", imageUrl2);
+                                if (imageUri_2 != null) {
+                                    StorageReference imageRef2 = storageReference.child("image_2.jpg");
+                                    imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
+                                        imageRef2.getDownloadUrl().addOnSuccessListener(uri2 -> {
+                                            String imageUrl2 = uri2.toString();
+                                            updates.put("imgProducts_2", imageUrl2);
 
 
-                                        if (imageUri_3 != null) {
-                                            StorageReference imageRef3 = storageReference.child("image_3.jpg");
-                                            imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
-                                                imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
-                                                    String imageUrl3 = uri3.toString();
-                                                    updates.put("imgProducts_3", imageUrl3);
+                                            if (imageUri_3 != null) {
+                                                StorageReference imageRef3 = storageReference.child("image_3.jpg");
+                                                imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
+                                                    imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
+                                                        String imageUrl3 = uri3.toString();
+                                                        updates.put("imgProducts_3", imageUrl3);
 
 
-                                                    updateProductInDatabase(databaseReference, updates);
+                                                        updateProductInDatabase(databaseReference, updates);
+                                                    });
                                                 });
-                                            });
-                                        } else {
+                                            } else {
 
-                                            updateProductInDatabase(databaseReference, updates);
-                                        }
-                                    });
-                                });
-                            } else {
-
-                                updateProductInDatabase(databaseReference, updates);
-                            }
-                        });
-                    });
-                } else {
-
-                    if (imageUri_2 != null) {
-                        StorageReference imageRef2 = storageReference.child("image_2.jpg");
-                        imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
-                            imageRef2.getDownloadUrl().addOnSuccessListener(uri2 -> {
-                                String imageUrl2 = uri2.toString();
-                                updates.put("imgProducts_2", imageUrl2);
-
-                                if (imageUri_3 != null) {
-                                    StorageReference imageRef3 = storageReference.child("image_3.jpg");
-                                    imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
-                                        imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
-                                            String imageUrl3 = uri3.toString();
-                                            updates.put("imgProducts_3", imageUrl3);
-
-                                            // Update the product in the Firebase Database once.
-                                            updateProductInDatabase(databaseReference, updates);
+                                                updateProductInDatabase(databaseReference, updates);
+                                            }
                                         });
                                     });
                                 } else {
@@ -851,31 +869,63 @@ public class Activity_Add_Products extends AppCompatActivity {
                         });
                     } else {
 
-                        if (imageUri_3 != null) {
-                            StorageReference imageRef3 = storageReference.child("image_3.jpg");
-                            imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
-                                imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
-                                    String imageUrl3 = uri3.toString();
-                                    updates.put("imgProducts_3", imageUrl3);
+                        if (imageUri_2 != null) {
+                            StorageReference imageRef2 = storageReference.child("image_2.jpg");
+                            imageRef2.putFile(imageUri_2).addOnSuccessListener(taskSnapshot2 -> {
+                                imageRef2.getDownloadUrl().addOnSuccessListener(uri2 -> {
+                                    String imageUrl2 = uri2.toString();
+                                    updates.put("imgProducts_2", imageUrl2);
 
+                                    if (imageUri_3 != null) {
+                                        StorageReference imageRef3 = storageReference.child("image_3.jpg");
+                                        imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
+                                            imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
+                                                String imageUrl3 = uri3.toString();
+                                                updates.put("imgProducts_3", imageUrl3);
 
-                                    updateProductInDatabase(databaseReference, updates);
+                                                // Update the product in the Firebase Database once.
+                                                updateProductInDatabase(databaseReference, updates);
+                                            });
+                                        });
+                                    } else {
+                                        updateProductInDatabase(databaseReference, updates);
+                                    }
                                 });
                             });
                         } else {
 
-                            updateProductInDatabase(databaseReference, updates);
+                            if (imageUri_3 != null) {
+                                StorageReference imageRef3 = storageReference.child("image_3.jpg");
+                                imageRef3.putFile(imageUri_3).addOnSuccessListener(taskSnapshot3 -> {
+                                    imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
+                                        String imageUrl3 = uri3.toString();
+                                        updates.put("imgProducts_3", imageUrl3);
+
+                                        updateProductInDatabase(databaseReference, updates);
+                                    });
+                                });
+                            } else {
+                                updateProductInDatabase(databaseReference, updates);
+                            }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+
+                }
+
             }
         });
     }
     private void updateProductInDatabase(DatabaseReference databaseReference, Map<String, Object> updates) {
-        databaseReference.updateChildren(updates).addOnSuccessListener(unused -> {
-            Toast.makeText(Activity_Add_Products.this, "Chỉnh sửa sản phẩm thành công", Toast.LENGTH_SHORT).show();
-
-        });
+        try {
+            databaseReference.updateChildren(updates).addOnSuccessListener(unused -> {
+                Toast.makeText(Activity_Add_Products.this, "Chỉnh sửa sản phẩm thành công", Toast.LENGTH_SHORT).show();
+            });
+        } catch (Exception e) {
+            // Handle the exception, e.g., log it or show an error message to the user.
+        }
     }
 
 }

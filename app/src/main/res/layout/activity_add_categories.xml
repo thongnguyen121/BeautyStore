@@ -54,7 +54,7 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         >
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginRight="10dp"
@@ -63,11 +63,11 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/pink"
+                android:src="@color/white"
                 android:scaleType="fitXY"
                 android:id="@+id/ivCategory"
                 ></ImageView>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,6 +86,7 @@
             android:fontFamily="@font/abeezeeregular"
             android:id="@+id/btnAddCate"
             android:textAllCaps="false"
+            android:background="@drawable/bg_btn_add_products"
             ></Button>
         <Button
             android:layout_width="match_parent"
@@ -96,6 +97,7 @@
             android:textSize="20dp"
             android:fontFamily="@font/abeezeeregular"
             android:id="@+id/btnEditCate"
+            android:background="@drawable/bg_btn_add_products"
             ></Button>
     </LinearLayout>
 </LinearLayout>
