@@ -46,8 +46,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.LoginActivity;
+import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.model.Customer;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,7 +93,7 @@ public class Fragment_editProfile extends Fragment {
     FragmentManager fragmentManage;
     ActivityResultLauncher<Intent> cameraResultLauncher;
     boolean seletedImage = false;
-
+SpinKitView spinKitView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,7 +129,9 @@ public class Fragment_editProfile extends Fragment {
             public void onClick(View view) {
 //                updateAccountIntoFirebase(uid);
 //                saveInfo();
+
                 if (seletedImage == false) {
+
                     Toast.makeText(getContext(), "Chua co chon cai con me gi het "+imageUri, Toast.LENGTH_SHORT).show();
                     updateAccountIntoFirebaseWithoutImg();
                 }
@@ -144,6 +148,8 @@ public class Fragment_editProfile extends Fragment {
     private void saveInfo() {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProfile").child(uid);
         Log.d(TAG, "storage hinha nh: " + storageReference);
+        spinKitView.setVisibility(View.VISIBLE);
+        setViewEnable(false);
         storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -151,6 +157,8 @@ public class Fragment_editProfile extends Fragment {
                 while (!uriTask.isComplete()) ;
                 imageUri = uriTask.getResult();
                 updateAccountIntoFirebase();
+                spinKitView.setVisibility(View.GONE);
+                setViewEnable(true);
                 Toast.makeText(getContext(), "co the" + imageUri, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "co the: "+imageUri );
             }
@@ -161,6 +169,14 @@ public class Fragment_editProfile extends Fragment {
                 Log.d(TAG, "khong the: " +e);
             }
         });
+    }
+
+    private void setViewEnable(boolean b) {
+        edtSDT.setEnabled(b);
+        edtTen.setEnabled(b);
+        edtDiaChi.setEnabled(b);
+        btnSave.setEnabled(b);
+        cvAnh.setEnabled(b);
     }
 
     private void updateAccountIntoFirebase() {
@@ -181,6 +197,7 @@ public class Fragment_editProfile extends Fragment {
 
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
+
                     Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -198,6 +215,8 @@ public class Fragment_editProfile extends Fragment {
         name = edtTen.getText().toString();
         phoneNum = edtSDT.getText().toString();
         address = edtDiaChi.getText().toString();
+        spinKitView.setVisibility(View.VISIBLE);
+        setViewEnable(false);
         DatabaseReference databaseReference = database.getReference("Customer").child(uid);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -211,6 +230,8 @@ public class Fragment_editProfile extends Fragment {
 
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
+                    spinKitView.setVisibility(View.GONE);
+                    setViewEnable(true);
                     Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -247,18 +268,6 @@ public class Fragment_editProfile extends Fragment {
                 } else {
                     requestPermissionCameraAccress();
                 }
-//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-//                    ContentValues contentValues = new ContentValues();
-//                    contentValues.put(MediaStore.Images.Media.TITLE, "Captured");
-//                    contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Captured image");
-//                    imageUri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//                    cameraResultLauncher.launch(intent);
-//                    Toast.makeText(getContext(), "dc" + imageUri, Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Log.d(TAG, "khong dc: ");
-//                }
             }
         });
         dialog.show();
@@ -338,8 +347,6 @@ public class Fragment_editProfile extends Fragment {
             @Override
             public void onActivityResult(ActivityResult o) {
                 if (o.getResultCode() == RESULT_OK && o.getData() != null) {
-//                    imageView.setImageURI(imageUri);
-//                    imageUri = o.getData().getData();
                     imageView.setImageURI(imageUri);
                     Log.d(TAG, "uri hinh anh: " + imageUri);
                 }
@@ -355,9 +362,6 @@ public class Fragment_editProfile extends Fragment {
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Captured image");
         imageUri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
-//        FragmentTransaction transaction = fragmentManage.beginTransaction();
-//        transaction.add(R.id.framelayout, Fragment_editProfile.this);
-//        transaction.commit();
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         laucher_for_camera.launch(intent);
@@ -432,6 +436,6 @@ public class Fragment_editProfile extends Fragment {
         edtSDT = view.findViewById(R.id.edtPhonenumPF);
         edtDiaChi = view.findViewById(R.id.edtAddressPF);
         btnSave = view.findViewById(R.id.btnSavePF);
-
+        spinKitView = view.findViewById(R.id.spin_kitPF);
     }
 }

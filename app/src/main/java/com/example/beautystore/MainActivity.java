@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public static MaterialToolbar toolbar;
     FragmentManager fragmentManager;
 
-    NavigationView navigationView;
+    public static NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
     //    String email="", name="";
     String email = "", name = "", uri = "";
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
             String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             databaseReference = firebaseDatabase.getReference("Customer");
-            databaseReference.child(UID).addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.child(UID).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Customer customer = snapshot.getValue(Customer.class);
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public boolean  onSupportNavigateUp() {
         controller = Navigation.findNavController(this, R.id.nav_host_fragment_container_user);
         return NavigationUI.navigateUp(controller, configuration) || super.onSupportNavigateUp();
     }

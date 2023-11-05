@@ -26,6 +26,8 @@ import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.activity.Activity_add_Brands;
 import com.example.beautystore.activity.Activity_add_Categories;
 import com.example.beautystore.activity.Admin_MainActivity;
+import com.example.beautystore.adapter.RecyclerViewBrands;
+import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
 import com.example.beautystore.adapter.RecyclerView_cate_WH;
@@ -113,6 +115,21 @@ public class Fragment_warehouse_list extends Fragment {
                 statusBrands = true;
             }
         });
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.appBar_home){
+            getProducts();
+            getData_brands();
+            getData_categories();
+            RecyclerView_Brands_WH.selectedPosition_brands= -1;
+            RecyclerView_cate_WH.selectedPosition_cate= -1;
+            Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
+            Fragment_warehouse_list.recyclerViewProductsWh.notifyDataSetChanged();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setControl(View view) {

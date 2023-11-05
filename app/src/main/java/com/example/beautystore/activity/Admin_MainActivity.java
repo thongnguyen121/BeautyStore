@@ -13,27 +13,44 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.beautystore.LoginActivity;
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
+import com.example.beautystore.model.Customer;
+import com.example.beautystore.model.Members;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Admin_MainActivity extends AppCompatActivity{
     NavController navController;
     AppBarConfiguration appBarConfiguration;
     Menu menu;
+    TextView tvProfile_name;
+    ImageView ivProfileImg;
+    String name, uri;
     public static BottomNavigationView bottomNavigationView;
     public static  MaterialToolbar toolbar;
     public static final String SHARE_PREFS = "sharedPrefs";
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +65,37 @@ public class Admin_MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         NavigationView navigation = findViewById(R.id.id_navigationviewAdmin);
 
+
+        View header = navigation.getHeaderView(0);
+        tvProfile_name = header.findViewById(R.id.tvProfile_name_drawer);
+        ivProfileImg = header.findViewById(R.id.ivProfileImg);
         DrawerLayout drawerLayout = findViewById(R.id.dwLayout);
+
+        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d("TAG", "UID cua admin: " + UID);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Member");
+        databaseReference.child(UID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Members members = snapshot.getValue(Members.class);
+                name = members.getUsername();
+                uri = members.getProfileImage();
+                if (members != null){
+                    tvProfile_name.setVisibility(View.VISIBLE);
+                    tvProfile_name.setText(name);
+                    Glide.with(Admin_MainActivity.this).load(uri).into(ivProfileImg);
+                }else{
+                    tvProfile_name.setText("Guess");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Admin_MainActivity.this, "Cant", Toast.LENGTH_SHORT).show();
+            }
+            });
+
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.fragment_admin_home, R.id.fragment_admin_employees,R.id.fragment_admin_statistic, R.id.fragment_warehouse_list, R.id.fragment_admin_transaction ).setOpenableLayout(drawerLayout).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
@@ -90,18 +137,6 @@ public class Admin_MainActivity extends AppCompatActivity{
 
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.appBar_home) {
-            Toast.makeText(this, "reload lại fragment này", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

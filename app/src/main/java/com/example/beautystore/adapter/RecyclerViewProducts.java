@@ -63,6 +63,7 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducts);
         id = products.getCategories_id();
 
+
     }
     @Override
     public int getItemViewType(int position) {

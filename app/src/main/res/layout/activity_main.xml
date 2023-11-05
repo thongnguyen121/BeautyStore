@@ -79,7 +79,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
                 >
 
                 <com.google.android.material.appbar.MaterialToolbar
@@ -88,10 +87,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="#ffffff"
                     android:elevation="4dp"
-                    app:menu="@menu/menu_appbar"
-
-                    >
-                </com.google.android.material.appbar.MaterialToolbar>
+                    app:menu="@menu/menu_appbar"></com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
 
 <!--            <FrameLayout-->
@@ -113,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="#ffffff"
+
                 app:itemIconTint="@color/color_1"
                 app:itemTextColor="@color/pink"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -126,6 +123,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:defaultNavHost="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintBottom_toTopOf="@+id/idbottomNavigation"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -142,7 +140,6 @@
             app:itemIconTint="@color/black"
             app:headerLayout="@layout/drawer_navigation_profile"
             app:menu="@menu/menu_drawer"
-
             ></com.google.android.material.navigation.NavigationView>
     </androidx.drawerlayout.widget.DrawerLayout>
 
