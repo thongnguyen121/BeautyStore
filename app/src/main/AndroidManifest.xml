@@ -24,8 +24,16 @@
         <activity
             android:name=".activity.Activity_Cart_Detail"
             android:exported="false">
-
         </activity>
+      <activity
+            android:name=".activity.Tuvanvien_MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.Shipper_MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.Admin_MainActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_Order"
             android:exported="false">
@@ -49,7 +57,8 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:noHistory="true" />
         <activity
             android:name=".activity.Activity_add_Brands"
             android:exported="false" />

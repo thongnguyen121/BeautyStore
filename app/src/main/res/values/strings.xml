@@ -26,7 +26,7 @@
     <string name="chon_anh">Chọn ảnh</string>
     <string name="btn_them">Thêm</string>
     <string name="btn_sua">Sửa</string>
-    <string name="add_categories">Thêm loại sản phẩm</string>
+    <string name="add_categories">Loại sản phẩm</string>
     <string name="add_brand">Thêm hãng</string>
     <string name="name_brand">Nhập tên hãng</string>
     <string name="name_categories">Nhập tên loại</string>
@@ -56,7 +56,7 @@
     <string name="save_change">Lưu thay đổi</string>
     <string name="title_activity_admin_main">AdminMainActivity</string>
 
-    <string name="employees">Nhân viên</string>
+    <string name="members">Nhân viên</string>
     <string name="warehouse">Kho</string>
     <string name="statistic">Thống kê</string>
     <string name="customer_list">Danh sách khách hàng</string>

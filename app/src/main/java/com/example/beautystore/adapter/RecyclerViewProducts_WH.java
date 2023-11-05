@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Products;
 
@@ -24,7 +26,7 @@ public class RecyclerViewProducts_WH extends RecyclerView.Adapter<RecyclerViewPr
     private Fragment_warehouse_list context;
     private int resource;
     private ArrayList<Products> data;
-
+    public static String products_id = "";
     public RecyclerViewProducts_WH(Fragment_warehouse_list context, int resource, ArrayList<Products> data) {
         this.context = context;
         this.resource = resource;
@@ -49,11 +51,28 @@ public class RecyclerViewProducts_WH extends RecyclerView.Adapter<RecyclerViewPr
         Products products = data.get(position);
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        if(products.getProducts_name().length() < 13)
+        {
+            holder.tvProducts_name.setText(products.getProducts_name());
+        }else {
+            holder.tvProducts_name.setText(products.getProducts_name().substring(0,12) + "...");
+        }
 
-        holder.tvProducts_name.setText(products.getProducts_name().substring(0,12) + "...");
         holder.tvProducts_price.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
         holder.tvProducts_id.setText(products.getProducts_id());
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducs);
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(v.getContext(), Activity_Add_Products.class);
+                intent.putExtra("products_id", products.getProducts_id());
+                intent.putExtra("categories_id", products.getCategories_id());
+                intent.putExtra("brands_id", products.getBrands_id());
+                context.startActivity(intent);
+                Fragment_warehouse_list.statusProducts = false;
+            }
+        });
     }
     @Override
     public int getItemViewType(int position) {
