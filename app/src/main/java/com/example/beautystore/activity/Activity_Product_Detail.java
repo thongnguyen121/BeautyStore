@@ -1,6 +1,7 @@
 package com.example.beautystore.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +33,8 @@ public class Activity_Product_Detail extends AppCompatActivity {
 
     String productId = "";
 
+    int productQty =1;
+
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
@@ -44,14 +47,13 @@ public class Activity_Product_Detail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
-
-
-        //productId = getIntent().getStringExtra("products_id");
-
         setScreenElement();
 
-        //changeBigProductImage();
-
+        setScreenData();
+        changeBigProductImage();
+        increaseProductQty();
+        decreaseProductQty();
+        //productId = getIntent().getStringExtra("products_id");
         //intent_getData(productId);
 
         ivMessenger.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +63,28 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void increaseProductQty(){
+        ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productQty++;
+                tvProductQty.setText(String.valueOf(productQty));
+            }
+        });
+    }
+    private void decreaseProductQty(){
+        ivDecreaseQty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (productQty <= 0 ){
+//
+//                }
+                productQty--;
+                tvProductQty.setText(String.valueOf(productQty));
+            }
+        });
     }
 
     private void createRatingsList(){
@@ -94,9 +118,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
     }
 
-//    protected void setScreenData(){
-//        ivProductBig.setImageDrawable();
-//    }
+    protected void setScreenData(){
+        tvProductQty.setText(String.valueOf(productQty));
+    }
 
     protected void changeBigProductImage(){
         ivProductSmall1.setOnClickListener(new View.OnClickListener() {
@@ -126,11 +150,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
     }
 
     protected void setScreenElement(){
-//        recyclerViewRating = new RecyclerView_Rating( R.layout.activity_product_detail, ratings, this);
-//        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-//        layoutManager.setOrientation(RecyclerView.VERTICAL);
-//        ratingList.setLayoutManager(layoutManager);
-//        ratingList.setAdapter(recyclerViewRating);
 
         //Recyclerview:
         ratingRecyclerView = findViewById(R.id.reviewList);

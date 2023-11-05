@@ -28,12 +28,8 @@
         </activity>
         <activity
             android:name=".activity.Activity_Order"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.Activity_Wish_List"
@@ -42,8 +38,12 @@
         </activity>
         <activity
             android:name=".activity.Activity_Product_Detail"
-            android:exported="false" >
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.Admin_MainActivity"
