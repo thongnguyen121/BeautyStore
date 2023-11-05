@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +36,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
 
     int productQty =1;
 
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
@@ -53,7 +57,13 @@ public class Activity_Product_Detail extends AppCompatActivity {
         changeBigProductImage();
         increaseProductQty();
         decreaseProductQty();
-        //productId = getIntent().getStringExtra("products_id");
+        productId = getIntent().getStringExtra("products_id");
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Products");
+        getDataFromFireBase(productId);
+        Log.d("TAG", "onCreate: " + productId);
+
+
         //intent_getData(productId);
 
         ivMessenger.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +73,47 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
 
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
     }
+
+    private void getDataFromFireBase(String productId){
+        databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Products products = snapshot.getValue(Products.class);
+                    tvProductName.setText(products.getProducts_name());
+                    tvProductDesc.setText(products.getDescription());
+                    tvProductPrice.setText(products.getPrice());
+                    Glide.with(Activity_Product_Detail.this)
+                            .load(products.getImgProducts_1())
+                            .into(ivProductBig);
+                    Glide.with(Activity_Product_Detail.this)
+                            .load(products.getImgProducts_1())
+                            .into(ivProductSmall1);
+                    Glide.with(Activity_Product_Detail.this)
+                            .load(products.getImgProducts_2())
+                            .into(ivProductSmall2);
+                    Glide.with(Activity_Product_Detail.this)
+                            .load(products.getImgProduct_3())
+                            .into(ivProductSmall3);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
 
     private void increaseProductQty(){
         ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
@@ -78,9 +128,10 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivDecreaseQty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (productQty <= 0 ){
-//
-//                }
+                if (productQty <= 1 ){
+                    ivDecreaseQty.setEnabled(false);
+
+                }
                 productQty--;
                 tvProductQty.setText(String.valueOf(productQty));
             }
