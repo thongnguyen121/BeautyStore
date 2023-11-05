@@ -73,6 +73,7 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
             }
         });
 
+
     }
     @Override
     public int getItemViewType(int position) {

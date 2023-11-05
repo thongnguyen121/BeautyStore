@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 >
                 <ImageView
                     android:id="@+id/ivProductDetailBigProduct"
-                    android:layout_width="match_parent"
+                    android:layout_width="280dp"
                     android:layout_height="300dp"
                     android:src="@drawable/abc"
                     android:scaleType="centerCrop"
@@ -207,15 +207,15 @@
                 android:layout_height="wrap_content"
                 android:text="Buy now"/>
         </LinearLayout>
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="wrap_content">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
         <RatingBar
             android:id="@+id/rbProductDetailUserRating"
             android:layout_width="wrap_content"
@@ -259,4 +259,4 @@
     </LinearLayout>
 
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

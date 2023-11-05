@@ -35,6 +35,7 @@ import com.example.beautystore.adapter.RecyclerView_search_products;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
@@ -71,6 +72,7 @@ public class Fragment_home extends Fragment {
     private boolean isSearchViewExpanded = false;
     boolean isPopupMenuOpen = false;
     public static final String SHARE_PREFS = "sharedPrefs";
+    SpinKitView spinKitView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,6 +90,11 @@ public class Fragment_home extends Fragment {
         return view;
 
     }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_appbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     private void setControl(View view) {
 
@@ -101,7 +108,7 @@ public class Fragment_home extends Fragment {
         tvTitle_products = view.findViewById(R.id.title_products);
         tvTitle_categories = view.findViewById(R.id.title_categories);
         tvTitle_brands = view.findViewById(R.id.title_brands);
-
+        spinKitView = view.findViewById(R.id.spin_kit);
     }
 
     private void getProducts() {
@@ -123,10 +130,12 @@ public class Fragment_home extends Fragment {
                     data_products.clear();
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    spinKitView.setVisibility(View.VISIBLE);
                     Products products = dataSnapshot.getValue(Products.class);
                     data_products.add(products);
                 }
                 recyclerViewProducts.notifyDataSetChanged();
+                spinKitView.setVisibility(View.GONE);
             }
 
             @Override
@@ -224,7 +233,7 @@ public class Fragment_home extends Fragment {
         return pattern.matcher(nfdNormalizedString).replaceAll("").toLowerCase();
     }
 
-    private void getData_categories() {
+    public void getData_categories() {
         //Display categories list
 
         recylerViewCategories = new RecyclerViewCategories(this, R.layout.layout_items_categories, data_categories);
@@ -254,6 +263,21 @@ public class Fragment_home extends Fragment {
 
             }
         });
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.appBar_home){
+            getProducts();
+            getData_brands();
+            getData_categories();
+            RecyclerViewBrands.selectedPosition_brands= -1;
+            RecyclerViewCategories.selectedPosition_cate= -1;
+            Fragment_home.recylerViewCategories.notifyDataSetChanged();
+            Fragment_home.recyclerViewBands.notifyDataSetChanged();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getData_brands() {
