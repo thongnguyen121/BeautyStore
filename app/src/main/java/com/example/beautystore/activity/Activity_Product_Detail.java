@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    String productId = "";
+    String productId = "", imgProduct1,imgProduct2,imgProduct3;
 
     int productQty =1;
 
@@ -91,6 +91,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
                     tvProductPrice.setText(products.getPrice());
+                    imgProduct1 = products.getImgProducts_1();
+                    imgProduct2 = products.getImgProducts_2();
+                    imgProduct3 = products.getImgProducts_3();
                     Glide.with(Activity_Product_Detail.this)
                             .load(products.getImgProducts_1())
                             .into(ivProductBig);
@@ -101,7 +104,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                             .load(products.getImgProducts_2())
                             .into(ivProductSmall2);
                     Glide.with(Activity_Product_Detail.this)
-                            .load(products.getImgProduct_3())
+                            .load(products.getImgProducts_3())
                             .into(ivProductSmall3);
                 }
             }
@@ -159,7 +162,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_1()).into(ivProductBig);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_1()).into(ivProductSmall1);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_2()).into(ivProductSmall2);
-                Glide.with(Activity_Product_Detail.this).load(products.getImgProduct_3()).into(ivProductSmall3);
+                Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_3()).into(ivProductSmall3);
             }
 
             @Override
@@ -177,14 +180,16 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivProductSmall1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ivProductBig.setImageDrawable(ivProductSmall1.getDrawable());
+//                ivProductBig.setImageDrawable(ivProductSmall1.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct1).into(ivProductBig);
             }
         });
 
         ivProductSmall2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ivProductBig.setImageDrawable(ivProductSmall2.getDrawable());
+//                ivProductBig.setImageDrawable(ivProductSmall2.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct2).into(ivProductBig);
             }
         });
 
@@ -192,6 +197,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ivProductBig.setImageDrawable(ivProductSmall3.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct3).into(ivProductBig);
             }
         });
     }
