@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +63,7 @@ public class Activity_add_Brands extends AppCompatActivity {
     String brands_id = "", autoId_brands,  nameBrand,  oldImageURI;
     private MaterialCardView cardView;
     private  TextView tvCondition_brands;
+    private LinearLayout linearLayout;
     private boolean status;
 
 
@@ -71,6 +75,7 @@ public class Activity_add_Brands extends AppCompatActivity {
         setControl();
         registerResult();
         condition_brands_name();
+        focusOut();
         brands_id = getIntent().getStringExtra("brands_id");
         if (Fragment_warehouse_list.statusBrands) {
             btnEdit.setVisibility(View.GONE);
@@ -100,6 +105,7 @@ public class Activity_add_Brands extends AppCompatActivity {
         edtBrand_name = findViewById(R.id.edt_add_brand_screen);
         cardView = findViewById(R.id.card_add_brands);
         tvCondition_brands = findViewById(R.id.tv_addBrands_screen);
+        linearLayout = findViewById(R.id.liner_add_brands);
     }
 
     private void edit_getData(String brand_id) {
@@ -129,6 +135,8 @@ public class Activity_add_Brands extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pickImage();
+                edtBrand_name.clearFocus();
+                imgBrand.requestFocus();
             }
         });
 
@@ -139,7 +147,7 @@ public class Activity_add_Brands extends AppCompatActivity {
                     Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    if (edtBrand_name.length() > 7)
+                    if (edtBrand_name.length() > 50)
                     {
                         Toast.makeText(Activity_add_Brands.this, "Ban nhap ten hang qua 7 ki tu", Toast.LENGTH_SHORT).show();
                     }
@@ -160,10 +168,10 @@ public class Activity_add_Brands extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Activity_add_Brands.this, "ko ther", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Activity_add_Brands.this, "Them thong tin hang khong thanh cong", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Toast.makeText(Activity_add_Brands.this, "dep chai" + autoId_brands, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Activity_add_Brands.this, "Them thong tin hang thanh cong" + autoId_brands, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -177,54 +185,61 @@ public class Activity_add_Brands extends AppCompatActivity {
                 nameBrand = edtBrand_name.getText().toString();
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands").child(brands_id);
 
-                if (imageUri_Brands == null) {
-                    Toast.makeText(Activity_add_Brands.this, "Không có hình", Toast.LENGTH_SHORT).show();
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("brands_name", nameBrand);
-                    databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(Activity_add_Brands.this, "Có hình", Toast.LENGTH_SHORT).show();
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(brands_id);
-                    storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isComplete()) ;
-                            imageUri_Brands = uriTask.getResult();
-
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("brands_name", nameBrand);
-                            updates.put("img_brands", imageUri_Brands.toString());
-
-                            databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                if (edtBrand_name.length() > 50 )
+                {
+                    Toast.makeText(Activity_add_Brands.this, "Ban da cap nhat ten hang qua ki tu cho phep ", Toast.LENGTH_SHORT).show();
                 }
+                else {
+                    if (imageUri_Brands == null) {
+                        Toast.makeText(Activity_add_Brands.this, "Không có hình", Toast.LENGTH_SHORT).show();
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("brands_name", nameBrand);
+                        databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(Activity_add_Brands.this, "Có hình", Toast.LENGTH_SHORT).show();
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(brands_id);
+                        storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!uriTask.isComplete()) ;
+                                imageUri_Brands = uriTask.getResult();
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("brands_name", nameBrand);
+                                updates.put("img_brands", imageUri_Brands.toString());
+
+                                databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Activity_add_Brands.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+
             }
         });
     }
@@ -298,7 +313,7 @@ public class Activity_add_Brands extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String inputText = s.toString().trim();
                 if (!inputText.isEmpty()) {
-                    if (inputText.length() > 7) {
+                    if (inputText.length() > 50) {
                         cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
                     } else {
                         cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.blue));
@@ -311,7 +326,7 @@ public class Activity_add_Brands extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 7) {
+                if (s.length() > 50) {
                     cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
                     tvCondition_brands.setVisibility(View.VISIBLE);
                     tvCondition_brands.setText("Bạn đã nhập quá 7 kí tự");
@@ -323,30 +338,48 @@ public class Activity_add_Brands extends AppCompatActivity {
                 }
             }
         });
+        edtBrand_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                String inputText = edtBrand_name.getText().toString().trim();
+                if (!hasFocus) {
+                    if (inputText.isEmpty()) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+                        tvCondition_brands.setVisibility(View.VISIBLE);
+                        tvCondition_brands.setText("Bạn cần nhập giá của sản phẩm");
+                    } else if (inputText.length() > 50) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(Color.TRANSPARENT);
+                    }
+                } else {
+                    if (inputText.length() > 50) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.blue));
+                        tvCondition_brands.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
 
-//        edtBrand_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                String inputText = edtBrand_name.getText().toString().trim();
-//                if (!hasFocus) {
-//                    if (inputText.isEmpty()) {
-//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
-//                        tvBrand_name.setVisibility(View.VISIBLE);
-//                        tvBrand_name.setText("Bạn cần nhập giá của sản phẩm");
-//                    } else if (inputText.length() > 7) {
-//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
-//                    } else {
-//                        cardView.setStrokeColor(Color.TRANSPARENT);
-//                    }
-//                } else {
-//                    if (inputText.length() > 7) {
-//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.red));
-//                    } else {
-//                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Brands.this, R.color.blue));
-//                        tvBrand_name.setVisibility(View.GONE);
-//                    }
-//                }
-//            }
-//        });
+    }
+    private void focusOut() {
+        linearLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    View focusedView = getCurrentFocus();
+                    if (focusedView instanceof EditText) {
+                        Rect outRect = new Rect();
+                        focusedView.getGlobalVisibleRect(outRect);
+                        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                            focusedView.clearFocus();
+                        }
+                    }
+                }
+                return false;
+            }
+        });
     }
 }

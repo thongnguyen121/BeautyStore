@@ -4,100 +4,123 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.Activity_add_Categories"
-    android:orientation="vertical"
     android:background="@color/background_admin"
+    android:orientation="vertical"
+    tools:context=".activity.Activity_add_Categories"
+    android:id="@+id/liner_add_cate"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
         android:layout_gravity="center"
         android:background="@drawable/bg_header"
-        >
+        android:orientation="horizontal">
+
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/back"
-            android:layout_marginLeft="5dp"
-            android:layout_gravity="center"
             android:id="@+id/ivBack"
-            ></ImageView>
-        <TextView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/back"></ImageView>
+
+        <TextView
+            android:id="@+id/tvTitle_add_cate_screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_categories"
-            android:textSize="30dp"
-            android:gravity="center"
-            android:textColor="@color/pink"
+            android:layout_gravity="center"
             android:fontFamily="@font/abeezeeregular"
-            ></TextView>
+            android:gravity="center"
+            android:text="@string/add_categories"
+            android:textColor="@color/pink"
+            android:textSize="25dp"></TextView>
     </LinearLayout>
-    <EditText
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:hint="@string/name_categories"
-        android:paddingLeft="15dp"
-        android:layout_margin="10dp"
-        android:fontFamily="@font/abeezeeregular"
-        android:background="@drawable/bg_edittext"
-        android:id="@+id/edtCateName"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        app:cardCornerRadius="20dp"
+        app:strokeWidth="1dp"
+        android:id="@+id/card_add_cate_screen"
         >
 
-    </EditText>
+        <EditText
+            android:id="@+id/edtCateName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_edittext"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/name_categories"
+            android:paddingLeft="15dp">
 
+        </EditText>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_addCate_screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingLeft="15dp"
+        android:text="blabla"
+        android:textColor="@color/red"
+        android:visibility="gone"></TextView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        >
+        android:orientation="horizontal">
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginRight="10dp"
-            app:cardCornerRadius="20dp"
-            >
+            app:cardCornerRadius="20dp">
+
             <ImageView
+                android:id="@+id/ivCategory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/white"
                 android:scaleType="fitXY"
-                android:id="@+id/ivCategory"
-                ></ImageView>
+                android:src="@color/white"></ImageView>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_marginBottom="15dp"
-        >
+        android:gravity="center"
+        android:orientation="vertical">
+
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/btn_them"
-            android:textSize="20dp"
-            android:fontFamily="@font/abeezeeregular"
             android:id="@+id/btnAddCate"
-            android:textAllCaps="false"
-            android:background="@drawable/bg_btn_add_products"
-            ></Button>
-        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:textAllCaps="false"
-            android:text="@string/btn_sua"
-            android:textSize="20dp"
-            android:fontFamily="@font/abeezeeregular"
-            android:id="@+id/btnEditCate"
             android:background="@drawable/bg_btn_add_products"
-            ></Button>
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/btn_them"
+            android:textAllCaps="false"
+            android:textSize="20dp"></Button>
+
+        <Button
+            android:id="@+id/btnEditCate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_btn_add_products"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/btn_sua"
+            android:textAllCaps="false"
+            android:textSize="20dp"></Button>
     </LinearLayout>
 </LinearLayout>
