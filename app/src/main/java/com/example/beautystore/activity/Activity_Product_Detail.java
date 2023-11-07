@@ -1,5 +1,7 @@
 package com.example.beautystore.activity;
 
+import static java.security.AccessController.getContext;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +21,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.adapter.RecyclerViewProducts;
 import com.example.beautystore.adapter.RecyclerView_Rating;
+import com.example.beautystore.adapter.RecyclerView_search_products;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
 import com.google.firebase.database.DataSnapshot;
@@ -28,25 +32,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    String productId = "", imgProduct1,imgProduct2,imgProduct3;
+    String productId = "", cate_id = "", imgProduct1,imgProduct2,imgProduct3;
 
     int productQty =1;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-
+    private RecyclerViewProducts recyclerViewProducts;
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
     RecyclerView_Rating ratingAdapter; //Adapter
-    private RecyclerView ratingRecyclerView;
+    private RecyclerView ratingRecyclerView, rcDSlienquan;
     private ArrayList<Rating> ratings;
+    private ArrayList<Products> data_products = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +64,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         increaseProductQty();
         decreaseProductQty();
         productId = getIntent().getStringExtra("products_id");
+        cate_id = getIntent().getStringExtra("categories_id");
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
@@ -83,6 +90,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     }
 
     private void getDataFromFireBase(String productId){
+        DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -90,7 +98,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     Products products = snapshot.getValue(Products.class);
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
-                    tvProductPrice.setText(products.getPrice());
+                    tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
                     imgProduct1 = products.getImgProducts_1();
                     imgProduct2 = products.getImgProducts_2();
                     imgProduct3 = products.getImgProducts_3();
@@ -243,5 +251,34 @@ public class Activity_Product_Detail extends AppCompatActivity {
         edtComment = findViewById(R.id.edtProductDetailComment);
 
         ivMessenger = findViewById(R.id.ivProductDetailMessenger);
+
+        rcDSlienquan = findViewById(R.id.rcDSSlienquan);
     }
+//    private void getData_DSLienquan(String categories_id)
+//    {
+//        recyclerViewProducts = new RecyclerViewProducts(this, R.layout.layout_item_products, data_products);
+//        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+//        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+//        rcDSlienquan.setLayoutManager(layoutManager);
+//        rcDSlienquan.setAdapter(recyclerViewProducts);
+//        databaseReference.child(categories_id).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                    if (data_products != null) {
+//                        data_products.clear();
+//                    }
+//                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                        Products products = dataSnapshot.getValue(Products.class);
+//                        data_products.add(products);
+//                    }
+//                    recyclerViewProducts.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 }
