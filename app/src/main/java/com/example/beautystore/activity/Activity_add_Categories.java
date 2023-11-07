@@ -6,18 +6,26 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +35,7 @@ import com.example.beautystore.model.Categories;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +58,9 @@ public class Activity_add_Categories extends AppCompatActivity {
     String id_cate = "",autoId_category , nameCate,oldImageURI;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference, reference;
+    private MaterialCardView cardView;
+    private TextView tvCondition_cate, tvTile;
+    private LinearLayout linearLayout;
     boolean status;
 
     @Override
@@ -61,6 +73,8 @@ public class Activity_add_Categories extends AppCompatActivity {
         status = Fragment_warehouse_list.statusCate;
         id_cate = getIntent().getStringExtra("id_category");
         setEvent();
+        condition_cate_name();
+        focusOut();
 
     }
 
@@ -93,6 +107,7 @@ public class Activity_add_Categories extends AppCompatActivity {
 
         if (status) {
             btnEditCate.setVisibility(View.GONE);
+
             Log.d("TAG", "id cua loai " + id_cate);
         } else {
             btnAddCate.setVisibility(View.GONE);
@@ -111,6 +126,8 @@ public class Activity_add_Categories extends AppCompatActivity {
                     i.setAction(Intent.ACTION_GET_CONTENT);
                 }
                 resultLauncher.launch(i);
+                edtNameCate.clearFocus();
+                imgCategory.requestFocus();
             }
         });
         if (status == false) {
@@ -122,24 +139,29 @@ public class Activity_add_Categories extends AppCompatActivity {
                 if (imageURI == null || TextUtils.isEmpty(edtNameCate.getText())) {
                     Toast.makeText(Activity_add_Categories.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
                 } else {
-                    reference = FirebaseDatabase.getInstance().getReference("Categories/" + autoId_category);
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_category);
-                    storageReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isComplete()) ;
-                            imageURI = uriTask.getResult();
-                            Categories categories = new Categories(autoId_category, edtNameCate.getText().toString(), imageURI.toString());
-                            reference.setValue(categories);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    Toast.makeText(Activity_add_Categories.this, "dep chai" + autoId_category, Toast.LENGTH_SHORT).show();
+                    if (edtNameCate.length() > 50)
+                    {
+                        Toast.makeText(Activity_add_Categories.this, "Ban nhap qua 7 chu", Toast.LENGTH_SHORT).show();
+                    } else {
+                        reference = FirebaseDatabase.getInstance().getReference("Categories/" + autoId_category);
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_category);
+                        storageReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!uriTask.isComplete()) ;
+                                imageURI = uriTask.getResult();
+                                Categories categories = new Categories(autoId_category, edtNameCate.getText().toString(), imageURI.toString());
+                                reference.setValue(categories);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Toast.makeText(Activity_add_Categories.this, "dep chai" + autoId_category, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -148,58 +170,62 @@ public class Activity_add_Categories extends AppCompatActivity {
             public void onClick(View view) {
                 nameCate = edtNameCate.getText().toString();
                 reference = FirebaseDatabase.getInstance().getReference("Categories").child(id_cate);
-                if (imageURI == null ){
-                    Toast.makeText(Activity_add_Categories.this, "ko co hinh", Toast.LENGTH_SHORT).show();
-                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()){
-                                Map<String, Object> updates = new HashMap<>();
-                                updates.put("categories_name", nameCate);
-                                reference.updateChildren(updates);
-                                Toast.makeText(Activity_add_Categories.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(Activity_add_Categories.this, "Ko dc", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }else {
-                    Toast.makeText(Activity_add_Categories.this, "co hinh", Toast.LENGTH_SHORT).show();
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(id_cate);
-                    storageReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isComplete()) ;
-                            imageURI = uriTask.getResult();
-                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        Map<String, Object> updatesCategory = new HashMap<>();
-                                        updatesCategory.put("categories_name", nameCate);
-                                        updatesCategory.put("img_categories",imageURI.toString());
-                                        reference.updateChildren(updatesCategory);
-                                        Toast.makeText(Activity_add_Categories.this, "update thanh cong", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    Toast.makeText(Activity_add_Categories.this, "ko dc", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                if(edtNameCate.length()> 50)
+                {
+                    Toast.makeText(Activity_add_Categories.this, "Ban nhap qua ky tu cho phep", Toast.LENGTH_SHORT).show();
                 }
-
+                else {
+                    if (imageURI == null ){
+                        Toast.makeText(Activity_add_Categories.this, "ko co hinh", Toast.LENGTH_SHORT).show();
+                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    Map<String, Object> updates = new HashMap<>();
+                                    updates.put("categories_name", nameCate);
+                                    reference.updateChildren(updates);
+                                    Toast.makeText(Activity_add_Categories.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(Activity_add_Categories.this, "Ko dc", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }else {
+                        Toast.makeText(Activity_add_Categories.this, "co hinh", Toast.LENGTH_SHORT).show();
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(id_cate);
+                        storageReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!uriTask.isComplete()) ;
+                                imageURI = uriTask.getResult();
+                                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()){
+                                            Map<String, Object> updatesCategory = new HashMap<>();
+                                            updatesCategory.put("categories_name", nameCate);
+                                            updatesCategory.put("img_categories",imageURI.toString());
+                                            reference.updateChildren(updatesCategory);
+                                            Toast.makeText(Activity_add_Categories.this, "update thanh cong", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Toast.makeText(Activity_add_Categories.this, "ko dc", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
             }
         });
     }
@@ -251,5 +277,89 @@ public class Activity_add_Categories extends AppCompatActivity {
         edtNameCate = findViewById(R.id.edtCateName);
         btnAddCate = findViewById(R.id.btnAddCate);
         btnEditCate = findViewById(R.id.btnEditCate);
+        linearLayout = findViewById(R.id.liner_add_cate);
+        cardView = findViewById(R.id.card_add_cate_screen);
+        tvCondition_cate = findViewById(R.id.tv_addCate_screen);
+        tvTile = findViewById(R.id.tvTitle_add_cate_screen);
+
+    }
+    private void condition_cate_name() {
+        edtNameCate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String inputText = s.toString().trim();
+                if (!inputText.isEmpty()) {
+                    if (inputText.length() > 50) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.blue));
+                        if (!edtNameCate.hasFocus()) {
+                            cardView.setStrokeColor(Color.TRANSPARENT);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 50) {
+                    cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.red));
+                    tvCondition_cate.setVisibility(View.VISIBLE);
+                    tvCondition_cate.setText("Bạn đã nhập quá 7 kí tự");
+                } else {
+                    if (!edtNameCate.hasFocus()) {
+                        cardView.setStrokeColor(Color.TRANSPARENT);
+                    }
+                    tvCondition_cate.setVisibility(View.GONE);
+                }
+            }
+        });
+        edtNameCate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                String inputText = edtNameCate.getText().toString().trim();
+                if (!hasFocus) {
+                    if (inputText.isEmpty()) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.red));
+                        tvCondition_cate.setVisibility(View.VISIBLE);
+                        tvCondition_cate.setText("Bạn cần nhập giá của sản phẩm");
+                    } else if (inputText.length() > 50) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(Color.TRANSPARENT);
+                    }
+                } else {
+                    if (inputText.length() > 50) {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.red));
+                    } else {
+                        cardView.setStrokeColor(ContextCompat.getColor(Activity_add_Categories.this, R.color.blue));
+                        tvCondition_cate.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+
+    }
+    private void focusOut() {
+        linearLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    View focusedView = getCurrentFocus();
+                    if (focusedView instanceof EditText) {
+                        Rect outRect = new Rect();
+                        focusedView.getGlobalVisibleRect(outRect);
+                        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                            focusedView.clearFocus();
+                        }
+                    }
+                }
+                return false;
+            }
+        });
     }
 }

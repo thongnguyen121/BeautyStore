@@ -65,6 +65,7 @@ public class Fragment_warehouse_list extends Fragment {
     public static boolean statusBrands = true;
     public static boolean statusProducts = true;
     public static  boolean statusCate = true;
+    public static TextView tvThongbao_cate, tvThongbao_products;
     String cateName, imgCate;
     View view;
 
@@ -150,6 +151,8 @@ public class Fragment_warehouse_list extends Fragment {
         tvTitle_brands = view.findViewById(R.id.tiltle_brands_wh);
         tvTitle_cate = view.findViewById(R.id.tiltle_categories_wh);
 //        scrollView = view.findViewById(R.id.id_scrollView_warehouse_list);
+        tvThongbao_cate = view.findViewById(R.id.tvThongbao_cate);
+        tvThongbao_products = view.findViewById(R.id.tvThongbao_products);
 
 
     }
