@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
@@ -58,21 +60,20 @@ public class Activity_Product_Detail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
         setScreenElement();
-
         setScreenData();
         changeBigProductImage();
         increaseProductQty();
         decreaseProductQty();
+        reView_products();
         productId = getIntent().getStringExtra("products_id");
         cate_id = getIntent().getStringExtra("categories_id");
+        Toast.makeText(this, "cate_id"+cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
+        getData_DSLienquan(cate_id);
         Log.d("TAG", "onCreate: " + productId);
-
-
         //intent_getData(productId);
-
         ivMessenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,10 +151,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     }
 
     private void createRatingsList(){
-        ratings.add(new Rating("1", "1", "1", "Dep", "4", "12/12/2023"));
-        ratings.add(new Rating("2", "2", "2", "OK", "3", "12/12/2023"));
-        ratings.add(new Rating("3", "3", "3", "Tot", "5", "12/12/2023"));
-        ratings.add(new Rating("4", "4", "4", "Xau", "4", "12/12/2023"));
+
     }
 
     private void intent_getData(String products_id) {
@@ -172,14 +170,12 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_2()).into(ivProductSmall2);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_3()).into(ivProductSmall3);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
-
     protected void setScreenData(){
         tvProductQty.setText(String.valueOf(productQty));
     }
@@ -200,7 +196,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 Glide.with(Activity_Product_Detail.this).load(imgProduct2).into(ivProductBig);
             }
         });
-
         ivProductSmall3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,11 +204,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
     }
-
     protected void addOrRemoveProductToWishList(){
 
     }
-
     protected void setScreenElement(){
 
         //Recyclerview:
@@ -254,31 +247,47 @@ public class Activity_Product_Detail extends AppCompatActivity {
 
         rcDSlienquan = findViewById(R.id.rcDSSlienquan);
     }
-//    private void getData_DSLienquan(String categories_id)
-//    {
-//        recyclerViewProducts = new RecyclerViewProducts(this, R.layout.layout_item_products, data_products);
-//        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-//        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
-//        rcDSlienquan.setLayoutManager(layoutManager);
-//        rcDSlienquan.setAdapter(recyclerViewProducts);
-//        databaseReference.child(categories_id).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//                    if (data_products != null) {
-//                        data_products.clear();
-//                    }
-//                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                        Products products = dataSnapshot.getValue(Products.class);
-//                        data_products.add(products);
-//                    }
-//                    recyclerViewProducts.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
+
+    private void reView_products()
+    {
+        rbUserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+
+            }
+        });
+    }
+
+    private void getData_DSLienquan(String categories_id)
+    {
+        recyclerViewProducts = new RecyclerViewProducts(this, R.layout.layout_item_products, data_products);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        rcDSlienquan.setLayoutManager(layoutManager);
+        rcDSlienquan.setAdapter(recyclerViewProducts);
+        Query queryProducts = databaseReference.orderByChild("categories_id").equalTo(categories_id);
+        queryProducts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    if (data_products != null) {
+                        data_products.clear();
+                    }
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Products products = dataSnapshot.getValue(Products.class);
+                        if (!products.getProducts_id().equals(productId))
+                        {
+                            data_products.add(products);
+                        }
+
+                    }
+                    recyclerViewProducts.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
