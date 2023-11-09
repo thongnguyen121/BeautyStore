@@ -6,14 +6,22 @@ import static java.security.AccessController.getContext;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +35,7 @@ import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts;
 import com.example.beautystore.adapter.RecyclerView_Rating;
 import com.example.beautystore.adapter.RecyclerView_search_products;
+import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
@@ -69,6 +78,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
     float numberStar = 0;
     private ArrayList<Products> data_products = new ArrayList<>();
 
+    private String user_id = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +93,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
 
         productId = getIntent().getStringExtra("products_id");
         cate_id = getIntent().getStringExtra("categories_id");
+        user_id = getIntent().getStringExtra("user_id");
         Toast.makeText(this, "cate_id" + cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
@@ -88,7 +101,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
         getData_DSLienquan(cate_id);
         createRatingsList();
         reView_products();
-
         Log.d("TAG", "onCreate: " + productId);
         //intent_getData(productId);
         ivMessenger.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +144,8 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     Glide.with(Activity_Product_Detail.this)
                             .load(products.getImgProducts_3())
                             .into(ivProductSmall3);
+                    calculateAverageRating();
+
                 }
             }
 
@@ -304,55 +318,97 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 numberStar = ratingBar.getRating();
             }
         });
-        // Kiểm tra xem người dùng đã thêm đánh giá cho sản phẩm chưa
         ivComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
-                userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            // Người dùng đã thêm đánh giá, hiển thị thông báo
-                            rbUserRating.setRating(0);
-                            edtComment.setText("");
-                            showAlreadyReviewedDialog();
-                        } else {
-                            // Thêm đánh giá vào Firebase
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
-                            final HashMap<String, Object> ratinglist = new HashMap<>();
-                            Rating rating = new Rating(productId, UserID, edtComment.getText().toString(), String.valueOf(numberStar), savedate);
-                            ratinglist.put("product_id", productId);
-                            ratinglist.put("customer_id", UserID);
-                            ratinglist.put("comment", rating.getComment());
-                            ratinglist.put("startNumber", rating.getStartNumber());
-                            ratinglist.put("create_at", savedate);
+                if(numberStar == 0 || TextUtils.isEmpty(edtComment.getText()))
+                {
+                    showRating_empty();
+                }
+                else {
+                    DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                    userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                rbUserRating.setRating(0);
+                                edtComment.setText("");
+                                showAlreadyReviewedDialog();
+                            } else {
 
-                            reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    rbUserRating.setRating(0);
-                                    edtComment.setText("");
-                                    Toast.makeText(Activity_Product_Detail.this, "Đánh giá thành công", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Activity_Product_Detail.this, "Lưu không thành công", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                                final HashMap<String, Object> ratinglist = new HashMap<>();
+                                Rating rating = new Rating(productId, UserID, edtComment.getText().toString(), String.valueOf(numberStar), savedate);
+                                ratinglist.put("product_id", productId);
+                                ratinglist.put("customer_id", UserID);
+                                ratinglist.put("comment", rating.getComment());
+                                ratinglist.put("startNumber", rating.getStartNumber());
+                                ratinglist.put("create_at", savedate);
+
+                                reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        rbUserRating.setRating(0);
+                                        edtComment.setText("");
+                                        Toast.makeText(Activity_Product_Detail.this, "Đánh giá thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(Activity_Product_Detail.this, "Lưu không thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Xử lý trường hợp có lỗi khi truy vấn dữ liệu
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+
             }
         });
 
     }
+
+    private void calculateAverageRating() {
+        DatabaseReference ratingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId);
+
+        ratingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    float totalStars = 0;
+                    int totalRatings = 0;
+
+                    for (DataSnapshot ratingSnapshot : snapshot.getChildren()) {
+                        Rating rating = ratingSnapshot.getValue(Rating.class);
+                        if (rating != null) {
+                            totalStars += Float.parseFloat(rating.getStartNumber());
+                            totalRatings++;
+                        }
+                    }
+
+                    if (totalRatings > 0) {
+                        float averageRating = totalStars / totalRatings;
+                        rbProductRating.setRating(averageRating);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+
+//    private void updateProductAverageRating(float averageRating) {
+//        DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
+//        productRef.child("averageRating").setValue(averageRating);
+//    }
 
     private void showAlreadyReviewedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -362,10 +418,11 @@ public class Activity_Product_Detail extends AppCompatActivity {
         builder.show();
     }
 
-    private void showReviewSuccessDialog() {
+
+    private void showRating_empty() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thông báo");
-        builder.setMessage("Đánh giá của bạn đã được thêm thành công.");
+        builder.setMessage("Bạn cần nhập đầy đủ thông tin để đánh giá");
         builder.setPositiveButton("OK", null);
         builder.show();
     }
