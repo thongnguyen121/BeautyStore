@@ -247,7 +247,15 @@
                 android:textColor="@color/white" />
         </LinearLayout>
 
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Review"
+            android:textColor="@color/pink"
+            android:textSize="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            ></TextView>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviewList"
             android:layout_width="match_parent"
@@ -260,7 +268,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:numStars="5"
-            android:stepSize="0.5"
+            android:stepSize="1"
             android:background="@color/white"
             />
         <LinearLayout
@@ -318,10 +326,16 @@
             android:layout_height="wrap_content"
             android:text="Những sản phẩm liên quan"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
+
             android:textSize="25dp"
             android:textColor="@color/pink"
             ></TextView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/pink"
+            android:layout_marginBottom="10dp"
+            ></View>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

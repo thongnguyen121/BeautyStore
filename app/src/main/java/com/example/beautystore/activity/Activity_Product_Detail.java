@@ -1,5 +1,6 @@
 package com.example.beautystore.activity;
 
+import static androidx.fragment.app.FragmentManager.TAG;
 import static java.security.AccessController.getContext;
 
 import androidx.annotation.NonNull;
@@ -22,11 +23,17 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts;
 import com.example.beautystore.adapter.RecyclerView_Rating;
 import com.example.beautystore.adapter.RecyclerView_search_products;
+import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,17 +42,22 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    String productId = "", cate_id = "", imgProduct1,imgProduct2,imgProduct3;
+    String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3, autoId_rating;
 
-    int productQty =1;
+    int productQty = 1;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     private RecyclerViewProducts recyclerViewProducts;
+    private RecyclerView_Rating recyclerViewRating;
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
@@ -53,8 +65,10 @@ public class Activity_Product_Detail extends AppCompatActivity {
     EditText edtComment;
     RecyclerView_Rating ratingAdapter; //Adapter
     private RecyclerView ratingRecyclerView, rcDSlienquan;
-    private ArrayList<Rating> ratings;
+    private ArrayList<Rating> data_ratings = new ArrayList<>();
+    float numberStar = 0;
     private ArrayList<Products> data_products = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,14 +78,17 @@ public class Activity_Product_Detail extends AppCompatActivity {
         changeBigProductImage();
         increaseProductQty();
         decreaseProductQty();
-        reView_products();
+
         productId = getIntent().getStringExtra("products_id");
         cate_id = getIntent().getStringExtra("categories_id");
-        Toast.makeText(this, "cate_id"+cate_id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "cate_id" + cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
         getData_DSLienquan(cate_id);
+        createRatingsList();
+        reView_products();
+
         Log.d("TAG", "onCreate: " + productId);
         //intent_getData(productId);
         ivMessenger.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +107,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
 
     }
 
-    private void getDataFromFireBase(String productId){
+    private void getDataFromFireBase(String productId) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -99,7 +116,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     Products products = snapshot.getValue(Products.class);
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
-                    tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
+                    tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim())) + " Đ");
                     imgProduct1 = products.getImgProducts_1();
                     imgProduct2 = products.getImgProducts_2();
                     imgProduct3 = products.getImgProducts_3();
@@ -126,8 +143,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     }
 
 
-
-    private void increaseProductQty(){
+    private void increaseProductQty() {
         ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,11 +152,12 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
     }
-    private void decreaseProductQty(){
+
+    private void decreaseProductQty() {
         ivDecreaseQty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (productQty <= 1 ){
+                if (productQty <= 1) {
                     ivDecreaseQty.setEnabled(false);
 
                 }
@@ -150,8 +167,37 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
     }
 
-    private void createRatingsList(){
+    private void createRatingsList() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        String ratingPath = "Rating/" + productId + "/" + currentUserId;
+        recyclerViewRating = new RecyclerView_Rating(data_ratings, this, R.layout.layout_item_review);
+        GridLayoutManager layoutManager1 = new GridLayoutManager(this, 1);
+        layoutManager1.setOrientation(RecyclerView.VERTICAL);
+        ratingRecyclerView.setLayoutManager(layoutManager1);
+        ratingRecyclerView.setAdapter(recyclerViewRating);
 
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Rating").child(productId);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (data_ratings != null) {
+                    data_ratings.clear();
+                }
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Rating rating = dataSnapshot.getValue(Rating.class);
+
+                    data_ratings.add(rating);
+                }
+                recyclerViewRating.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý trường hợp có lỗi khi truy vấn dữ liệu
+            }
+        });
     }
 
     private void intent_getData(String products_id) {
@@ -170,17 +216,19 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_2()).into(ivProductSmall2);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_3()).into(ivProductSmall3);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
-    protected void setScreenData(){
+
+    protected void setScreenData() {
         tvProductQty.setText(String.valueOf(productQty));
     }
 
-    protected void changeBigProductImage(){
+    protected void changeBigProductImage() {
         ivProductSmall1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,18 +252,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
     }
-    protected void addOrRemoveProductToWishList(){
+
+    protected void addOrRemoveProductToWishList() {
 
     }
-    protected void setScreenElement(){
+
+    protected void setScreenElement() {
 
         //Recyclerview:
-        ratingRecyclerView = findViewById(R.id.reviewList);
-        ratings = new ArrayList<>();
-        createRatingsList();
-        ratingAdapter = new RecyclerView_Rating(ratings, this);
-        ratingRecyclerView.setAdapter(ratingAdapter);
-        ratingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ivBack = findViewById(R.id.ivProductDetailBack);
         ivProductBig = findViewById(R.id.ivProductDetailBigProduct);
@@ -246,20 +290,115 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivMessenger = findViewById(R.id.ivProductDetailMessenger);
 
         rcDSlienquan = findViewById(R.id.rcDSSlienquan);
+        ratingRecyclerView = findViewById(R.id.reviewList);
     }
 
-    private void reView_products()
-    {
+    private void reView_products() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String savedate = simpleDateFormat.format(calendar.getTime());
+        String UserID = FirebaseAuth.getInstance().getUid();
         rbUserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                numberStar = ratingBar.getRating();
+            }
+        });
+        // Kiểm tra xem người dùng đã thêm đánh giá cho sản phẩm chưa
+        ivComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Người dùng đã thêm đánh giá, hiển thị thông báo
+                            rbUserRating.setRating(0);
+                            edtComment.setText("");
+                            showAlreadyReviewedDialog();
+                        } else {
+                            // Thêm đánh giá vào Firebase
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                            final HashMap<String, Object> ratinglist = new HashMap<>();
+                            Rating rating = new Rating(productId, UserID, edtComment.getText().toString(), String.valueOf(numberStar), savedate);
+                            ratinglist.put("product_id", productId);
+                            ratinglist.put("customer_id", UserID);
+                            ratinglist.put("comment", rating.getComment());
+                            ratinglist.put("startNumber", rating.getStartNumber());
+                            ratinglist.put("create_at", savedate);
+
+                            reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    rbUserRating.setRating(0);
+                                    edtComment.setText("");
+                                    Toast.makeText(Activity_Product_Detail.this, "Đánh giá thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Activity_Product_Detail.this, "Lưu không thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Xử lý trường hợp có lỗi khi truy vấn dữ liệu
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void showAlreadyReviewedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Bạn đã thêm đánh giá cho sản phẩm này.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
+    private void showReviewSuccessDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Đánh giá của bạn đã được thêm thành công.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
+    public void getIDrating() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference().child("Rating");
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<String> dsUser = new ArrayList<>();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    dsUser.add(dataSnapshot.getKey());
+                }
+                String[] temp = dsUser.get(dsUser.size() - 1).split("RT");
+                String id = "";
+                int idNumber = Integer.parseInt(temp[1]) + 1;
+                if (idNumber < 10) {
+                    id = "RT0" + idNumber;
+                } else {
+                    id = "RT" + idNumber;
+                }
+                autoId_rating = id;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
 
-    private void getData_DSLienquan(String categories_id)
-    {
+    private void getData_DSLienquan(String categories_id) {
         recyclerViewProducts = new RecyclerViewProducts(this, R.layout.layout_item_products, data_products);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -270,18 +409,16 @@ public class Activity_Product_Detail extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    if (data_products != null) {
-                        data_products.clear();
+                if (data_products != null) {
+                    data_products.clear();
+                }
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Products products = dataSnapshot.getValue(Products.class);
+                    if (!products.getProducts_id().equals(productId)) {
+                        data_products.add(products);
                     }
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Products products = dataSnapshot.getValue(Products.class);
-                        if (!products.getProducts_id().equals(productId))
-                        {
-                            data_products.add(products);
-                        }
-
-                    }
-                    recyclerViewProducts.notifyDataSetChanged();
+                }
+                recyclerViewProducts.notifyDataSetChanged();
             }
 
             @Override
