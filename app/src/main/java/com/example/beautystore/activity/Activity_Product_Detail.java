@@ -1,6 +1,7 @@
 package com.example.beautystore.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,12 +17,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Rating;
+import com.example.beautystore.model.Cart;
+import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,12 +34,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    String productId = "", imgProduct1,imgProduct2,imgProduct3;
+    String productId = "", imgProduct1,imgProduct2,imgProduct3, uid, price;
 
     int productQty =1;
+    double total = 0;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -47,6 +54,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     RecyclerView_Rating ratingAdapter; //Adapter
     private RecyclerView ratingRecyclerView;
     private ArrayList<Rating> ratings;
+    boolean productExist = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +66,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         increaseProductQty();
         decreaseProductQty();
         productId = getIntent().getStringExtra("products_id");
+        uid = FirebaseAuth.getInstance().getUid();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
@@ -79,8 +88,86 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
+        btnAddCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addToCart(uid);
+            }
+        });
     }
+
+    private void addToCart(String uid) {
+        CartDetail cartDetail = new CartDetail(productId, price,String.valueOf(productQty));
+        DatabaseReference  reference = firebaseDatabase.getReference("Cart").child(uid);
+        Double total = Double.valueOf(price) * productQty;
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Cart cart = snapshot.getValue(Cart.class);
+                if (cart == null) {
+                    cart = new Cart(uid, new ArrayList<>(), String.valueOf(total));
+                }
+                for (CartDetail item : cart.getItems()){
+                    if (item.getProduct_id().equals(cartDetail.getProduct_id())){
+                        int currentQty = Integer.parseInt(item.getQty());
+                        int newQty = currentQty + Integer.parseInt(cartDetail.getQty());
+                        item.setQty(String.valueOf(newQty));
+                        productExist = true;
+                        break;
+                    }
+                }
+                if (!productExist) {
+                    cart.getItems().add(cartDetail);
+                }
+                updateTotalPrice(reference, uid);
+                reference.setValue(cart, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                      if (error == null){
+                          Toast.makeText(Activity_Product_Detail.this, "thanh cong ", Toast.LENGTH_SHORT).show();
+                      }
+                      else {
+                          Toast.makeText(Activity_Product_Detail.this, "loi " + error, Toast.LENGTH_SHORT).show();
+                      }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public static void updateTotalPrice(DatabaseReference reference, String uid) {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Cart cart = snapshot.getValue(Cart.class);
+                int total = 0;
+                if (cart != null){
+                    List<CartDetail> items = cart.getItems();
+                    for (CartDetail cartDetail: items){
+                        double productPrice = Double.parseDouble(cartDetail.getPrice());
+                        double productQty = Double.parseDouble(cartDetail.getQty());
+                        total += productPrice * productQty;
+
+                    }
+                    Log.d("TAG", "tong tien la: " + total);
+                    cart.setTotal(String.valueOf(total));
+                    reference.setValue(cart);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     private void getDataFromFireBase(String productId){
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
@@ -91,6 +178,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
                     tvProductPrice.setText(products.getPrice());
+                    price = products.getPrice();
                     imgProduct1 = products.getImgProducts_1();
                     imgProduct2 = products.getImgProducts_2();
                     imgProduct3 = products.getImgProducts_3();

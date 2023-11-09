@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private Menu menu;
     private MenuItem menuItem;
     ImageView ivProfileImg;
-    NavController controller;
+    public static NavController controller;
     AppBarConfiguration configuration;
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
