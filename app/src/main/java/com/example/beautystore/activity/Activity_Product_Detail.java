@@ -79,14 +79,14 @@ double total = 0;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
     RecyclerView_Rating ratingAdapter; //Adapter=
-    boolean productExist = false;=
+    boolean productExist = false;
     private RecyclerView ratingRecyclerView, rcDSlienquan;
     private ArrayList<Rating> data_ratings = new ArrayList<>();
     float numberStar = 0;
     private ArrayList<Products> data_products = new ArrayList<>();
 
     private String user_id = "";
-=
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
