@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,7 +20,6 @@ import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
-import com.example.beautystore.model.Products;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerViewOder_Customer.OrderHolder> {
+public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerViewProgress_order.ProgressHolder> {
+
     private Context context;
     private int resource;
     private ArrayList<OrderStatus> data;
@@ -38,35 +39,32 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     String uid;
-    String condition = "";
+
     String order_id = "";
-    private ValueEventListener valueEventListener;
 
-
-
-    public RecyclerViewOder_Customer(Context context, int resource, ArrayList<OrderStatus> data) {
+    public RecyclerViewProgress_order(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
         this.resource = resource;
         this.data = data;
     }
 
+    @NonNull
     @Override
-    public RecyclerViewOder_Customer.OrderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerViewProgress_order.ProgressHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardViewItem = (CardView) LayoutInflater.from(context).inflate(viewType, parent, false);
-        return new RecyclerViewOder_Customer.OrderHolder(cardViewItem);
+        return new RecyclerViewProgress_order.ProgressHolder(cardViewItem);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewOder_Customer.OrderHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewProgress_order.ProgressHolder holder, int position) {
         OrderStatus orderStatus = data.get(position);
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
-        condition = orderStatus.getStatus();
         order_id = orderStatus.getOrder_id();
-        getCartItem(databaseReference, order_id, holder);
-        loadInformation_user(holder, condition);
         loadInformation_order(holder, order_id);
+        getCartItem(databaseReference, order_id, holder);
+
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,12 +82,10 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             }
         });
     }
-
-    private void getCartItem(DatabaseReference databaseReference, String order_id, RecyclerViewOder_Customer.OrderHolder holder) {
+    private void getCartItem(DatabaseReference databaseReference, String order_id, RecyclerViewProgress_order.ProgressHolder holder) {
         // Khởi tạo danh sách cartDetails nếu chưa được khởi tạo
 
         ArrayList<CartDetail>  cartDetails = new ArrayList<>();
-
 
         orderDetailAdapter = new RecyclerView_Order(cartDetails, context, R.layout.layout_item_order);
         holder.rcOrderDetail.setLayoutManager(new LinearLayoutManager(context));
@@ -136,7 +132,9 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             }
         });
     }
-    private void loadInformation_order(RecyclerViewOder_Customer.OrderHolder holder, String order_id)
+
+
+    private void loadInformation_order(RecyclerViewProgress_order.ProgressHolder holder, String order_id)
     {
         databaseReference.child("Order").child(order_id).addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,20 +142,26 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                 if (snapshot.exists()) {
                     Order order = snapshot.getValue(Order.class);
                     if (order != null) {
-
                         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
-                      holder.tvOrder_number.setText(order.getOrder_id());
-                      holder.tvDatetime.setText(order.getCreate_at());
-                      holder.tvTotal_money.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
+                        holder.tvCustomer_name.setText(order.getName());
+                        holder.tvDatetime.setText(order.getCreate_at());
+                        holder.tvTotalmoney.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
+                        holder.tvPhonenumber.setText(order.getPhoneNumber());
+                        holder.tvAddress.setText(order.getAddress());
+                        holder.tvOrdernumber.setText(order.getOrder_id());
                     }
+
+
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
+
     @Override
     public int getItemViewType(int position) {
         return resource;
@@ -167,21 +171,27 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         return data.size();
     }
 
-    public static class OrderHolder extends RecyclerView.ViewHolder {
+    public static class ProgressHolder extends RecyclerView.ViewHolder {
 
-        TextView tvOrder_number, tvDatetime, tvCondition, tvClick, tvTotal_money, tvClose;
+        TextView tvOrdernumber, tvCustomer_name, tvPhonenumber, tvAddress, tvClick, tvClose, tvDatetime, tvTotalmoney;
         RecyclerView rcOrderDetail;
+        Button btnCancle, btnConfirm_progressm, btnConfirm_queue;
         LinearLayout linearLayout;
-        public OrderHolder(@NonNull View itemView) {
+        public ProgressHolder(@NonNull View itemView) {
             super(itemView);
-            tvOrder_number = itemView.findViewById(R.id.tvOrder_customer);
-            tvDatetime = itemView.findViewById(R.id.tvDatetime_order_customer);
-            tvCondition = itemView.findViewById(R.id.tvCondition_order_customer);
-            tvClick = itemView.findViewById(R.id.tvClick_detail_order_customer);
-            tvTotal_money = itemView.findViewById(R.id.tvtotal_order_customer);
-            rcOrderDetail = itemView.findViewById(R.id.rcOrder_list_customer);
-            linearLayout = itemView.findViewById(R.id.liner_order_customer);
-            tvClose = itemView.findViewById(R.id.tvClose_order_customer);
+            tvOrdernumber = itemView.findViewById(R.id.tvOrdernumber_admin);
+            tvCustomer_name = itemView.findViewById(R.id.tvCustomer_name_order_admin);
+            tvPhonenumber = itemView.findViewById(R.id.tvPhone_order_admin);
+            tvAddress = itemView.findViewById(R.id.tvAddresses_order_admin);
+            tvDatetime = itemView.findViewById(R.id.tvDatetime_order_admin);
+            tvClick = itemView.findViewById(R.id.tvClick_detail_order_admin);
+            tvClose = itemView.findViewById(R.id.tvClose_order_admin);
+            tvTotalmoney = itemView.findViewById(R.id.tvTotal_money_admin);
+            rcOrderDetail= itemView.findViewById(R.id.rcOrder_list_admin);
+            btnCancle = itemView.findViewById(R.id.btnCacel_order_admin);
+            btnConfirm_progressm = itemView.findViewById(R.id.btnConfirm_order_admin);
+            btnConfirm_queue = itemView.findViewById(R.id.btnConfirm_order_admin_queue);
+            linearLayout = itemView.findViewById(R.id.linner_orderDetail_admin);
         }
     }
 }

@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     app:cardCornerRadius="10dp">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="7dp"
+        android:layout_margin="5dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -19,7 +19,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="9"
+                android:layout_weight="5"
                 android:orientation="horizontal">
 
                 <TextView
@@ -30,9 +30,10 @@
                     android:textSize="20dp"></TextView>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DH01"
+                    android:id="@+id/tvOrdernumber_admin"
                     android:textColor="@color/black"
                     android:textSize="20dp"></TextView>
             </LinearLayout>
@@ -41,10 +42,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_weight="3"
+                android:layout_weight="5"
                 android:text="15/5/2020"
-                android:textSize="17dp">
-
+                android:textSize="17dp"
+                android:id="@+id/tvDatetime_order_admin"
+                >
             </TextView>
         </LinearLayout>
 
@@ -63,6 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ức Văn Bình"
+                android:id="@+id/tvCustomer_name_order_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -82,6 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0358350740"
+                android:id="@+id/tvPhone_order_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -101,7 +105,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="153,Đ 339, Phường Phươc Long B - TP. Thủ Đức"
-                android:textSize="17dp"></TextView>
+                android:textSize="17dp"
+                android:id="@+id/tvAddresses_order_admin"
+                ></TextView>
         </LinearLayout>
 
         <View
@@ -109,19 +115,37 @@
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
             android:background="@color/gray"></View>
-        <TextView
-            android:layout_marginTop="5dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Click xem chi tiết đơn hàng"
-            android:textStyle="italic"
-            android:textSize="17dp"
-            ></TextView>
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click xem chi tiết đơn hàng"
+                android:textStyle="italic"
+                android:textSize="17dp"
+                android:id="@+id/tvClick_detail_order_admin"
+                ></TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Click đóng chi tiết đơn hàng"
+                android:textSize="17dp"
+                android:gravity="end"
+                android:visibility="gone"
+                android:textStyle="italic"
+                android:id="@+id/tvClose_order_admin"
+                ></TextView>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
+            android:id="@+id/linner_orderDetail_admin"
             >
 
             <LinearLayout
@@ -134,7 +158,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="95dp"
+                    android:layout_marginRight="90dp"
                     android:text="Tên SP"
                     android:textSize="17dp">
 
@@ -151,7 +175,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="95dp"
+                    android:layout_marginLeft="90dp"
                     android:text="Đơn giá"
                     android:textSize="17dp">
 
@@ -159,10 +183,11 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcOrder_list"
+                android:id="@+id/rcOrder_list_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"></androidx.recyclerview.widget.RecyclerView>
+                android:layout_marginTop="5dp"
+                ></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
 
         <LinearLayout
@@ -182,7 +207,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="200.000Đ"
-                android:textSize="20dp"></TextView>
+                android:textSize="20dp"
+                android:id="@+id/tvTotal_money_admin"
+                ></TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -199,7 +226,9 @@
                 android:background="@drawable/bg_btn"
                 android:backgroundTint="@color/red"
                 android:text="Hủy"
-                android:textColor="@color/white"></androidx.appcompat.widget.AppCompatButton>
+                android:textColor="@color/white"
+                android:id="@+id/btnCacel_order_admin"
+                ></androidx.appcompat.widget.AppCompatButton>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="150dp"
@@ -208,7 +237,9 @@
                 android:background="@drawable/bg_btn"
                 android:backgroundTint="@color/btn_blue"
                 android:text="Xác Nhận"
-                android:textColor="@color/white"></androidx.appcompat.widget.AppCompatButton>
+                android:textColor="@color/white"
+                android:id="@+id/btnConfirm_order_admin"
+                ></androidx.appcompat.widget.AppCompatButton>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -220,6 +251,9 @@
             android:text="Xác Nhận"
             android:textColor="@color/white"
             android:textSize="17dp"
-            android:visibility="gone"></androidx.appcompat.widget.AppCompatButton>
+            android:visibility="gone"
+            android:id="@+id/btnConfirm_order_admin_queue"
+
+            ></androidx.appcompat.widget.AppCompatButton>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
