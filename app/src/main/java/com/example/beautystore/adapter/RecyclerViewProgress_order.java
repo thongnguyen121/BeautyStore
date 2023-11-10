@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -20,6 +21,8 @@ import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +44,7 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
     String uid;
 
     String order_id = "";
+    String status = "";
 
     public RecyclerViewProgress_order(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
@@ -62,8 +66,10 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
         order_id = orderStatus.getOrder_id();
+        status = orderStatus.getStatus();
         loadInformation_order(holder, order_id);
         getCartItem(databaseReference, order_id, holder);
+        setClickConfirm_progress(holder, order_id);
 
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +167,51 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
             }
         });
     }
+    private void setClickConfirm_progress(RecyclerViewProgress_order.ProgressHolder holder, String order_id) {
+        if(status.equals("0"))
+        {
+            holder.linner_button.setVisibility(View.VISIBLE);
+        }
+        else if (status.equals("1"))
+        {
+            holder.linner_button.setVisibility(View.GONE);
+            holder.btnConfirm_packing.setVisibility(View.VISIBLE);
+        }
+
+        holder.btnConfirm_progressm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("1").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Đơn hàng đã được xử lý", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Cập nhật trạng thái không thành công", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        holder.btnConfirm_packing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("2").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Đơn hàng đã được đóng gói", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Cập nhật trạng thái không thành công", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -175,8 +226,8 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
 
         TextView tvOrdernumber, tvCustomer_name, tvPhonenumber, tvAddress, tvClick, tvClose, tvDatetime, tvTotalmoney;
         RecyclerView rcOrderDetail;
-        Button btnCancle, btnConfirm_progressm, btnConfirm_queue;
-        LinearLayout linearLayout;
+        Button btnCancle, btnConfirm_progressm, btnConfirm_packing;
+        LinearLayout linearLayout, linner_button;
         public ProgressHolder(@NonNull View itemView) {
             super(itemView);
             tvOrdernumber = itemView.findViewById(R.id.tvOrdernumber_admin);
@@ -190,8 +241,9 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
             rcOrderDetail= itemView.findViewById(R.id.rcOrder_list_admin);
             btnCancle = itemView.findViewById(R.id.btnCacel_order_admin);
             btnConfirm_progressm = itemView.findViewById(R.id.btnConfirm_order_admin);
-            btnConfirm_queue = itemView.findViewById(R.id.btnConfirm_order_admin_queue);
+            btnConfirm_packing = itemView.findViewById(R.id.btnConfirm_order_admin_packing);
             linearLayout = itemView.findViewById(R.id.linner_orderDetail_admin);
+            linner_button = itemView.findViewById(R.id.linner_button_order_admin);
         }
     }
 }

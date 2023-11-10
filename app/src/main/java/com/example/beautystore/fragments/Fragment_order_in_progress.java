@@ -68,7 +68,11 @@ public class Fragment_order_in_progress extends Fragment {
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
-                    data_OrderStatus.add(orderStatus);
+                    if(orderStatus.getStatus().equals("0"))
+                    {
+                        data_OrderStatus.add(orderStatus);
+                    }
+
                 }
                 recyclerViewOderprogress.notifyDataSetChanged();
             }

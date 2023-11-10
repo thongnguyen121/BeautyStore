@@ -217,7 +217,9 @@
             android:layout_height="wrap_content"
             android:background="@color/bg_pink"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/linner_button_order_admin"
+            >
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="150dp"
@@ -252,7 +254,7 @@
             android:textColor="@color/white"
             android:textSize="17dp"
             android:visibility="gone"
-            android:id="@+id/btnConfirm_order_admin_queue"
+            android:id="@+id/btnConfirm_order_admin_packing"
 
             ></androidx.appcompat.widget.AppCompatButton>
     </LinearLayout>
