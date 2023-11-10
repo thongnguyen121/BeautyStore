@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp"
+    >
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="Mỹ phẩm làm trắng"
+        android:textColor="@color/black"
+        ></TextView>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="7"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_marginLeft="10dp"
+        ></TextView>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="200.000Đ"
+        android:textColor="@color/black"
+        android:layout_marginLeft="10dp"
+        ></TextView>
+</LinearLayout>
