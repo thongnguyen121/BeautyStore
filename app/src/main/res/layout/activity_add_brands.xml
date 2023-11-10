@@ -7,6 +7,7 @@
     tools:context=".activity.Activity_add_Brands"
     android:orientation="vertical"
     android:background="@color/background_admin"
+    android:id="@+id/liner_add_brands"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,8 +43,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         app:cardCornerRadius="20dp"
-        android:id="@+id/card_add_cate"
+        android:id="@+id/card_add_brands"
+        app:strokeWidth="1dp"
         >
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -64,7 +67,7 @@
         android:layout_marginRight="10dp"
         android:text="blabla"
         android:paddingLeft="15dp"
-        android:id="@+id/tv_cate_addCate_screen"
+        android:id="@+id/tv_addBrands_screen"
         android:visibility="gone"
         ></TextView>
     <LinearLayout
@@ -74,20 +77,20 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         >
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_marginRight="10dp"
             app:cardCornerRadius="20dp"
             >
             <ImageView
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:src="@color/pink"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@color/white"
                 android:id="@+id/img_Add_Brand_screen"
 
                 ></ImageView>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

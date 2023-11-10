@@ -1,7 +1,7 @@
 package com.example.beautystore.model;
 
 public class Rating {
-    private String rating_id;
+
     private String product_id;
     private String customer_id;
     private String comment;
@@ -11,8 +11,7 @@ public class Rating {
     public Rating() {
     }
 
-    public Rating(String rating_id, String product_id, String customer_id, String comment, String startNumber, String create_at) {
-        this.rating_id = rating_id;
+    public Rating(String product_id, String customer_id, String comment, String startNumber, String create_at) {
         this.product_id = product_id;
         this.customer_id = customer_id;
         this.comment = comment;
@@ -20,13 +19,7 @@ public class Rating {
         this.create_at = create_at;
     }
 
-    public String getRating_id() {
-        return rating_id;
-    }
 
-    public void setRating_id(String rating_id) {
-        this.rating_id = rating_id;
-    }
 
     public String getProduct_id() {
         return product_id;

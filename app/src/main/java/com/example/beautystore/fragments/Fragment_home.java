@@ -118,7 +118,7 @@ public class Fragment_home extends Fragment {
 
     private void getProducts() {
         //Display products list
-        recyclerViewProducts = new RecyclerViewProducts(this, R.layout.layout_item_products, data_products);
+        recyclerViewProducts = new RecyclerViewProducts(requireContext(), R.layout.layout_item_products, data_products);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         rcProducts.setLayoutManager(layoutManager);
