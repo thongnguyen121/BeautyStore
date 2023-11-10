@@ -34,19 +34,19 @@ public class Activity_Cart_Detail extends AppCompatActivity {
         //Set RecyclerView
         cartDetaiRecyclerView = findViewById(R.id.CartDetailList);
         cartDetails = new ArrayList<>();
-        createCartDetailsList();
-        cartDetailAdapter = new RecyclerView_Cart_Detail(cartDetails, this);
-        cartDetaiRecyclerView.setAdapter(cartDetailAdapter);
-        cartDetaiRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        createCartDetailsList();
+//        cartDetailAdapter = new RecyclerView_Cart_Detail(cartDetails, this);
+//        cartDetaiRecyclerView.setAdapter(cartDetailAdapter);
+//        cartDetaiRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         tvTotalMoney = findViewById(R.id.tvCartDetailTotalMoney);
         btnOrder = findViewById(R.id.btnCartDetailOrderButton);
     }
 
     private void createCartDetailsList(){
-        cartDetails.add(new CartDetail("1", "1", "1", "1"));
-        cartDetails.add(new CartDetail("2", "2", "2", "2"));
-        cartDetails.add(new CartDetail("3", "3", "3", "3"));
-        cartDetails.add(new CartDetail("4", "4", "4", "4"));
+//        cartDetails.add(new CartDetail("1", "1", "1", "1"));
+//        cartDetails.add(new CartDetail("2", "2", "2", "2"));
+//        cartDetails.add(new CartDetail("3", "3", "3", "3"));
+//        cartDetails.add(new CartDetail("4", "4", "4", "4"));
     }
 }

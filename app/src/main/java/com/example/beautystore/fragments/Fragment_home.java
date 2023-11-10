@@ -79,6 +79,7 @@ public class Fragment_home extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         setHasOptionsMenu(true);
+
         setControl(view);
         RunWiewLipper();
         getProducts();
@@ -86,7 +87,11 @@ public class Fragment_home extends Fragment {
         getData_brands();
         getData_categories();
         getFilter_price(view);
-
+        
+        RecyclerViewBrands.selectedPosition_brands= -1;
+        RecyclerViewCategories.selectedPosition_cate= -1;
+        Fragment_home.recylerViewCategories.notifyDataSetChanged();
+        Fragment_home.recyclerViewBands.notifyDataSetChanged();
         return view;
 
     }
