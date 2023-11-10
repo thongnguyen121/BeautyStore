@@ -4,27 +4,36 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
-import com.example.beautystore.model.OrderDetail;
-import com.example.beautystore.model.WishList;
+import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.Products;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RecyclerView_Order extends RecyclerView.Adapter<RecyclerView_Order.OrderDetailViewHolder> {
-    private ArrayList<OrderDetail> data;
+    private ArrayList<CartDetail> data;
     private Context context;
+    private  int resource;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
 
-    public RecyclerView_Order(ArrayList<OrderDetail> data, Context context) {
+    public RecyclerView_Order(ArrayList<CartDetail> data, Context context,int resource) {
         this.data = data;
         this.context = context;
+        this.resource = resource;
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
     }
 
     @NonNull
@@ -37,10 +46,37 @@ public class RecyclerView_Order extends RecyclerView.Adapter<RecyclerView_Order.
 
     @Override
     public void onBindViewHolder(@NonNull OrderDetailViewHolder holder, int position) {
-        OrderDetail orderDetail = data.get(position);
-        holder.tvProductName.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
-        holder.tvProductQty.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
-        holder.tvProductPrice.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
+        CartDetail cartDetail = data.get(position);
+//        holder.tvProductName.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
+//        holder.tvProductQty.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
+//        holder.tvProductPrice.setText(orderDetail.getProduct_id()); //Fix replace product name with firebase
+//        OrderDetail cartDetail = data.get(position);
+        String product_id = cartDetail.getProduct_id();
+        loadDataProduct(holder, product_id, cartDetail.getQty());
+    }
+
+    private void loadDataProduct(OrderDetailViewHolder holder, String productId, String qty) {
+        DatabaseReference productReference = databaseReference.child("Products").child(productId);
+        DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        productReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Products products = snapshot.getValue(Products.class);
+                    if (products != null) {
+                        holder.tvProductName.setText(products.getProducts_name());
+//                        holder.tvProductPrice.setText(products.getPrice());
+                        holder.tvProductQty.setText(qty);
+                        holder.tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu cần
+            }
+        });
     }
 
     @Override
