@@ -1,15 +1,15 @@
 package com.example.beautystore.model;
 
 public class OrderStatus {
-    private String order_id, status, shipper_id;
+    private String order_id, status, member_id;
 
     public OrderStatus() {
     }
 
-    public OrderStatus(String order_id, String status, String shipper_id) {
+    public OrderStatus(String order_id, String status, String member_id) {
         this.order_id = order_id;
         this.status = status;
-        this.shipper_id = shipper_id;
+        this.member_id = member_id;
     }
 
     public String getOrder_id() {
@@ -28,11 +28,11 @@ public class OrderStatus {
         this.status = status;
     }
 
-    public String getShipper_id() {
-        return shipper_id;
+    public String getMember_id() {
+        return member_id;
     }
 
-    public void setShipper_id(String shipper_id) {
-        this.shipper_id = shipper_id;
+    public void setMember_id(String member_id) {
+        this.member_id = member_id;
     }
 }

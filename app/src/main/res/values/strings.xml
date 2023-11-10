@@ -63,5 +63,8 @@
     <string name="logout">Đăng xuất</string>
     <string name="Edit">Sửa</string>
     <string name="Delete">Xóa</string>
+    <string name="order_in_progress">Danh sách đơn hàng chưa xử lý</string>
+    <string name="packing_order">Đơn hàng đóng gói</string>
+    <string name="order_queue">Đơn hàng giao và nhận</string>
 
 </resources>

@@ -104,6 +104,15 @@ public class Admin_MainActivity extends AppCompatActivity{
             bottomNavigationView.setVisibility(View.GONE);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
+        } else if (navDestination.getId() == R.id.fragment_order_in_progress) {
+            bottomNavigationView.setVisibility(View.GONE);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else if (navDestination.getId() == R.id.fragment_packing_order) {
+            bottomNavigationView.setVisibility(View.GONE);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else if (navDestination.getId() == R.id.fragment_order_queue) {
+            bottomNavigationView.setVisibility(View.GONE);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else{
             bottomNavigationView.setVisibility(View.VISIBLE);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -130,6 +139,15 @@ public class Admin_MainActivity extends AppCompatActivity{
                 }
                 else if (idItem == R.id.fragment_customer_list){
                     navController.navigate(R.id.fragment_customer_list);
+                    return  true;
+                }else if (idItem == R.id.fragment_order_in_progress){
+                    navController.navigate(R.id.fragment_order_in_progress);
+                    return  true;
+                }else if (idItem == R.id.fragment_packing_order){
+                    navController.navigate(R.id.fragment_packing_order);
+                    return  true;
+                }else if (idItem == R.id.fragment_order_queue){
+                    navController.navigate(R.id.fragment_order_queue);
                     return  true;
                 }
                     return false;

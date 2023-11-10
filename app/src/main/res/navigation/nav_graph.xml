@@ -54,4 +54,19 @@
         android:name="com.example.beautystore.LoginActivity"
         android:label="activity_login"
         tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/fragment_order_in_progress"
+        android:name="com.example.beautystore.fragments.Fragment_order_in_progress"
+        android:label="@string/order_in_progress"
+        tools:layout="@layout/fragment_order_in_progress" />
+    <fragment
+        android:id="@+id/fragment_order_queue"
+        android:name="com.example.beautystore.fragments.Fragment_order_queue"
+        android:label="@string/order_queue"
+        tools:layout="@layout/fragment_order_queue" />
+    <fragment
+        android:id="@+id/fragment_packing_order"
+        android:name="com.example.beautystore.fragments.Fragment_packing_order"
+        android:label="@string/packing_order"
+        tools:layout="@layout/fragment_packing_order" />
 </navigation>
