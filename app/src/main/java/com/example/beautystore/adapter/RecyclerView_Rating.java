@@ -249,9 +249,6 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
         String savedate = simpleDateFormat.format(calendar.getTime());
         String UserID = FirebaseAuth.getInstance().getUid();
 
-
-
-
         String commentText = edtComment_dialog.getText().toString().trim();
         if (!TextUtils.isEmpty(commentText) || currentNumberStar != 0) {
             DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(id_producst).child(UserID);

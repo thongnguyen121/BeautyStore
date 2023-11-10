@@ -390,7 +390,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
                             totalRatings++;
                         }
                     }
-
                     if (totalRatings > 0) {
                         float averageRating = totalStars / totalRatings;
                         rbProductRating.setRating(averageRating);
@@ -417,7 +416,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
         builder.setPositiveButton("OK", null);
         builder.show();
     }
-
 
     private void showRating_empty() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
