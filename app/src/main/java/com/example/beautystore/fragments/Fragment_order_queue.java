@@ -2,65 +2,83 @@ package com.example.beautystore.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.beautystore.R;
+import com.example.beautystore.adapter.RecyclerViewOrder_queue;
+import com.example.beautystore.adapter.RecyclerViewProgress_order;
+import com.example.beautystore.model.OrderStatus;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Fragment_order_queue#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
+
 public class Fragment_order_queue extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Fragment_order_queue() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Fragment_order_queue.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Fragment_order_queue newInstance(String param1, String param2) {
-        Fragment_order_queue fragment = new Fragment_order_queue();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    RecyclerViewOrder_queue recyclerViewOrderQueue;
+    RecyclerView rcOrderqueue_admin;
+    View view;
+    ArrayList<OrderStatus> data_OrderStatus = new ArrayList<>();
+    FirebaseDatabase database;
+    DatabaseReference databaseReference;
+    String uid;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order_queue, container, false);
+       view = inflater.inflate(R.layout.fragment_order_queue, container, false);
+
+       setControl(view);
+       getData_order();
+
+       return view;
+    }
+
+    private void setControl(View view) {
+        rcOrderqueue_admin = view.findViewById(R.id.rcOrder_admin_queue_fr);
+    }
+    private void getData_order()
+    {
+        recyclerViewOrderQueue = new RecyclerViewOrder_queue(requireContext(), R.layout.layout_item_order_queue, data_OrderStatus);
+        GridLayoutManager layoutManager1 = new GridLayoutManager(getContext(), 1);
+        layoutManager1.setOrientation(RecyclerView.VERTICAL);
+        rcOrderqueue_admin.setLayoutManager(layoutManager1);
+        rcOrderqueue_admin.setAdapter(recyclerViewOrderQueue);
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference orderStatusReference = firebaseDatabase.getReference().child("OrderStatus");
+        orderStatusReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (data_OrderStatus != null) {
+                    data_OrderStatus.clear();
+                }
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
+                    if( orderStatus.getStatus().equals("2") || orderStatus.getStatus().equals("3") || orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("5") )
+                    {
+                        data_OrderStatus.add(orderStatus);
+                    }
+
+                }
+                recyclerViewOrderQueue.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
