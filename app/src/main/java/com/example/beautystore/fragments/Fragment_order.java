@@ -35,6 +35,7 @@ public class Fragment_order extends Fragment {
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     String uid;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,7 +53,8 @@ public class Fragment_order extends Fragment {
     private void setControl(View view) {
         rcOrder_customer = view.findViewById(R.id.rcOrder_customer_fr);
     }
-    private void getData_orderList(){
+
+    private void getData_orderList() {
         recyclerViewOderCustomer = new RecyclerViewOder_Customer(requireContext(), R.layout.layout_items_orders_customer, data_OrderStatus);
         GridLayoutManager layoutManager1 = new GridLayoutManager(getContext(), 1);
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
@@ -74,31 +76,32 @@ public class Fragment_order extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
 
-                    if (orderStatus != null) {
-                        // Lấy user_id từ bảng Order dựa trên order_id
-                        String orderId = orderStatus.getOrder_id();
-                        if (orderId != null) {
-                            orderReference.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
-                                    if (orderSnapshot.exists()) {
-                                        String orderUserId = orderSnapshot.child("customer_id").getValue(String.class);
-                                        // Kiểm tra nếu user_id từ Order trùng với user_id đang đăng nhập
-                                        if (orderUserId != null && orderUserId.equals(currentUserId)) {
-                                            data_OrderStatus.add(orderStatus);
-                                            recyclerViewOderCustomer.notifyDataSetChanged();
+                        if (orderStatus != null && !orderStatus.getStatus().equals("4") && !orderStatus.getStatus().equals("5")) {
+                            // Lấy user_id từ bảng Order dựa trên order_id
+                            String orderId = orderStatus.getOrder_id();
+                            if (orderId != null) {
+                                orderReference.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                        if (orderSnapshot.exists()) {
+                                            String orderUserId = orderSnapshot.child("customer_id").getValue(String.class);
+
+                                            if (orderUserId != null && orderUserId.equals(currentUserId)) {
+                                                data_OrderStatus.add(orderStatus);
+                                                recyclerViewOderCustomer.notifyDataSetChanged();
+                                            }
+
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    // Xử lý lỗi nếu cần
-                                }
-                            });
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        // Xử lý lỗi nếu cần
+                                    }
+                                });
+                            }
                         }
                     }
-                }
             }
 
             @Override

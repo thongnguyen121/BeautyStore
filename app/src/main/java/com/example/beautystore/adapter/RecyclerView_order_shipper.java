@@ -108,7 +108,6 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                     CartDetail item = dataSnapshot.getValue(CartDetail.class);
                     cartDetails.add(item);
                 }
-
                 orderDetailAdapter.notifyDataSetChanged();
             }
             @Override
@@ -174,6 +173,28 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                     }
                 });
                 myDialog.create().show();
+            }
+        });
+
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String savedate = simpleDateFormat.format(calendar.getTime());
+        holder.btnConfirm_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseReference.child("OrderStatus").child(order_id).child("create_at").setValue(savedate);
+                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("4").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Đã xác nhận giao hàng", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            Toast.makeText(context, "Không thành công", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
     }

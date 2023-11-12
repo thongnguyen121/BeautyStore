@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +63,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewOrder_queue.QueueHolder holder, int position) {
         OrderStatus orderStatus = data.get(position);
+        holder.tvDatetime_transaction.setText(orderStatus.getCreate_at());
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
@@ -75,6 +77,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         getRole_member(uid, holder);
         getMember_name(holder, orderStatus.getMember_id());
         setClick_ConfirmShipper(holder);
+        click_confirmStatus(holder);
 
     }
     private void getCartItem(DatabaseReference databaseReference, String order_id, RecyclerViewOrder_queue.QueueHolder holder) {
@@ -148,10 +151,20 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         if (status.equals("2") || status.equals("3"))
         {
             holder.btnConfirm_queue.setEnabled(false);
+            holder.tvClick_note.setVisibility(View.GONE);
+            holder.linner_note.setVisibility(View.VISIBLE);
         }
         else if (status.equals("4") || status.equals("5"))
         {
             holder.btnConfirm_queue.setEnabled(true);
+            holder.tvClick_note.setVisibility(View.VISIBLE);
+            holder.linner_note.setVisibility(View.VISIBLE);
+            if(status.equals("4")){
+                holder.tvTile_status.setText("Ngày giao dịch: ");
+                holder.tvClick_note.setVisibility(View.GONE);
+            } else if (status.equals("5")) {
+                holder.tvTile_status.setText("Ngày hoàn trả: ");
+            }
         }
 
     }
@@ -184,6 +197,38 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
             });
         }
 
+    }
+    private void click_confirmStatus(RecyclerViewOrder_queue.QueueHolder holder){
+        holder.btnConfirm_queue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                holder.btnConfirm_queue.setVisibility(View.GONE);
+                if (status.equals("4"))
+                {
+                    showAlreadyReviewedDialog();
+                }
+                else if (status.equals("5"))
+                {
+                    showAlreadyReviewedDialog_cancel();
+                }
+
+            }
+        });
+    }
+    private void showAlreadyReviewedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Bạn đã nhận tiền đơn hàng này.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+    private void showAlreadyReviewedDialog_cancel() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Xác nhận đơn hàng này đã hủy.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
 
 
@@ -283,10 +328,11 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     }
 
     public static class QueueHolder extends RecyclerView.ViewHolder {
-        TextView tvOrdernumber, tvCustomer_name, tvPhonenumber, tvAddress, tvClick, tvClose, tvDatetime, tvTotalmoney, tvStatus, tvShipper;
+        TextView tvOrdernumber, tvCustomer_name, tvPhonenumber, tvAddress, tvClick, tvClose, tvDatetime,
+                tvTotalmoney, tvStatus, tvShipper, tvClick_note, tvTile_status, tvDatetime_transaction;
         RecyclerView rcOrderDetail;
         Button btnConfirm_shipper, btnConfirm_queue;
-        LinearLayout linearLayout;
+        LinearLayout linearLayout, linner_note;
         public QueueHolder(@NonNull View itemView) {
             super(itemView);
             tvOrdernumber = itemView.findViewById(R.id.tvOrdernumberqueue_admin);
@@ -303,6 +349,11 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
             btnConfirm_shipper = itemView.findViewById(R.id.btnConfirm_shipper);
             btnConfirm_queue = itemView.findViewById(R.id.btnConfirm_queque_admin);
             linearLayout = itemView.findViewById(R.id.linner_orderDetailqueue_admin);
+            linner_note = itemView.findViewById(R.id.linner_note);
+            tvClick_note = itemView.findViewById(R.id.tvClick_note);
+            tvTile_status = itemView.findViewById(R.id.tvstatusTitle);
+            tvDatetime_transaction = itemView.findViewById(R.id.tvDatime_transaction);
+
         }
     }
 }

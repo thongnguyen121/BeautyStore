@@ -1,14 +1,19 @@
 package com.example.beautystore.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +25,8 @@ import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,7 +35,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerViewOder_Customer.OrderHolder> {
     private Context context;
@@ -67,6 +76,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         getCartItem(databaseReference, order_id, holder);
         loadInformation_user(holder, condition);
         loadInformation_order(holder, order_id);
+        setClick_cancle(holder);
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +146,43 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             }
         });
     }
+    private void setClick_cancle(RecyclerViewOder_Customer.OrderHolder holder){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String savedate = simpleDateFormat.format(calendar.getTime());
+        holder.btnCancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder myDialog = new AlertDialog.Builder(context);
+                myDialog.setTitle("Question");
+                myDialog.setMessage("Bản có chắc muốn hủy đơn hàng này");
+                myDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        databaseReference.child("OrderStatus").child(order_id).child("create_at").setValue(savedate);
+                        databaseReference.child("OrderStatus").child(order_id).child("status").setValue("5").addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(context, "Hủy thành công", Toast.LENGTH_SHORT).show();
+
+                                } else {
+                                    Toast.makeText(context, "Không thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+                myDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+                myDialog.create().show();
+            }
+        });
+    }
     private void loadInformation_order(RecyclerViewOder_Customer.OrderHolder holder, String order_id)
     {
         databaseReference.child("Order").child(order_id).addValueEventListener(new ValueEventListener() {
@@ -172,6 +219,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         TextView tvOrder_number, tvDatetime, tvCondition, tvClick, tvTotal_money, tvClose;
         RecyclerView rcOrderDetail;
         LinearLayout linearLayout;
+        Button btnCancle;
         public OrderHolder(@NonNull View itemView) {
             super(itemView);
             tvOrder_number = itemView.findViewById(R.id.tvOrder_customer);
@@ -182,6 +230,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             rcOrderDetail = itemView.findViewById(R.id.rcOrder_list_customer);
             linearLayout = itemView.findViewById(R.id.liner_order_customer);
             tvClose = itemView.findViewById(R.id.tvClose_order_customer);
+            btnCancle = itemView.findViewById(R.id.btn_cancel_order_customer);
         }
     }
 }

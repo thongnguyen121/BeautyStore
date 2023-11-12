@@ -283,14 +283,14 @@
                 android:text="Ngày giao dịch:"
                 android:textStyle="italic"
                 android:textSize="17dp"
-                android:id="@+id/statusTitle"
+                android:id="@+id/tvstatusTitle"
                 ></TextView>
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15/05/2023"
                 android:textSize="17dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:textStyle="italic"
                 android:id="@+id/tvDatime_transaction"
                 ></TextView>

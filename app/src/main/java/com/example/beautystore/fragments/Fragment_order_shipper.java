@@ -91,7 +91,7 @@ public class Fragment_order_shipper extends Fragment {
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
-                    if( orderStatus.getStatus().equals("2") || orderStatus.getStatus().equals("3") || orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("5") )
+                    if( orderStatus.getStatus().equals("2") || orderStatus.getStatus().equals("3"))
                     {
                         data_OrderStatus.add(orderStatus);
                     }
