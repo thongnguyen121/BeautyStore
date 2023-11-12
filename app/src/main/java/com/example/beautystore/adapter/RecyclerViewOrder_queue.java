@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -16,8 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beautystore.R;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,9 +41,10 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     String uid;
-
     String order_id = "";
     String status = "";
+    String role = "";
+    String member_id = "";
 
     public RecyclerViewOrder_queue(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
@@ -62,14 +67,14 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         databaseReference = database.getReference();
         order_id = orderStatus.getOrder_id();
         status = orderStatus.getStatus();
+        member_id = orderStatus.getMember_id();
         getCartItem(databaseReference, order_id, holder);
         loadInformation_status(holder, status);
         loadInformation_order(holder, order_id);
         setClick_Close(holder);
-        if(orderStatus.getMember_id().equals(""))
-        {
-            holder.tvShipper.setText("Chưa có");
-        }
+        getRole_member(uid, holder);
+        getMember_name(holder, orderStatus.getMember_id());
+        setClick_ConfirmShipper(holder);
 
     }
     private void getCartItem(DatabaseReference databaseReference, String order_id, RecyclerViewOrder_queue.QueueHolder holder) {
@@ -94,7 +99,6 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
 
                 orderDetailAdapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -140,6 +144,105 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
 
             }
         });
+
+        if (status.equals("2") || status.equals("3"))
+        {
+            holder.btnConfirm_queue.setEnabled(false);
+        }
+        else if (status.equals("4") || status.equals("5"))
+        {
+            holder.btnConfirm_queue.setEnabled(true);
+        }
+
+    }
+
+    private void getMember_name(RecyclerViewOrder_queue.QueueHolder holder, String uid)
+    {
+
+        if (member_id.equals(""))
+        {
+            holder.tvShipper.setText("Chưa có");
+        }
+        else {
+            databaseReference.child("Member").child(uid).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        Members members = snapshot.getValue(Members.class);
+                        if (members != null) {
+
+                                holder.tvShipper.setText(members.getUsername());
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+    }
+
+
+    private void setClick_ConfirmShipper(RecyclerViewOrder_queue.QueueHolder holder)
+    {
+
+        holder.btnConfirm_shipper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = FirebaseAuth.getInstance().getUid();
+
+                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("3");
+                databaseReference.child("OrderStatus").child(order_id).child("member_id").setValue(userId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Bạn đã nhận đơn", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Nhận đơn hàng thất bãi", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        if (status.equals("3"))
+        {
+            holder.btnConfirm_shipper.setEnabled(false);
+        }
+
+
+    }
+    private void getRole_member(String uid, RecyclerViewOrder_queue.QueueHolder holder)
+    {
+        databaseReference.child("Member").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Members members = snapshot.getValue(Members.class);
+                    if (members != null) {
+                        role = members.getRole();
+                        if (role.equals("1"))
+                        {
+                            holder.btnConfirm_shipper.setVisibility(View.VISIBLE);
+                            holder.btnConfirm_queue.setVisibility(View.GONE);
+                        }
+                        else {
+                            holder.btnConfirm_shipper.setVisibility(View.GONE);
+                            holder.btnConfirm_queue.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 
@@ -200,8 +303,6 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
             btnConfirm_shipper = itemView.findViewById(R.id.btnConfirm_shipper);
             btnConfirm_queue = itemView.findViewById(R.id.btnConfirm_queque_admin);
             linearLayout = itemView.findViewById(R.id.linner_orderDetailqueue_admin);
-
-
         }
     }
 }

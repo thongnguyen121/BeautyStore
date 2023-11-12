@@ -257,25 +257,23 @@
                 android:id="@+id/tvShipper"
                 ></TextView>
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnConfirm_queque_admin"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:background="@drawable/bg_select_status"
             android:text="Xác nhận"
-            android:background="@drawable/bg_btn"
-            android:backgroundTint="@color/btn_blue"
-            android:textColor="@color/white"
-            android:id="@+id/btnConfirm_queque_admin"
-            android:enabled="true"
-            ></androidx.appcompat.widget.AppCompatButton>
+            android:textColor="@color/white"></androidx.appcompat.widget.AppCompatButton>
+
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:text="Nhận"
             android:visibility="gone"
-            android:background="@drawable/bg_btn"
-            android:backgroundTint="@color/btn_blue"
+            android:background="@drawable/bg_select_status"
             android:textColor="@color/white"
             android:id="@+id/btnConfirm_shipper"
             ></androidx.appcompat.widget.AppCompatButton>
