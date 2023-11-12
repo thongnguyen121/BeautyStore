@@ -1,9 +1,5 @@
 package com.example.beautystore.fragments;
 
-import static android.content.Context.MODE_PRIVATE;
-
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,10 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
-import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewOrder_queue;
+import com.example.beautystore.adapter.RecyclerView_order_shipper;
 import com.example.beautystore.model.OrderStatus;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,55 +25,40 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Fragment_order_shipper extends Fragment {
 
-    RecyclerViewOrder_queue recyclerViewOrderQueue;
-    RecyclerView rcOrderqueue_shipper;
+public class Fragment_list_order_memberShipper extends Fragment {
+    RecyclerView_order_shipper recyclerViewOrderShipper;
+    RecyclerView rcOrderlist_shipper;
     ArrayList<OrderStatus> data_OrderStatus = new ArrayList<>();
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     String uid;
-
-    public static final String SHARE_PREFS = "sharedPrefs";
-    Button btnLogout;
+    Button btnback;
     View view;
+    String member_id = "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_order_shipper, container, false);
+        view = inflater.inflate(R.layout.fragment_list_order_member_shipper, container, false);
 
         setControl(view);
+        uid = FirebaseAuth.getInstance().getUid();
         getData_order();
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("check", "");
-                editor.apply();
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
-
         return view;
     }
 
     private void setControl(View view) {
-        btnLogout = view.findViewById(R.id.btnShipperLogout);
-        rcOrderqueue_shipper = view.findViewById(R.id.rcOrder_shipper);
-
+        rcOrderlist_shipper =  view.findViewById(R.id.rcOrder_lít_memberShipper);
+        btnback = view.findViewById(R.id.btnback_shipper);
     }
     private void getData_order()
     {
-        recyclerViewOrderQueue = new RecyclerViewOrder_queue(requireContext(), R.layout.layout_item_order_queue, data_OrderStatus);
+        recyclerViewOrderShipper = new RecyclerView_order_shipper(requireContext(), R.layout.layout_item_order_being_received, data_OrderStatus);
         GridLayoutManager layoutManager1 = new GridLayoutManager(getContext(), 1);
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
-        rcOrderqueue_shipper.setLayoutManager(layoutManager1);
-        rcOrderqueue_shipper.setAdapter(recyclerViewOrderQueue);
+        rcOrderlist_shipper.setLayoutManager(layoutManager1);
+        rcOrderlist_shipper.setAdapter(recyclerViewOrderShipper);
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference orderStatusReference = firebaseDatabase.getReference().child("OrderStatus");
@@ -91,13 +71,18 @@ public class Fragment_order_shipper extends Fragment {
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
-                    if( orderStatus.getStatus().equals("2") || orderStatus.getStatus().equals("3") || orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("5") )
+                    member_id = orderStatus.getMember_id();
+                    if(orderStatus.getStatus().equals("3"))
                     {
-                        data_OrderStatus.add(orderStatus);
+                        if (member_id.equals(uid))
+                        {
+                            data_OrderStatus.add(orderStatus);
+                        }
+
                     }
 
                 }
-                recyclerViewOrderQueue.notifyDataSetChanged();
+                recyclerViewOrderShipper.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -105,6 +90,4 @@ public class Fragment_order_shipper extends Fragment {
             }
         });
     }
-
-
 }

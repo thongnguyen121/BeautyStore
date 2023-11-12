@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_margin="10dp"
     android:background="@color/btn_blue"
+    android:id="@+id/linner_layout_dialog_note"
     >
 
     <TextView
@@ -23,7 +24,7 @@
         ></View>
 
     <EditText
-        android:id="@+id/edt_products_descirption"
+        android:id="@+id/edt_Note"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="@drawable/bg_edittext"
@@ -47,7 +48,7 @@
             android:layout_marginLeft="20dp"
             android:backgroundTint="@color/pink"
             android:textColor="@color/white"
-            android:id="@+id/btn_save_dialog"
+            android:id="@+id/btn_save_dialogNote"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             ></androidx.appcompat.widget.AppCompatButton>
