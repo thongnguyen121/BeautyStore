@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,18 +67,16 @@ public class Fragment_order extends Fragment {
         DatabaseReference orderReference = firebaseDatabase.getReference().child("Order");
 
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        orderStatusReference.addValueEventListener(new ValueEventListener() {
+        orderStatusReference.orderByChild("status").startAt("0").endAt("3").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (data_OrderStatus != null) {
-                    data_OrderStatus.clear();
-                }
+
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
-
-                        if (orderStatus != null && !orderStatus.getStatus().equals("4") && !orderStatus.getStatus().equals("5")) {
-                            // Lấy user_id từ bảng Order dựa trên order_id
+                    Log.d("TAG", "onDataChange: "+orderStatus.getOrder_id());
+                        if (orderStatus != null ) {
+                            data_OrderStatus.clear();
                             String orderId = orderStatus.getOrder_id();
                             if (orderId != null) {
                                 orderReference.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -87,11 +86,14 @@ public class Fragment_order extends Fragment {
                                             String orderUserId = orderSnapshot.child("customer_id").getValue(String.class);
 
                                             if (orderUserId != null && orderUserId.equals(currentUserId)) {
+
                                                 data_OrderStatus.add(orderStatus);
-                                                recyclerViewOderCustomer.notifyDataSetChanged();
+
                                             }
 
                                         }
+                                        recyclerViewOderCustomer.notifyDataSetChanged();
+
                                     }
 
                                     @Override
@@ -102,12 +104,58 @@ public class Fragment_order extends Fragment {
                             }
                         }
                     }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
+
             }
         });
+
+//        orderStatusReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (data_OrderStatus != null) {
+//                    data_OrderStatus.clear();
+//                }
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
+//
+//                        if (orderStatus != null && !orderStatus.getStatus().equals("4") && !orderStatus.getStatus().equals("5")) {
+//
+//                            String orderId = orderStatus.getOrder_id();
+//                            if (orderId != null) {
+//                                orderReference.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+//                                        if (orderSnapshot.exists()) {
+//                                            String orderUserId = orderSnapshot.child("customer_id").getValue(String.class);
+//
+//                                            if (orderUserId != null && orderUserId.equals(currentUserId)) {
+//                                                data_OrderStatus.add(orderStatus);
+//
+//                                            }
+//                                            recyclerViewOderCustomer.notifyDataSetChanged();
+//
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError error) {
+//                                        // Xử lý lỗi nếu cần
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Xử lý lỗi nếu cần
+//            }
+//        });
     }
 }

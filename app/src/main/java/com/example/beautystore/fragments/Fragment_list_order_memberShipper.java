@@ -50,7 +50,7 @@ public class Fragment_list_order_memberShipper extends Fragment {
 
     private void setControl(View view) {
         rcOrderlist_shipper =  view.findViewById(R.id.rcOrder_lít_memberShipper);
-        btnback = view.findViewById(R.id.btnback_shipper);
+
     }
     private void getData_order()
     {

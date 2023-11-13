@@ -38,6 +38,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerViewOder_Customer.OrderHolder> {
     private Context context;
@@ -76,7 +77,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         getCartItem(databaseReference, order_id, holder);
         loadInformation_user(holder, condition);
         loadInformation_order(holder, order_id);
-        setClick_cancle(holder);
+        setClick_cancle(holder, order_id);
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,7 +147,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             }
         });
     }
-    private void setClick_cancle(RecyclerViewOder_Customer.OrderHolder holder){
+    private void setClick_cancle(RecyclerViewOder_Customer.OrderHolder holder, String order_id){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String savedate = simpleDateFormat.format(calendar.getTime());
@@ -159,15 +160,20 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                 myDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        databaseReference.child("OrderStatus").child(order_id).child("create_at").setValue(savedate);
-                        databaseReference.child("OrderStatus").child(order_id).child("status").setValue("5").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                        OrderStatus orderStatus = new OrderStatus(order_id, "5", "","",savedate);
+                        orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                        orderStatuslist.put("status", orderStatus.getStatus());
+                        orderStatuslist.put("member_id", orderStatus.getMember_id());
+                        orderStatuslist.put("note", orderStatus.getNote());
+                        orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                        databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Hủy thành công", Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(context, "Không thành công", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Hủy đơn hàng không thành công", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

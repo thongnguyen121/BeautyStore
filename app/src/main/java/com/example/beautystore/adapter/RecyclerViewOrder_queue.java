@@ -21,6 +21,7 @@ import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
+import com.example.beautystore.model.Rating;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOrder_queue.QueueHolder> {
 
@@ -46,6 +48,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     String status = "";
     String role = "";
     String member_id = "";
+
 
     public RecyclerViewOrder_queue(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
@@ -76,7 +79,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         setClick_Close(holder);
         getRole_member(uid, holder);
         getMember_name(holder, orderStatus.getMember_id());
-        setClick_ConfirmShipper(holder);
+        setClick_ConfirmShipper(holder, order_id);
         click_confirmStatus(holder);
 
     }
@@ -137,7 +140,6 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
                     String value = snapshot.getValue(String.class);
                     if (value != null) {
                         holder.tvStatus.setText(value);
-
                     }
                 }
             }
@@ -207,10 +209,12 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
                 if (status.equals("4"))
                 {
                     showAlreadyReviewedDialog();
+
                 }
                 else if (status.equals("5"))
                 {
                     showAlreadyReviewedDialog_cancel();
+
                 }
 
             }
@@ -232,16 +236,23 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     }
 
 
-    private void setClick_ConfirmShipper(RecyclerViewOrder_queue.QueueHolder holder)
+    private void setClick_ConfirmShipper(RecyclerViewOrder_queue.QueueHolder holder, String order_id)
     {
 
         holder.btnConfirm_shipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userId = FirebaseAuth.getInstance().getUid();
+//                String order_id, String status, String member_id, String note, String create_at
+                final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                OrderStatus orderStatus = new OrderStatus(order_id, "3", userId,"", "");
 
-                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("3");
-                databaseReference.child("OrderStatus").child(order_id).child("member_id").setValue(userId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                orderStatuslist.put("status", orderStatus.getStatus());
+                orderStatuslist.put("member_id", orderStatus.getMember_id());
+                orderStatuslist.put("note", orderStatus.getNote());
+                orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {

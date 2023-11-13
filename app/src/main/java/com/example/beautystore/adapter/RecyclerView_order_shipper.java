@@ -42,6 +42,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerView_order_shipper.ShipperHolder> {
 
@@ -130,15 +131,20 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        databaseReference.child("OrderStatus").child(order_id).child("status").setValue("2");
-                        databaseReference.child("OrderStatus").child(order_id).child("member_id").setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                        OrderStatus orderStatus = new OrderStatus(order_id, "2", "","", "");
+                        orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                        orderStatuslist.put("status", orderStatus.getStatus());
+                        orderStatuslist.put("member_id", orderStatus.getMember_id());
+                        orderStatuslist.put("note", orderStatus.getNote());
+                        orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                        databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Bạn đã hủy đơn hàng", Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(context, "Huy đơn hàng không thành công", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Hủy đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -151,7 +157,6 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                     }
                 });
                 myDialog.create().show();
-
             }
         });
         holder.btnReturn_order.setOnClickListener(new View.OnClickListener() {
@@ -183,15 +188,20 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
         holder.btnConfirm_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                databaseReference.child("OrderStatus").child(order_id).child("create_at").setValue(savedate);
-                databaseReference.child("OrderStatus").child(order_id).child("status").setValue("4").addOnCompleteListener(new OnCompleteListener<Void>() {
+                final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                OrderStatus orderStatus = new OrderStatus(order_id, "4", member_id,"", savedate);
+                orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                orderStatuslist.put("status", orderStatus.getStatus());
+                orderStatuslist.put("member_id", orderStatus.getMember_id());
+                orderStatuslist.put("note", orderStatus.getNote());
+                orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(context, "Đã xác nhận giao hàng", Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(context, "Đơn hàng đã được giao", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(context, "Không thành công", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "không thành công", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -223,15 +233,21 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
             @Override
             public void onClick(View v) {
                 if (order_id != null && savedate != null && context != null && edtNote != null) {
-                    databaseReference.child("OrderStatus").child(order_id).child("status").setValue("5");
-                    databaseReference.child("OrderStatus").child(order_id).child("create_at").setValue(savedate);
-                    databaseReference.child("OrderStatus").child(order_id).child("note").setValue(edtNote.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                    OrderStatus orderStatus = new OrderStatus(order_id, "5",member_id,edtNote.getText().toString(), savedate);
+
+                    orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                    orderStatuslist.put("status", orderStatus.getStatus());
+                    orderStatuslist.put("member_id", orderStatus.getMember_id());
+                    orderStatuslist.put("note", orderStatus.getNote());
+                    orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                    databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Hoàn trả đơn hàng thành công", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(context, "Hoàn trả không thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Hoàn trả đơn hàng không thành công", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -260,8 +276,6 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                         holder.tvAddress.setText(order.getAddress());
                         holder.tvOrdernumber.setText(order.getOrder_id());
                     }
-
-
                 }
             }
 
