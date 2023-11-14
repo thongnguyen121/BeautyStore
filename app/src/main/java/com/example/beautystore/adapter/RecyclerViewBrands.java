@@ -115,7 +115,6 @@ public class RecyclerViewBrands extends RecyclerView.Adapter<RecyclerViewBrands.
                     Products products = dataSnapshot.getValue(Products.class);
                     String id_categories = products.getCategories_id();
 
-
                     // lay id cua categories khi loc prodcucts theo hang
                     categories_id_brands =  products.getCategories_id();
                     //lay brand_id khi loc products theo hang

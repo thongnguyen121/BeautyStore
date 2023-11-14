@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.beautystore.activity.Admin_MainActivity;
+import com.example.beautystore.activity.Shipper_MainActivity;
+import com.example.beautystore.activity.Tuvanvien_MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -79,18 +82,30 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
-        rememberLogin();
+//        rememberLogin();
     }
 
-    private void rememberLogin() {
-    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-    String check = sharedPreferences.getString("check","");
-    if (check.equals("true")){
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-    }
+//    private void rememberLogin() {
+//    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+//    String check = sharedPreferences.getString("check","");
+//    if (check.equals("true")){
+//        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//        startActivity(intent);
+//        finish();
+//    } else if (check.equals("0")) {
+//        Intent intent = new Intent(LoginActivity.this, Admin_MainActivity.class);
+//        startActivity(intent);
+//        finish();
+//    } else if (check.equals("1")) {
+//        Intent intent = new Intent(LoginActivity.this, Shipper_MainActivity.class);
+//        startActivity(intent);
+//        finish();
+//    } else if (check.equals("2")) {
+//        Intent intent = new Intent(LoginActivity.this, Tuvanvien_MainActivity.class);
+//        startActivity(intent);
+//        finish();
+//    }
+//    }
 
     private void login() {
 
@@ -116,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();
-//                                        checkRole(uid);
+                                        checkRole(uid);
                             }
                         }
 
@@ -133,20 +148,35 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkRole(String uid) {
-        databaseReference.child("NhanSu").child(uid).child("role").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("Member").child(uid).child("role").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String a = snapshot.getValue(String.class);
-                if (a.equals("Shipper")) {
+                if (a.equals("1")) {
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("check","1");
+                    editor.apply();
                     Toast.makeText(LoginActivity.this, "sp", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, Shipper_MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                } else if (a.equals("tuvan")) {
+                } else if (a.equals("2")) {
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("check","2");
+                    editor.apply();
                     Toast.makeText(LoginActivity.this, "tv", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, Tuvanvien_MainActivity.class);
                     startActivity(intent);
                 } else {
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("check","0");
+                    editor.apply();
                     Toast.makeText(LoginActivity.this, "am", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(LoginActivity.this, Admin_MainActivity.class);
+                    startActivity(i);
                 }
             }
 

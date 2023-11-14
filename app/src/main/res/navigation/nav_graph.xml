@@ -8,18 +8,14 @@
     <fragment
         android:id="@+id/fragment_admin_employees"
         android:name="com.example.beautystore.fragments.Fragment_admin_employees"
-        android:label="@string/employees"
+        android:label="@string/members"
         tools:layout="@layout/fragment_admin_employees" />
 
     <fragment
         android:id="@+id/fragment_admin_home"
         android:name="com.example.beautystore.fragments.Fragment_admin_home"
         android:label="@string/fragment_home"
-        tools:layout="@layout/fragment_admin_home" >
-        <action
-            android:id="@+id/action_fragment_admin_home_to_activity_add_Brands"
-            app:destination="@id/activity_add_Brands" />
-    </fragment>
+        tools:layout="@layout/fragment_admin_home" />
     <fragment
         android:id="@+id/fragment_admin_statistic"
         android:name="com.example.beautystore.fragments.Fragment_admin_statistic"
@@ -46,5 +42,16 @@
         android:id="@+id/fragment_warehouse_list"
         android:name="com.example.beautystore.fragments.Fragment_warehouse_list"
         android:label="@string/warehouse"
-        tools:layout="@layout/fragment_warehouse_list" />
+        tools:layout="@layout/fragment_warehouse_list" >
+    </fragment>
+    <activity
+        android:id="@+id/activity_add_Categories"
+        android:name="com.example.beautystore.activity.Activity_add_Categories"
+        android:label="activity_add_categories"
+        tools:layout="@layout/activity_add_categories" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.beautystore.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>

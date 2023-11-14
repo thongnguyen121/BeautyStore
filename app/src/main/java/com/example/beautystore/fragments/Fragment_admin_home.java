@@ -1,5 +1,7 @@
 package com.example.beautystore.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,10 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.beautystore.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Fragment_admin_home extends Fragment {
 
-
+    public static final String SHARE_PREFS = "sharedPrefs";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -24,7 +27,11 @@ public class Fragment_admin_home extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_fragment_admin_home_to_activity_add_Brands);
+                FirebaseAuth.getInstance().signOut();
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("check", "");
+                editor.apply();
             }
         });
                return  view;

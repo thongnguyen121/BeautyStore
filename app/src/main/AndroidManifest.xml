@@ -22,9 +22,6 @@
         android:theme="@style/Theme.BeautyStore"
         tools:targetApi="31">
         <activity
-            android:name=".activity.Activity_Messenger"
-            android:exported="false" />
-        <activity
             android:name=".activity.Activity_Cart_Detail"
             android:exported="false">
         </activity>
@@ -36,9 +33,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.Admin_MainActivity"
-            android:exported="false" >
-
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_Order"
             android:exported="false">

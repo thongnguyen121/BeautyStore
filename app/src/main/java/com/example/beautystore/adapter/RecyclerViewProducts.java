@@ -47,11 +47,21 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
         Products products = data.get(position);
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
-
-        holder.tvproductName.setText(products.getProducts_name());
+        if(products.getProducts_name().length() < 13)
+        {
+            holder.tvproductName.setText(products.getProducts_name());
+        }else {
+            holder.tvproductName.setText(products.getProducts_name().substring(0,12) + "...");
+        }
 
         holder.tvPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
-        holder.tvdescription.setText(products.getDescription());
+        if (products.getDescription().length() <= 40){
+            holder.tvdescription.setText(products.getDescription());
+        }
+        else {
+            holder.tvdescription.setText(products.getDescription().substring(0,40) + "...");
+        }
+
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducts);
         id = products.getCategories_id();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
