@@ -84,7 +84,7 @@ public class Activity_Order extends AppCompatActivity {
                 phoneNum = edtPhoneNumber.getText().toString();
                 name = edtUserName.getText().toString();
                 Order order = new Order(autoID,uid,"0",savedate,total,address,phoneNum,name,detail);
-                OrderStatus orderStatus = new OrderStatus(order.getOrder_id(),"0","");
+                OrderStatus orderStatus = new OrderStatus(order.getOrder_id(),"0","", "", "");
                 databaseReference.child("Order").child(autoID).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

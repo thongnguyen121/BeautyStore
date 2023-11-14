@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="10dp"
     android:layout_margin="5dp"
-    app:cardCornerRadius="10dp">
+    >
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DH01"
-                    android:id="@+id/tvOrdernumber_admin"
+                    android:id="@+id/tvOrdernumberqueue_admin"
                     android:textColor="@color/black"
                     android:textSize="20dp"></TextView>
             </LinearLayout>
@@ -45,7 +48,7 @@
                 android:layout_weight="5"
                 android:text="15/5/2020"
                 android:textSize="17dp"
-                android:id="@+id/tvDatetime_order_admin"
+                android:id="@+id/tvDatetime_orderqueue_admin"
                 >
             </TextView>
         </LinearLayout>
@@ -65,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ức Văn Bình"
-                android:id="@+id/tvCustomer_name_order_admin"
+                android:id="@+id/tvCustomer_name_orderqueue_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -85,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0358350740"
-                android:id="@+id/tvPhone_order_admin"
+                android:id="@+id/tvPhone_orderqueue_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -106,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:text="153,Đ 339, Phường Phươc Long B - TP. Thủ Đức"
                 android:textSize="17dp"
-                android:id="@+id/tvAddresses_order_admin"
+                android:id="@+id/tvAddresses_orderqueue_admin"
                 ></TextView>
         </LinearLayout>
 
@@ -127,7 +130,7 @@
                 android:text="Click xem chi tiết đơn hàng"
                 android:textStyle="italic"
                 android:textSize="17dp"
-                android:id="@+id/tvClick_detail_order_admin"
+                android:id="@+id/tvClick_detailorder_queue_admin"
                 ></TextView>
             <TextView
                 android:layout_width="match_parent"
@@ -137,7 +140,7 @@
                 android:gravity="end"
                 android:visibility="gone"
                 android:textStyle="italic"
-                android:id="@+id/tvClose_order_admin"
+                android:id="@+id/tvClose_orderqueue_admin"
                 ></TextView>
         </LinearLayout>
         <LinearLayout
@@ -145,7 +148,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            android:id="@+id/linner_orderDetail_admin"
+            android:id="@+id/linner_orderDetailqueue_admin"
             >
 
             <LinearLayout
@@ -183,17 +186,40 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcOrder_list_admin"
+                android:id="@+id/rcOrder_queue_list_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 ></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trạng thái: "
+
+                android:textSize="17dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bla"
+                android:textSize="17dp"
+                android:id="@+id/tvTotal_Statusqueue_admin"
+                ></TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -208,54 +234,89 @@
                 android:layout_height="wrap_content"
                 android:text="200.000Đ"
                 android:textSize="20dp"
-                android:id="@+id/tvTotal_money_admin"
+                android:id="@+id/tvTotal_moneyqueue_admin"
                 ></TextView>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Người giao hàng: "
+                android:textSize="17dp"
+                ></TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bla"
+                android:textSize="17dp"
+                android:id="@+id/tvShipper"
+                ></TextView>
+        </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click xem lý do"
+                android:textStyle="italic"
+                android:textSize="17dp"
+                android:id="@+id/tvClick_note"
+                android:layout_margin="5dp"
+                android:visibility="gone"
+                ></TextView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/bg_pink"
-            android:gravity="center"
             android:orientation="horizontal"
-            android:id="@+id/linner_button_order_admin"
+            android:layout_margin="5dp"
+            android:id="@+id/linner_note"
+            android:visibility="gone"
             >
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="150dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/bg_btn"
-                android:backgroundTint="@color/red"
-                android:text="Hủy"
-                android:textColor="@color/white"
-                android:id="@+id/btnCacel_order_admin"
-                ></androidx.appcompat.widget.AppCompatButton>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="150dp"
+                android:text="Ngày giao dịch:"
+                android:textStyle="italic"
+                android:textSize="17dp"
+                android:id="@+id/tvstatusTitle"
+                ></TextView>
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/bg_btn"
-                android:backgroundTint="@color/btn_blue"
-                android:text="Xác Nhận"
-                android:textColor="@color/white"
-                android:id="@+id/btnConfirm_order_admin"
-                ></androidx.appcompat.widget.AppCompatButton>
+                android:text="15/05/2023"
+                android:textSize="17dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="italic"
+                android:id="@+id/tvDatime_transaction"
+                ></TextView>
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_btn"
-            android:backgroundTint="@color/btn_blue"
-            android:text="Xác Nhận"
-            android:textColor="@color/white"
-            android:textSize="17dp"
-            android:visibility="gone"
-            android:id="@+id/btnConfirm_order_admin_packing"
 
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnConfirm_queque_admin"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/bg_select_status"
+            android:text="Xác nhận"
+            android:textColor="@color/white"></androidx.appcompat.widget.AppCompatButton>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Nhận"
+            android:visibility="gone"
+            android:background="@drawable/bg_select_status"
+            android:textColor="@color/white"
+            android:id="@+id/btnConfirm_shipper"
             ></androidx.appcompat.widget.AppCompatButton>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

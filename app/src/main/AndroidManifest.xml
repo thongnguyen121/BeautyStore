@@ -22,6 +22,9 @@
         android:theme="@style/Theme.BeautyStore"
         tools:targetApi="31">
         <activity
+            android:name=".activity.Activity_Messenger"
+            android:exported="false" />
+      <activity
             android:name=".activity.Activity_add_members"
             android:exported="false" />
         <activity

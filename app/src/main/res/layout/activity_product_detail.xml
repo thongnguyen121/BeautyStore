@@ -111,6 +111,7 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,8 +141,8 @@
                     android:id="@+id/ivProductDetailAddWishList"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/baseline_favorite_24" />
+                    android:src="@drawable/baseline_favorite_border_24"
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <LinearLayout

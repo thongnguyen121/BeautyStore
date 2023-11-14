@@ -12,6 +12,9 @@ import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Rating;
 import com.example.beautystore.adapter.RecyclerView_WishList;
 import com.example.beautystore.model.WishList;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
@@ -21,17 +24,21 @@ public class Activity_Wish_List extends AppCompatActivity {
     RecyclerView wishlistRecyclerView;
     RecyclerView_WishList wishListAdapter;
     ArrayList<WishList> wishLists;
+    FirebaseUser fuser;
+    DatabaseReference reference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wish_list);
 
         setScreenElement();
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+
     }
 
     private void setScreenElement(){
         //Recyclerview:
-        wishlistRecyclerView = findViewById(R.id.rvWishList);
+//        wishlistRecyclerView = findViewById(R.id.rvWishList);
         wishLists = new ArrayList<>();
         createWishListList();
         wishListAdapter = new RecyclerView_WishList(wishLists, this);

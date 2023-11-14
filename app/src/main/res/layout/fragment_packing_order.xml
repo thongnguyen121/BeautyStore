@@ -3,12 +3,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.Fragment_packing_order">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    tools:context=".fragments.Fragment_packing_order"
+    android:background="@color/background_admin"
+    >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        >
+        <SearchView
+            android:id="@+id/idsearchview_orderPacking_admin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_searchview"
+            android:gravity="center"
+            android:queryHint="Search"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_margin="5dp"
+            >
+        </SearchView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Danh sách đơn hàng"
+            android:textSize="20dp"
+            android:textColor="@color/pink"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            ></TextView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rcOrder_admin_packing"
+            ></androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
 </FrameLayout>
