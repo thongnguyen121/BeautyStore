@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_shipper_graph"
+    app:startDestination="@id/fragment_list_order_memberShipper">
+
+    <fragment
+        android:id="@+id/fragment_list_order_memberShipper"
+        android:name="com.example.beautystore.fragments.Fragment_list_order_memberShipper"
+        android:label="fragment_list_order_member_shipper"
+        tools:layout="@layout/fragment_list_order_member_shipper" />
+    <fragment
+        android:id="@+id/fragment_order_shipper"
+        android:name="com.example.beautystore.fragments.Fragment_order_shipper"
+        android:label="fragment_order_shipper"
+        tools:layout="@layout/fragment_order_shipper" />
+    <fragment
+        android:id="@+id/fragment_shipper_profile"
+        android:name="com.example.beautystore.fragments.Fragment_shipper_profile"
+        android:label="fragment_shipper_profile"
+        tools:layout="@layout/fragment_shipper_profile" />
+</navigation>
