@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Members;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -140,7 +141,6 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Customer customer = new Customer(name,email,pass,phoneNum,"https://firebasestorage.googleapis.com/v0/b/beautystore-8082e.appspot.com/o/imgProfile%2Fprofile_default.jpg?alt=media&token=53a80567-0eb2-4584-a746-5359e4d08ac7","","");
-                    Members members = new Members(name,email,pass,phoneNum,"","","","","2");
                     databaseReference.child("Customer").child(firebaseAuth.getCurrentUser().getUid()).setValue(customer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -158,6 +158,11 @@ public class SignUpActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(SignUpActivity.this, "Thất bại", Toast.LENGTH_SHORT).show();
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(SignUpActivity.this, "khong the", Toast.LENGTH_SHORT).show();
             }
         });
     }

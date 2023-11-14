@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.activity.Tuvanvien_MainActivity;
+import com.example.beautystore.model.Members;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -124,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("check","true");
+
                                 editor.apply();
                                 Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -148,37 +151,82 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkRole(String uid) {
-        databaseReference.child("Member").child(uid).child("role").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("Member").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String a = snapshot.getValue(String.class);
-                if (a.equals("1")) {
-                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("check","1");
-                    editor.apply();
-                    Toast.makeText(LoginActivity.this, "sp", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, Shipper_MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                } else if (a.equals("2")) {
-                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("check","2");
-                    editor.apply();
-                    Toast.makeText(LoginActivity.this, "tv", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, Tuvanvien_MainActivity.class);
-                    startActivity(intent);
-                } else {
-                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("check","0");
-                    editor.apply();
-                    Toast.makeText(LoginActivity.this, "am", Toast.LENGTH_SHORT).show();
+                if (snapshot.exists()){
+                    Members members = snapshot.getValue(Members.class);
+                    if (members.getRole().equals("1")) {
+                        if (members.getStatus().equals("1")){
+                            FirebaseAuth.getInstance().signOut();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("check","1");
+                            editor.apply();
+                            Toast.makeText(LoginActivity.this, "sp", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, Shipper_MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
 
-                    Intent i = new Intent(LoginActivity.this, Admin_MainActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(i);
+                    } else if (members.getRole().equals("2")) {
+                        if (members.getStatus().equals("1")){
+                            FirebaseAuth.getInstance().signOut();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("check", "2");
+                            editor.apply();
+                            Toast.makeText(LoginActivity.this, "tv", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, Tuvanvien_MainActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        if (members.getStatus().equals("1")){
+                            FirebaseAuth.getInstance().signOut();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("check", "0");
+                            editor.putString("email", email);
+                            editor.putString("pass", pass);
+                            editor.apply();
+                            Toast.makeText(LoginActivity.this, "am", Toast.LENGTH_SHORT).show();
+
+                            Intent i = new Intent(LoginActivity.this, Admin_MainActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkStatus() {
+        databaseReference.child("Member").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Members members = snapshot.getValue(Members.class);
+                    Log.d("TAG", "status cua mem ber la: ." + members.getStatus());
+                    if (members.getStatus().equals("1")){
+                        FirebaseAuth.getInstance().signOut();
+                        Toast.makeText(LoginActivity.this, "Lmao tài khoản của bạn đã bị khóa", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

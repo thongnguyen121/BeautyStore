@@ -55,7 +55,7 @@ public class Admin_MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
-
+//        FirebaseAuth.getInstance().signOut();
         bottomNavigationView = findViewById(R.id.bottomNavigationAdminMenu);
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_container);

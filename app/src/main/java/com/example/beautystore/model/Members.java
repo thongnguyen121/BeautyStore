@@ -1,18 +1,42 @@
 package com.example.beautystore.model;
 
 public class Members {
-    String username, email, password, phoneNumber, profileImage, hinhCCCDMatTruoc, hinhCCCDMatSau, status, role;
+    String id,username, email, password, phoneNumber, profileImage, cccd, status, role, address;
 
-    public Members(String username, String email, String password, String phoneNumber, String profileImage, String hinhCCCDMatTruoc, String hinhCCCDMatSau, String status, String role) {
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Members(String id, String username, String email, String password, String phoneNumber, String profileImage, String cccd, String status, String role, String address) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.profileImage = profileImage;
-        this.hinhCCCDMatTruoc = hinhCCCDMatTruoc;
-        this.hinhCCCDMatSau = hinhCCCDMatSau;
+        this.cccd = cccd;
         this.status = status;
         this.role = role;
+        this.address = address;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCccd() {
+        return cccd;
+    }
+
+    public void setCccd(String cccd) {
+        this.cccd = cccd;
     }
 
     public Members() {
@@ -58,21 +82,7 @@ public class Members {
         this.profileImage = profileImage;
     }
 
-    public String getHinhCCCDMatTruoc() {
-        return hinhCCCDMatTruoc;
-    }
 
-    public void setHinhCCCDMatTruoc(String hinhCCCDMatTruoc) {
-        this.hinhCCCDMatTruoc = hinhCCCDMatTruoc;
-    }
-
-    public String getHinhCCCDMatSau() {
-        return hinhCCCDMatSau;
-    }
-
-    public void setHinhCCCDMatSau(String hinhCCCDMatSau) {
-        this.hinhCCCDMatSau = hinhCCCDMatSau;
-    }
 
     public String getStatus() {
         return status;

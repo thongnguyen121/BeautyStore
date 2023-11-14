@@ -81,10 +81,10 @@ public class Fragment_editProfile extends Fragment {
     DatabaseReference reference;
     StorageReference storageReference;
     String uid = "", email = "", name = "", phoneNum = "", address = "", password = "", status = "", extention = "";
-    Uri  imageUri = Uri.parse("");
+    Uri imageUri = Uri.parse("");
     private static final int PICK_IMAGE_REQUEST = 1;
     private ProgressBar progressBar;
-        ActivityResultLauncher<Intent> resultLaucher;
+    ActivityResultLauncher<Intent> resultLaucher;
     String[] required_permissions;
     boolean is_storage_image_permitted = false;
     boolean is_camera_access_permitted = false;
@@ -93,7 +93,8 @@ public class Fragment_editProfile extends Fragment {
     FragmentManager fragmentManage;
     ActivityResultLauncher<Intent> cameraResultLauncher;
     boolean seletedImage = false;
-SpinKitView spinKitView;
+    SpinKitView spinKitView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -132,10 +133,9 @@ SpinKitView spinKitView;
 
                 if (seletedImage == false) {
 
-                    Toast.makeText(getContext(), "Chua co chon cai con me gi het "+imageUri, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Chua co chon cai con me gi het " + imageUri, Toast.LENGTH_SHORT).show();
                     updateAccountIntoFirebaseWithoutImg();
-                }
-                else {
+                } else {
                     Toast.makeText(getContext(), "da chon hinh anh", Toast.LENGTH_SHORT).show();
                     saveInfo();
                     seletedImage = false;
@@ -160,13 +160,13 @@ SpinKitView spinKitView;
                 spinKitView.setVisibility(View.GONE);
                 setViewEnable(true);
                 Toast.makeText(getContext(), "co the" + imageUri, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "co the: "+imageUri );
+                Log.e(TAG, "co the: " + imageUri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getContext(), "khong the" + e, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "khong the: " +e);
+                Log.d(TAG, "khong the: " + e);
             }
         });
     }
@@ -204,6 +204,7 @@ SpinKitView spinKitView;
                     Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
@@ -238,6 +239,7 @@ SpinKitView spinKitView;
                     Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
@@ -425,7 +427,6 @@ SpinKitView spinKitView;
             is_camera_access_permitted = false;
         }
     });
-
 
 
     private void setControl(View view) {
