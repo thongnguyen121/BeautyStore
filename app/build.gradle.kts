@@ -50,4 +50,5 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("org.greenrobot:eventbus:3.3.1")
     implementation ("com.github.ybq:Android-SpinKit:1.4.0")
+    implementation ("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }

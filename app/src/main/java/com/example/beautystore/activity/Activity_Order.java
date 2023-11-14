@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class Activity_Order extends AppCompatActivity {
     TextView tvTotalPrice;
     Spinner spPaymentMethod;
     Button btnOrder;
+    ImageView ivBack;
     ArrayList<CartDetail> cartDetails = new ArrayList<>();
     RecyclerView orderDetailRecyclerView;
     RecyclerView_Order orderDetailAdapter;
@@ -107,10 +109,13 @@ public class Activity_Order extends AppCompatActivity {
                     }
                 });
             }
-
-
         });
-
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void saveCartItem(DatabaseReference databaseReference, String uid) {
@@ -219,7 +224,7 @@ public class Activity_Order extends AppCompatActivity {
         edtUserName = findViewById(R.id.edtOrderUserName);
         edtAddress = findViewById(R.id.edtOrderAddress);
         edtPhoneNumber = findViewById(R.id.edtOrderPhoneNumber);
-
+        ivBack = findViewById(R.id.ivBackOrder);
         tvTotalPrice = findViewById(R.id.tvOrderTotalMoney);
         spPaymentMethod = findViewById(R.id.spOrderPaymentMethod);
         btnOrder = findViewById(R.id.btnOrderOrderButton);

@@ -22,10 +22,12 @@
         android:theme="@style/Theme.BeautyStore"
         tools:targetApi="31">
         <activity
+            android:name=".activity.Activity_add_members"
+            android:exported="false" />
+        <activity
             android:name=".activity.Activity_Cart_Detail"
-            android:exported="false">
-        </activity>
-      <activity
+            android:exported="false"></activity>
+        <activity
             android:name=".activity.Tuvanvien_MainActivity"
             android:exported="false" />
         <activity
@@ -33,24 +35,16 @@
             android:exported="false" />
         <activity
             android:name=".activity.Admin_MainActivity"
-            android:exported="false" >
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activity.Activity_Order"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activity.Activity_Wish_List"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activity.Activity_Product_Detail"
-            android:exported="false" >
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activity.Admin_MainActivity"
             android:exported="false" />

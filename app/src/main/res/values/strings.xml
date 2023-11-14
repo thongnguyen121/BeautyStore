@@ -66,5 +66,14 @@
     <string name="order_in_progress">Danh sách đơn hàng chưa xử lý</string>
     <string name="packing_order">Đơn hàng đóng gói</string>
     <string name="order_queue">Đơn hàng giao và nhận</string>
-
+    <string name="add_employee">Thêm nhân viên</string>
+    <string name="enter_address">Nhập địa chỉ</string>
+    <string name="role">Vai trò</string>
+    <string name="cccd">Số CCCD</string>
+    <string name="enter_cccd">Nhập số CCCD</string>
+    <string name="edit_employee">Sửa nhân viên</string>
+    <string-array name="role">
+        <item>Shipper</item>
+        <item>Nhân viên tư vấn</item>
+    </string-array>
 </resources>
