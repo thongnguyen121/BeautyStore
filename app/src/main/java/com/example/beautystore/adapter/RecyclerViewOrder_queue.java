@@ -1,11 +1,19 @@
 package com.example.beautystore.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +56,11 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     String status = "";
     String role = "";
     String member_id = "";
+    String create_at = "";
+    Button btnSave;
+    EditText edtNote;
+    String note = "";
+
 
 
     public RecyclerViewOrder_queue(Context context, int resource, ArrayList<OrderStatus> data) {
@@ -73,6 +86,9 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         order_id = orderStatus.getOrder_id();
         status = orderStatus.getStatus();
         member_id = orderStatus.getMember_id();
+        create_at = orderStatus.getCreate_at();
+        note = orderStatus.getNote();
+
         getCartItem(databaseReference, order_id, holder);
         loadInformation_status(holder, status);
         loadInformation_order(holder, order_id);
@@ -81,6 +97,15 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         getMember_name(holder, orderStatus.getMember_id());
         setClick_ConfirmShipper(holder, order_id);
         click_confirmStatus(holder);
+        getNote(holder, order_id);
+
+        if (note.equals(""))
+        {
+            holder.tvClick_note.setVisibility(View.GONE);
+        }
+        else {
+            holder.tvClick_note.setVisibility(View.VISIBLE);
+        }
 
     }
     private void getCartItem(DatabaseReference databaseReference, String order_id, RecyclerViewOrder_queue.QueueHolder holder) {
@@ -155,12 +180,14 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
             holder.btnConfirm_queue.setEnabled(false);
             holder.tvClick_note.setVisibility(View.GONE);
             holder.linner_note.setVisibility(View.VISIBLE);
+            holder.tvTile_status.setVisibility(View.GONE);
         }
         else if (status.equals("4") || status.equals("5"))
         {
             holder.btnConfirm_queue.setEnabled(true);
             holder.tvClick_note.setVisibility(View.VISIBLE);
             holder.linner_note.setVisibility(View.VISIBLE);
+            holder.tvTile_status.setVisibility(View.VISIBLE);
             if(status.equals("4")){
                 holder.tvTile_status.setText("Ngày giao dịch: ");
                 holder.tvClick_note.setVisibility(View.GONE);
@@ -168,7 +195,6 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
                 holder.tvTile_status.setText("Ngày hoàn trả: ");
             }
         }
-
     }
 
     private void getMember_name(RecyclerViewOrder_queue.QueueHolder holder, String uid)
@@ -201,25 +227,72 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
 
     }
     private void click_confirmStatus(RecyclerViewOrder_queue.QueueHolder holder){
+
         holder.btnConfirm_queue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 holder.btnConfirm_queue.setVisibility(View.GONE);
                 if (status.equals("4"))
                 {
                     showAlreadyReviewedDialog();
-
                 }
                 else if (status.equals("5"))
                 {
                     showAlreadyReviewedDialog_cancel();
-
                 }
+            }
+        });
+    }
+
+    private void openDialog_update_status(int gravity) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_dialog_note);
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = gravity;
+        window.setAttributes(windowAttributes);
+
+        edtNote = dialog.findViewById(R.id.edt_Note);
+        btnSave = dialog.findViewById(R.id.btn_save_dialogNote);
+
+        btnSave.setVisibility(View.GONE);
+        dialog.show();
+
+    }
+    private void getNote(RecyclerViewOrder_queue.QueueHolder holder, String order_id)
+    {
+        holder.tvClick_note.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                databaseReference.child("OrderStatus").child(order_id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            OrderStatus orderStatus = snapshot.getValue(OrderStatus.class);
+                            if (orderStatus != null) {
+                                edtNote.setText(orderStatus.getNote());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                openDialog_update_status(Gravity.CENTER);
 
             }
         });
     }
+
     private void showAlreadyReviewedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Thông báo");
@@ -231,6 +304,13 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Thông báo");
         builder.setMessage("Xác nhận đơn hàng này đã hủy.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+    private void showAlreadyReviewedDialog_note() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Thông báo");
+        builder.setMessage("không có lý do");
         builder.setPositiveButton("OK", null);
         builder.show();
     }
@@ -246,7 +326,6 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
 //                String order_id, String status, String member_id, String note, String create_at
                 final HashMap<String, Object> orderStatuslist = new HashMap<>();
                 OrderStatus orderStatus = new OrderStatus(order_id, "3", userId,"", "");
-
                 orderStatuslist.put("order_id", orderStatus.getOrder_id());
                 orderStatuslist.put("status", orderStatus.getStatus());
                 orderStatuslist.put("member_id", orderStatus.getMember_id());

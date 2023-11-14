@@ -78,6 +78,17 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         loadInformation_user(holder, condition);
         loadInformation_order(holder, order_id);
         setClick_cancle(holder, order_id);
+
+        if (condition.equals("3"))
+        {
+            holder.btnCancle.setVisibility(View.GONE);
+        }
+        else {
+            holder.btnCancle.setVisibility(View.VISIBLE);
+        }
+
+
+
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

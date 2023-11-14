@@ -1,12 +1,18 @@
 package com.example.beautystore.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +39,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerViewProgress_order.ProgressHolder> {
@@ -143,6 +151,7 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
     }
 
 
+
     private void loadInformation_order(RecyclerViewProgress_order.ProgressHolder holder, String order_id)
     {
         databaseReference.child("Order").child(order_id).addValueEventListener(new ValueEventListener() {
@@ -216,19 +225,29 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
             @Override
             public void onClick(View v) {
 
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                String savedate = simpleDateFormat.format(calendar.getTime());
                 AlertDialog.Builder myDialog = new AlertDialog.Builder(context);
                 myDialog.setTitle("Question");
-                myDialog.setMessage("Bạn có chắc muốn hủy đơn hàng này?");
+                myDialog.setMessage("Bạn chắc xác nhận hủy đơn hàng này?");
                 myDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        databaseReference.child("OrderStatus").child(order_id).child("status").setValue("5").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final HashMap<String, Object> orderStatuslist = new HashMap<>();
+                        OrderStatus orderStatus = new OrderStatus(order_id, "7", "","", savedate);
+                        orderStatuslist.put("order_id", orderStatus.getOrder_id());
+                        orderStatuslist.put("status", orderStatus.getStatus());
+                        orderStatuslist.put("member_id", orderStatus.getMember_id());
+                        orderStatuslist.put("note", orderStatus.getNote());
+                        orderStatuslist.put("create_at", orderStatus.getCreate_at());
+                        databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(context, "Hủy không thành công", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Hủy đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
