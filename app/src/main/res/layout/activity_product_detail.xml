@@ -273,7 +273,6 @@
             android:layout_gravity="center"
             android:numStars="5"
             android:stepSize="1"
-            android:background="@color/white"
             android:progressTint="@color/yellow"
             />
         <LinearLayout

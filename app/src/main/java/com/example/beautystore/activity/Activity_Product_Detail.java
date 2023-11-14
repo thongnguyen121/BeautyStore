@@ -405,6 +405,7 @@ double total = 0;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
                 }
                 else {
+                    firebaseDatabase.getReference().child("WishList").child(uid).child(productId).removeValue();
                     isOnWishList = false;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
                 }
