@@ -16,12 +16,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Rating;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
+import com.example.beautystore.model.WishList;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,9 +36,13 @@ import java.util.ArrayList;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    String productId = "";
+    Boolean isOnWishList;
+
+    String productId = "", imgProduct1,imgProduct2,imgProduct3;
 
     int productQty =1;
+
+    String UID;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -47,42 +55,74 @@ public class Activity_Product_Detail extends AppCompatActivity {
     RecyclerView_Rating ratingAdapter; //Adapter
     private RecyclerView ratingRecyclerView;
     private ArrayList<Rating> ratings;
+    private ArrayList<WishList> wishLists;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
         setScreenElement();
 
+        setAddWishListButton();
         setScreenData();
         changeBigProductImage();
         increaseProductQty();
         decreaseProductQty();
         productId = getIntent().getStringExtra("products_id");
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
         Log.d("TAG", "onCreate: " + productId);
 
+        UID = FirebaseAuth.getInstance().getUid();
+
+        addOrRemoveProductToWishList();
 
         //intent_getData(productId);
 
         ivMessenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(v.getContext(), Activity_Product_Detail.class);
+                Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
+                intent.putExtra("products_id", productId);
+                intent.putExtra("user_id", UID);
+                startActivity(intent);
             }
         });
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                finish();
             }
         });
 
     }
 
+    private void setAddWishListButton(){
+        wishLists = new ArrayList<>();
+        databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
+        databaseReference.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(productId).exists()){
+                    Log.d("TAG", "onDataChange: sp co trong wishlist");
+                    isOnWishList = true;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                }
+                else {
+                    isOnWishList = false;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void getDataFromFireBase(String productId){
+        databaseReference = firebaseDatabase.getReference("Products");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -91,6 +131,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
                     tvProductPrice.setText(products.getPrice());
+                    imgProduct1 = products.getImgProducts_1();
+                    imgProduct2 = products.getImgProducts_2();
+                    imgProduct3 = products.getImgProduct_3();
                     Glide.with(Activity_Product_Detail.this)
                             .load(products.getImgProducts_1())
                             .into(ivProductBig);
@@ -177,14 +220,16 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivProductSmall1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ivProductBig.setImageDrawable(ivProductSmall1.getDrawable());
+//                ivProductBig.setImageDrawable(ivProductSmall1.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct1).into(ivProductBig);
             }
         });
 
         ivProductSmall2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ivProductBig.setImageDrawable(ivProductSmall2.getDrawable());
+//                ivProductBig.setImageDrawable(ivProductSmall2.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct2).into(ivProductBig);
             }
         });
 
@@ -192,12 +237,34 @@ public class Activity_Product_Detail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ivProductBig.setImageDrawable(ivProductSmall3.getDrawable());
+                Glide.with(Activity_Product_Detail.this).load(imgProduct3).into(ivProductBig);
             }
         });
     }
 
     protected void addOrRemoveProductToWishList(){
+        ivAddWishList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isOnWishList){
+                    databaseReference = firebaseDatabase.getReference().child("WishList");
+                    WishList wishList = new WishList(UID, productId, "");
+                    databaseReference.child(UID).child(productId).setValue(wishList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(Activity_Product_Detail.this, "Add Wish List Successfully!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    isOnWishList = true;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                }
+                else {
+                    isOnWishList = false;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
 
+                }
+            }
+        });
     }
 
     protected void setScreenElement(){

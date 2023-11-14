@@ -123,7 +123,7 @@
             >
             <TextView
                 android:id="@+id/tvProductDetailProductName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Product Name"
                 android:textSize="20sp"
@@ -133,7 +133,7 @@
                 android:id="@+id/ivProductDetailAddWishList"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_favorite_24"
+                android:src="@drawable/baseline_favorite_border_24"
                 android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
