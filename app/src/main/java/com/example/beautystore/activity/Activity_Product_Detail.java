@@ -133,7 +133,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     tvProductPrice.setText(products.getPrice());
                     imgProduct1 = products.getImgProducts_1();
                     imgProduct2 = products.getImgProducts_2();
-                    imgProduct3 = products.getImgProduct_3();
+                    imgProduct3 = products.getImgProducts_3();
                     Glide.with(Activity_Product_Detail.this)
                             .load(products.getImgProducts_1())
                             .into(ivProductBig);
@@ -144,7 +144,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                             .load(products.getImgProducts_2())
                             .into(ivProductSmall2);
                     Glide.with(Activity_Product_Detail.this)
-                            .load(products.getImgProduct_3())
+                            .load(products.getImgProducts_3())
                             .into(ivProductSmall3);
                 }
             }
@@ -202,7 +202,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_1()).into(ivProductBig);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_1()).into(ivProductSmall1);
                 Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_2()).into(ivProductSmall2);
-                Glide.with(Activity_Product_Detail.this).load(products.getImgProduct_3()).into(ivProductSmall3);
+                Glide.with(Activity_Product_Detail.this).load(products.getImgProducts_3()).into(ivProductSmall3);
             }
 
             @Override
