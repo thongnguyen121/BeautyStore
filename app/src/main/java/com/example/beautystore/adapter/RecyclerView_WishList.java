@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,9 @@ import java.util.ArrayList;
 public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_WishList.WishListViewHolder> {
 
     private ArrayList<WishList> data;
-    private Activity_Wish_List context;
+    private Context context;
 
-    public RecyclerView_WishList(ArrayList<WishList> data, Activity_Wish_List context) {
+    public RecyclerView_WishList(ArrayList<WishList> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -42,6 +43,7 @@ public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_Wis
         Glide.with(context)
                 .load(R.drawable.abc)
                 .into(holder.ivProductImage); //Fix replace image with image in firebase
+
         holder.tvProductName.setText(wishList.getProduct_id()); //Fix replace product name with firebase
     }
 

@@ -43,10 +43,11 @@ import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
+import com.example.beautystore.model.WishList;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -65,9 +66,12 @@ import java.util.Map;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
+  Boolean isOnWishList;
     String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3,uid, price, autoId_rating;
 double total = 0;
     int productQty = 1;
+
+    String UID;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -78,6 +82,7 @@ double total = 0;
     TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
+    private ArrayList<WishList> wishLists;
     RecyclerView_Rating ratingAdapter; //Adapter=
     boolean productExist = false;
     private RecyclerView ratingRecyclerView, rcDSlienquan;
@@ -92,6 +97,7 @@ double total = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
         setScreenElement();
+        setAddWishListButton();
         setScreenData();
         changeBigProductImage();
         increaseProductQty();
@@ -103,24 +109,30 @@ double total = 0;
         user_id = getIntent().getStringExtra("user_id");
         Toast.makeText(this, "cate_id" + cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
         getData_DSLienquan(cate_id);
         createRatingsList();
         reView_products();
         Log.d("TAG", "onCreate: " + productId);
+
+        UID = FirebaseAuth.getInstance().getUid();
+
+        addOrRemoveProductToWishList();
         //intent_getData(productId);
         ivMessenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(v.getContext(), Activity_Product_Detail.class);
+                Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
+                intent.putExtra("products_id", productId);
+                intent.putExtra("user_id", UID);
+                startActivity(intent);
             }
         });
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                finish();
             }
         });
         btnAddCart.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +215,29 @@ double total = 0;
         });
     }
 
+    private void setAddWishListButton(){
+        wishLists = new ArrayList<>();
+        databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
+        databaseReference.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(productId).exists()){
+                    Log.d("TAG", "onDataChange: sp co trong wishlist");
+                    isOnWishList = true;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                }
+                else {
+                    isOnWishList = false;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private void getDataFromFireBase(String productId) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
@@ -352,8 +387,28 @@ double total = 0;
         });
     }
 
-    protected void addOrRemoveProductToWishList() {
-
+    protected void addOrRemoveProductToWishList(){
+        ivAddWishList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isOnWishList){
+                    databaseReference = firebaseDatabase.getReference().child("WishList");
+                    WishList wishList = new WishList(UID, productId, "");
+                    databaseReference.child(UID).child(productId).setValue(wishList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(Activity_Product_Detail.this, "Add Wish List Successfully!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    isOnWishList = true;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                }
+                else {
+                    isOnWishList = false;
+                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+                }
+            }
+        });
     }
 
     protected void setScreenElement() {
