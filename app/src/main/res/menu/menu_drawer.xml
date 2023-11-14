@@ -7,10 +7,10 @@
         android:checkableBehavior="single"
         >
 
-        <item android:id="@+id/Edit_profile"
+        <item android:id="@+id/fragment_editProfile"
             android:title="Edit Profile"
             ></item>
-        <item android:id="@+id/Transaction_history"
+        <item android:id="@+id/fragment_transaction_history"
             android:title="Transaction history"
             ></item>
 

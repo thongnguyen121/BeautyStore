@@ -10,6 +10,15 @@
         <item android:id="@+id/fragment_customer_list"
             android:title="@string/customer_list"
             ></item>
+        <item android:id="@+id/fragment_order_in_progress"
+            android:title="@string/order_in_progress"
+            ></item>
+        <item android:id="@+id/fragment_packing_order"
+            android:title="@string/packing_order"
+            ></item>
+        <item android:id="@+id/fragment_order_queue"
+            android:title="@string/order_queue"
+            ></item>
         <item android:id="@+id/AdminLogout"
             android:title="@string/logout"
             ></item>

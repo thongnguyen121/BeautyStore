@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.fragments.Fragment_home;
+import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
@@ -144,6 +145,7 @@ public class RecyclerViewBrands extends RecyclerView.Adapter<RecyclerViewBrands.
                     });
                 }
 
+                Fragment_home.recylerViewCategories.notifyDataSetChanged();
                 Fragment_home.recyclerViewProducts.notifyDataSetChanged();
             }
 

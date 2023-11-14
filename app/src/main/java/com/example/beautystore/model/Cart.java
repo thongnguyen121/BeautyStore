@@ -1,30 +1,43 @@
 package com.example.beautystore.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cart {
-    private String cart_id;
-    private String customer_id;
+    private String user_id;
+    private List<CartDetail> items = new ArrayList<>();
+    private String total;
 
     public Cart() {
     }
 
-    public Cart(String cart_id, String customer_id) {
-        this.cart_id = cart_id;
-        this.customer_id = customer_id;
+    public Cart(String user_id, List<CartDetail> items, String total) {
+        this.user_id = user_id;
+        this.items = items;
+        this.total = total;
     }
 
-    public String getCart_id() {
-        return cart_id;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setCart_id(String cart_id) {
-        this.cart_id = cart_id;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public String getCustomer_id() {
-        return customer_id;
+    public List<CartDetail> getItems() {
+        return items;
     }
 
-    public void setCustomer_id(String customer_id) {
-        this.customer_id = customer_id;
+    public void setItems(List<CartDetail> items) {
+        this.items = items;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
     }
 }

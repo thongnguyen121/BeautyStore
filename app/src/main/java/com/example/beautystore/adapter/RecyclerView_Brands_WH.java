@@ -141,8 +141,6 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Products products = dataSnapshot.getValue(Products.class);
                     String id_categories = products.getCategories_id();
-
-
                     // lay id cua categories khi loc prodcucts theo hang
                     categories_id_brands_wh = products.getCategories_id();
                     //lay brand_id khi loc products theo hang
@@ -162,6 +160,9 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
                                 Fragment_warehouse_list.data_categories.add(categories);
                                 Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
 
+                            }else {
+                                Fragment_warehouse_list.data_categories.add(categories);
+                                Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
                             }
                         }
 
@@ -171,6 +172,7 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
                         }
                     });
                 }
+                Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
 
                 Fragment_warehouse_list.recyclerViewProductsWh.notifyDataSetChanged();
             }

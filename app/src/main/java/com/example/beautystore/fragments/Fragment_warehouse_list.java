@@ -26,6 +26,8 @@ import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.activity.Activity_add_Brands;
 import com.example.beautystore.activity.Activity_add_Categories;
 import com.example.beautystore.activity.Admin_MainActivity;
+import com.example.beautystore.adapter.RecyclerViewBrands;
+import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts_WH;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
 import com.example.beautystore.adapter.RecyclerView_cate_WH;
@@ -63,6 +65,7 @@ public class Fragment_warehouse_list extends Fragment {
     public static boolean statusBrands = true;
     public static boolean statusProducts = true;
     public static  boolean statusCate = true;
+    public static TextView tvThongbao_cate, tvThongbao_products;
     String cateName, imgCate;
     View view;
 
@@ -114,6 +117,21 @@ public class Fragment_warehouse_list extends Fragment {
             }
         });
     }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.appBar_home){
+            getProducts();
+            getData_brands();
+            getData_categories();
+            RecyclerView_Brands_WH.selectedPosition_brands= -1;
+            RecyclerView_cate_WH.selectedPosition_cate= -1;
+            Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
+            Fragment_warehouse_list.recyclerViewProductsWh.notifyDataSetChanged();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setControl(View view) {
         rcBrands = view.findViewById(R.id.rcBrands_warehouse);
@@ -133,6 +151,8 @@ public class Fragment_warehouse_list extends Fragment {
         tvTitle_brands = view.findViewById(R.id.tiltle_brands_wh);
         tvTitle_cate = view.findViewById(R.id.tiltle_categories_wh);
 //        scrollView = view.findViewById(R.id.id_scrollView_warehouse_list);
+        tvThongbao_cate = view.findViewById(R.id.tvThongbao_cate);
+        tvThongbao_products = view.findViewById(R.id.tvThongbao_products);
 
 
     }

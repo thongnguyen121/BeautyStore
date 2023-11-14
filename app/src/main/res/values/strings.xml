@@ -26,8 +26,8 @@
     <string name="chon_anh">Chọn ảnh</string>
     <string name="btn_them">Thêm</string>
     <string name="btn_sua">Sửa</string>
-    <string name="add_categories">Loại sản phẩm</string>
-    <string name="add_brand">Thêm hãng</string>
+    <string name="add_categories">Thông tin loại</string>
+    <string name="add_brand">Thông tin hãng</string>
     <string name="name_brand">Nhập tên hãng</string>
     <string name="name_categories">Nhập tên loại</string>
 
@@ -63,5 +63,8 @@
     <string name="logout">Đăng xuất</string>
     <string name="Edit">Sửa</string>
     <string name="Delete">Xóa</string>
+    <string name="order_in_progress">Danh sách đơn hàng chưa xử lý</string>
+    <string name="packing_order">Đơn hàng đóng gói</string>
+    <string name="order_queue">Đơn hàng giao và nhận</string>
 
 </resources>

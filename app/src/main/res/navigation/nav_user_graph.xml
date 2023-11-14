@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_user_graph"
+    app:startDestination="@id/fragment_home">
+
+    <fragment
+        android:id="@+id/fragment_cart"
+        android:name="com.example.beautystore.fragments.Fragment_cart"
+        android:label="@string/fragment_cart"
+        tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/fragment_home"
+        android:name="com.example.beautystore.fragments.Fragment_home"
+        android:label="@string/fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/fragment_order"
+        android:name="com.example.beautystore.fragments.Fragment_order"
+        android:label="@string/fragment_orders"
+        tools:layout="@layout/fragment_order" />
+    <fragment
+        android:id="@+id/fragment_wishlist"
+        android:name="com.example.beautystore.fragments.Fragment_wishlist"
+        android:label="@string/fragment_wishlist"
+        tools:layout="@layout/fragment_wishlist" />
+    <fragment
+        android:id="@+id/fragment_profile"
+        android:name="com.example.beautystore.fragments.Fragment_profile"
+        android:label="@string/fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/fragment_editProfile"
+        android:name="com.example.beautystore.fragments.Fragment_editProfile"
+        android:label="@string/fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/fragment_transaction_history"
+        android:name="com.example.beautystore.fragments.Fragment_transaction_history"
+        android:label="@string/fragment_transaction_history"
+        tools:layout="@layout/fragment_transaction_history" />
+</navigation>

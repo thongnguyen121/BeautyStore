@@ -1,118 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.Activity_Product_Detail"
+    android:background="#F6EAEE"
     android:orientation="vertical"
-    android:background="#F6EAEE">
+    tools:context=".activity.Activity_Product_Detail">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/ivProductDetailBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Product detail"
                 android:gravity="center|center_vertical"
+                android:text="Product detail"
                 android:textColor="#F4739E"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                />
-            <ImageView
-                android:id="@+id/ivProductDetailBack"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"/>
-
-        </RelativeLayout>
-
-
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 app:cardCornerRadius="20dp"
-                android:layout_margin="20dp"
-                >
+                app:cardElevation="0dp"
+                app:cardUseCompatPadding="false">
                 <ImageView
                     android:id="@+id/ivProductDetailBigProduct"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:src="@drawable/abc"
-                    android:scaleType="centerCrop"
+                    android:layout_margin="15dp"
                     android:background="@drawable/bg_radius_img"
-                    android:layout_margin="20dp"
-                    />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/abc" />
             </androidx.cardview.widget.CardView>
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                >
-
-                <androidx.cardview.widget.CardView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:cardCornerRadius="20dp"
                     android:layout_marginRight="30dp"
-                    >
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardUseCompatPadding="false">
                     <ImageView
                         android:id="@+id/ivProductDetailSmallProduct1"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/small1"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/bg_radius_img"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_margin="10dp"
-                        />
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
+                        android:background="@drawable/bg_radius_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/small1" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:cardCornerRadius="20dp"
                     android:layout_marginRight="30dp"
-                    >
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardUseCompatPadding="false">
+
                     <ImageView
                         android:id="@+id/ivProductDetailSmallProduct2"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/small2"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/bg_radius_img"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_margin="10dp"
-                        />
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
+                        android:background="@drawable/bg_radius_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/small2" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     app:cardCornerRadius="20dp"
-                    >
+                    app:cardElevation="0dp"
+                    app:cardUseCompatPadding="false">
+
                     <ImageView
                         android:id="@+id/ivProductDetailSmallProduct3"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/small3"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/bg_radius_img"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_margin="10dp"
-                        />
-                </androidx.cardview.widget.CardView>
+                        android:background="@drawable/bg_radius_img"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/small3" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -148,115 +144,232 @@
                 android:layout_height="wrap_content"
                 android:text="Product price"
                 android:layout_weight="1"/>
+
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvProductDetailProductName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:text="Product Name"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/ivProductDetailAddWishList"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/baseline_favorite_24" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvProductDetailProductPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Product price"
+                    android:textSize="17dp"
+                    android:textColor="@color/gray" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivProductDetailDecreaseQty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:src="@drawable/baseline_indeterminate_check_box_24" />
+
+                    <TextView
+                        android:id="@+id/tvProductDetailProductQty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="qty"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        android:id="@+id/ivProductDetailIncreaseQty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:src="@drawable/baseline_add_box_24" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RatingBar
+                android:id="@+id/rbProductDetailProductRating"
+                style="@style/Widget.AppCompat.RatingBar.Indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/ivProductDetailDecreaseQty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/baseline_indeterminate_check_box_24"
-                    android:layout_marginRight="10dp"/>
-                <TextView
-                    android:id="@+id/tvProductDetailProductQty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="qty"
-                    android:layout_marginRight="10dp"/>
-                <ImageView
-                    android:id="@+id/ivProductDetailIncreaseQty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/baseline_add_box_24"/>
-            </LinearLayout>
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:progressTint="@color/yellow"
+                />
         </LinearLayout>
-        <RatingBar
-            android:id="@+id/rbProductDetailProductRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_marginLeft="20dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="Description"
-            android:layout_marginLeft="20dp"/>
+            android:textColor="@color/pink"
+            android:textSize="30dp"
+            android:layout_marginBottom="10dp"
+            />
+
         <TextView
             android:id="@+id/tvProductDetailProductDesc"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="abcdefghhhhhhhhhhh"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"
+            android:padding="10dp"
+            android:textSize="17dp"
+            android:text="Ánh nắng mặt trời là một trong những tác nhân lớn nhất hủy hoại làn da của chúng ta. Trong ánh nắng mặt trời có chứa nhiều tia tử ngoại như UVA, UVB… không chỉ làm da trở nên đen sạm mà còn có thể làm tổn thương da từ sâu bên trong, khiến cho hắc tố melanin hoạt động mạnh hơn, dẫn đến những vết nám và tàn nhang trên khuôn mặt." />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <Button
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnProductDetailAddCart"
-                android:background="@drawable/bg_product_detail_button"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:background="@drawable/bg_product_detail_button"
                 android:text="Add cart"
-                android:layout_marginRight="50dp"/>
-            <Button
+                android:textColor="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnProductDetailBuyNow"
-                android:background="@drawable/bg_product_detail_button"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Buy now"/>
+                android:background="@drawable/bg_product_detail_button"
+                android:text="Buy now"
+                android:textColor="@color/white" />
         </LinearLayout>
-        <ScrollView
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Review"
+            android:textColor="@color/pink"
+            android:textSize="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            ></TextView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reviewList"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/reviewList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </ScrollView>
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            />
+
         <RatingBar
+            android:layout_marginTop="10dp"
             android:id="@+id/rbProductDetailUserRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1"
+            android:background="@color/white"
+            android:progressTint="@color/yellow"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/ivProductDetailAddComment"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:src="@drawable/rightarrow"
+                android:layout_gravity="center"
+                />
+            <EditText
+                android:id="@+id/edtProductDetailComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:background="@drawable/bg_product_detail_comment_edit_text"
+                android:hint="Comment..."
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="20dp">
-            <ImageView
-                android:id="@+id/ivProductDetailAddComment"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:src="@drawable/rightarrow"
-                android:layout_marginRight="10dp"/>
-            <EditText
-                android:id="@+id/edtProductDetailComment"
-                android:background="@drawable/bg_product_detail_comment_edit_text"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:hint="Comment..."
-                android:layout_weight="9"
-                android:paddingLeft="20dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="10dp"
+            >
             <ImageView
                 android:id="@+id/ivProductDetailMessenger"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_message_24"/>
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_message_24"
+                android:layout_gravity="center"
+                />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tư vấn ngay cùng chúng tôi"/>
+                android:text="Tư vấn ngay cùng chúng tôi?"
+                android:textSize="17dp"
+                android:textColor="@color/pink"
+                android:textStyle="italic"
+                android:fontFamily="@font/abeezeeregular"
+                android:layout_gravity="center"
+                />
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Những sản phẩm liên quan"
+            android:layout_marginLeft="10dp"
+
+            android:textSize="25dp"
+            android:textColor="@color/pink"
+            ></TextView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/pink"
+            android:layout_marginBottom="10dp"
+            ></View>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rcDSSlienquan"
+            ></androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
-
-
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

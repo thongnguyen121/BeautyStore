@@ -1,6 +1,8 @@
 package com.example.beautystore.adapter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,11 +22,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProducts.ViewProducts> {
-    private Fragment_home context;
+    private Context context;
     private int resource;
     private ArrayList<Products> data;
     public static  String id ="";
-    public RecyclerViewProducts(Fragment_home context, int resource, ArrayList<Products> data) {
+    public RecyclerViewProducts(Context context, int resource, ArrayList<Products> data) {
         this.context = context;
         this.resource = resource;
         this.data = data;
@@ -37,8 +39,7 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
     @NonNull
     @Override
     public RecyclerViewProducts.ViewProducts onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        CardView cardViewItem = (CardView) context.getLayoutInflater().
-                inflate(viewType, parent, false);
+        CardView cardViewItem = (CardView) LayoutInflater.from(context).inflate(viewType, parent, false);
         return new ViewProducts(cardViewItem);
     }
 
@@ -69,9 +70,11 @@ public class RecyclerViewProducts extends RecyclerView.Adapter<RecyclerViewProdu
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Activity_Product_Detail.class);
                 intent.putExtra("products_id", products.getProducts_id());
+                intent.putExtra("categories_id", products.getCategories_id());
                 context.startActivity(intent);
             }
         });
+
 
     }
     @Override
