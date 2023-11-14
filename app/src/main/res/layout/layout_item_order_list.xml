@@ -12,6 +12,8 @@
         android:textSize="17dp"
         android:text="Mỹ phẩm làm trắng"
         android:textColor="@color/black"
+        android:id="@+id/tvProducts_name_order"
+        android:layout_gravity="center"
         ></TextView>
     <TextView
         android:layout_width="0dp"
@@ -20,8 +22,10 @@
         android:textSize="17dp"
         android:text="7"
         android:gravity="center"
+        android:layout_gravity="center"
         android:textColor="@color/black"
         android:layout_marginLeft="10dp"
+        android:id="@+id/tvProducts_qt_order"
         ></TextView>
     <TextView
         android:layout_width="0dp"
@@ -31,5 +35,7 @@
         android:text="200.000Đ"
         android:textColor="@color/black"
         android:layout_marginLeft="10dp"
+        android:id="@+id/tvProducts_price_order"
+        android:layout_gravity="center"
         ></TextView>
 </LinearLayout>

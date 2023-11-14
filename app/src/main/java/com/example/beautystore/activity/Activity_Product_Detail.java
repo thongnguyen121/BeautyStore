@@ -41,6 +41,8 @@ import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.adapter.RecyclerView_search_products;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
+import com.example.beautystore.model.Order;
+import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
 import com.example.beautystore.model.WishList;
@@ -113,6 +115,7 @@ double total = 0;
         getDataFromFireBase(productId);
         getData_DSLienquan(cate_id);
         createRatingsList();
+//        checkOrderForRating(productId);
         reView_products();
         Log.d("TAG", "onCreate: " + productId);
 
@@ -513,6 +516,65 @@ double total = 0;
         });
 
     }
+//    private void checkOrderStatusForRating(String productId) {
+//        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference("OrderStatus");
+//
+//        orderStatusRef.orderByChild("order_id").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                boolean hasOrderWithStatus4 = false;
+//
+//                for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
+//                    OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
+//
+//                    if (orderStatus != null && orderStatus.getStatus().equals("4")) {
+//                        hasOrderWithStatus4 = true;
+//                    }
+//                }
+//
+//                if (hasOrderWithStatus4) {
+//                    checkOrderForRating(productId);
+//                } else {
+//                    showRating_byOrder();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Xử lý lỗi nếu cần
+//            }
+//        });
+//    }
+
+//    private void checkOrderForRating(String productId) {
+//        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
+//
+//        orderRef.child("items").equalTo(productId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
+//                        Order order = orderSnapshot.getValue(Order.class);
+//                        if (order != null && order.getOrder_id() != null) {
+//                            for (CartDetail item : order.getItems()) {
+//                                if (item != null && item.getProduct_id().equals(productId)) {
+//                                    reView_products();
+//                                    return;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                showRating_byOrder();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Xử lý lỗi nếu cần
+//            }
+//        });
+//    }
 
     private void calculateAverageRating() {
         DatabaseReference ratingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId);
@@ -545,6 +607,7 @@ double total = 0;
     }
 
 
+
 //    private void updateProductAverageRating(float averageRating) {
 //        DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
 //        productRef.child("averageRating").setValue(averageRating);
@@ -562,6 +625,13 @@ double total = 0;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thông báo");
         builder.setMessage("Bạn cần nhập đầy đủ thông tin để đánh giá");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+    private void showRating_byOrder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Thông báo");
+        builder.setMessage("Xin lỗi bạn chưa mua sản phẩm này");
         builder.setPositiveButton("OK", null);
         builder.show();
     }
