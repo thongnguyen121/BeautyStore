@@ -109,6 +109,7 @@ double total = 0;
         user_id = getIntent().getStringExtra("user_id");
         Toast.makeText(this, "cate_id" + cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
         getData_DSLienquan(cate_id);
         createRatingsList();
