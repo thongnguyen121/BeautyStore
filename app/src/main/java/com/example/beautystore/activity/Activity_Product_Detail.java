@@ -1,19 +1,28 @@
 package com.example.beautystore.activity;
 
 import static androidx.fragment.app.FragmentManager.TAG;
+import static java.security.AccessController.getContext;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,11 +32,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
+import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts;
 import com.example.beautystore.adapter.RecyclerView_Rating;
 
 import com.example.beautystore.model.Cart;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.adapter.RecyclerView_search_products;
+import com.example.beautystore.model.Brands;
+import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
@@ -51,12 +64,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-    Boolean isOnWishList;
-    String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3, uid, price, autoId_rating;
-    double total = 0;
+  Boolean isOnWishList;
+    String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3,uid, price, autoId_rating;
+double total = 0;
     int productQty = 1;
 
     String UID;
@@ -79,8 +93,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
     private ArrayList<Products> data_products = new ArrayList<>();
 
     private String user_id = "";
-    private String order_id;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +115,12 @@ public class Activity_Product_Detail extends AppCompatActivity {
         getDataFromFireBase(productId);
         getData_DSLienquan(cate_id);
         createRatingsList();
-
-        checkOrderStatusForRating(productId, uid);
+//        checkOrderForRating(productId);
+        reView_products();
         Log.d("TAG", "onCreate: " + productId);
+
         UID = FirebaseAuth.getInstance().getUid();
+
         addOrRemoveProductToWishList();
         //intent_getData(productId);
         ivMessenger.setOnClickListener(new View.OnClickListener() {
@@ -134,8 +148,8 @@ public class Activity_Product_Detail extends AppCompatActivity {
     }
 
     private void addToCart(String uid) {
-        CartDetail cartDetail = new CartDetail(productId, price, String.valueOf(productQty));
-        DatabaseReference reference = firebaseDatabase.getReference("Cart").child(uid);
+        CartDetail cartDetail = new CartDetail(productId, price,String.valueOf(productQty));
+        DatabaseReference  reference = firebaseDatabase.getReference("Cart").child(uid);
         Double total = Double.valueOf(price) * productQty;
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -144,8 +158,8 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 if (cart == null) {
                     cart = new Cart(uid, new ArrayList<>(), String.valueOf(total));
                 }
-                for (CartDetail item : cart.getItems()) {
-                    if (item.getProduct_id().equals(cartDetail.getProduct_id())) {
+                for (CartDetail item : cart.getItems()){
+                    if (item.getProduct_id().equals(cartDetail.getProduct_id())){
                         int currentQty = Integer.parseInt(item.getQty());
                         int newQty = currentQty + Integer.parseInt(cartDetail.getQty());
                         item.setQty(String.valueOf(newQty));
@@ -160,11 +174,12 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 reference.setValue(cart, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                        if (error == null) {
-                            Toast.makeText(Activity_Product_Detail.this, "thanh cong ", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(Activity_Product_Detail.this, "loi " + error, Toast.LENGTH_SHORT).show();
-                        }
+                      if (error == null){
+                          Toast.makeText(Activity_Product_Detail.this, "thanh cong ", Toast.LENGTH_SHORT).show();
+                      }
+                      else {
+                          Toast.makeText(Activity_Product_Detail.this, "loi " + error, Toast.LENGTH_SHORT).show();
+                      }
                     }
                 });
 
@@ -183,9 +198,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Cart cart = snapshot.getValue(Cart.class);
                 int total = 0;
-                if (cart != null) {
+                if (cart != null){
                     List<CartDetail> items = cart.getItems();
-                    for (CartDetail cartDetail : items) {
+                    for (CartDetail cartDetail: items){
                         double productPrice = Double.parseDouble(cartDetail.getPrice());
                         double productQty = Double.parseDouble(cartDetail.getQty());
                         total += productPrice * productQty;
@@ -204,17 +219,18 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
     }
 
-    private void setAddWishListButton() {
+    private void setAddWishListButton(){
         wishLists = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
         databaseReference.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(productId).exists()) {
+                if (snapshot.child(productId).exists()){
                     Log.d("TAG", "onDataChange: sp co trong wishlist");
                     isOnWishList = true;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
-                } else {
+                }
+                else {
                     isOnWishList = false;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
                 }
@@ -226,7 +242,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
             }
         });
     }
-
     private void getDataFromFireBase(String productId) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
@@ -376,11 +391,11 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
     }
 
-    protected void addOrRemoveProductToWishList() {
+    protected void addOrRemoveProductToWishList(){
         ivAddWishList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isOnWishList) {
+                if (!isOnWishList){
                     databaseReference = firebaseDatabase.getReference().child("WishList");
                     WishList wishList = new WishList(UID, productId, "");
                     databaseReference.child(UID).child(productId).setValue(wishList).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -391,7 +406,8 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     });
                     isOnWishList = true;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
-                } else {
+                }
+                else {
                     firebaseDatabase.getReference().child("WishList").child(uid).child(productId).removeValue();
                     isOnWishList = false;
                     ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
@@ -450,9 +466,11 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (numberStar == 0 || TextUtils.isEmpty(edtComment.getText())) {
+                if(numberStar == 0 || TextUtils.isEmpty(edtComment.getText()))
+                {
                     showRating_empty();
-                } else {
+                }
+                else {
                     DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
                     userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -499,50 +517,65 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
 
     }
-private void checkOrderStatusForRating(String productId, String uid) {
-    DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference("OrderStatus");
+//    private void checkOrderStatusForRating(String productId) {
+//        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference("OrderStatus");
+//
+//        orderStatusRef.orderByChild("order_id").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                boolean hasOrderWithStatus4 = false;
+//
+//                for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
+//                    OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
+//
+//                    if (orderStatus != null && orderStatus.getStatus().equals("4")) {
+//                        hasOrderWithStatus4 = true;
+//                    }
+//                }
+//
+//                if (hasOrderWithStatus4) {
+//                    checkOrderForRating(productId);
+//                } else {
+//                    showRating_byOrder();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Xử lý lỗi nếu cần
+//            }
+//        });
+//    }
 
-    orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
-                OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
-                if (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6")) {
-                    checkOrderForRating(orderStatus.getOrder_id(), productId, uid);
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            // Xử lý lỗi nếu cần
-        }
-    });
-}
-private void checkOrderForRating(String order_id, String productId, String uid) {
-    DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
-    orderRef.child(order_id).addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            Order order = snapshot.getValue(Order.class);
-            if (order != null && order.getCustomer_id().equals(uid)) {
-                if (order.getOrder_id() != null) {
-                    for (CartDetail item : order.getItems()) {
-                        if (item != null && item.getProduct_id().equals(productId)) {
-                            reView_products();
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            // Xử lý lỗi nếu cần
-        }
-    });
-}
+//    private void checkOrderForRating(String productId) {
+//        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
+//
+//        orderRef.child("items").equalTo(productId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
+//                        Order order = orderSnapshot.getValue(Order.class);
+//                        if (order != null && order.getOrder_id() != null) {
+//                            for (CartDetail item : order.getItems()) {
+//                                if (item != null && item.getProduct_id().equals(productId)) {
+//                                    reView_products();
+//                                    return;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                showRating_byOrder();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Xử lý lỗi nếu cần
+//            }
+//        });
+//    }
 
     private void calculateAverageRating() {
         DatabaseReference ratingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId);
@@ -574,6 +607,8 @@ private void checkOrderForRating(String order_id, String productId, String uid) 
         });
     }
 
+
+
 //    private void updateProductAverageRating(float averageRating) {
 //        DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
 //        productRef.child("averageRating").setValue(averageRating);
@@ -594,7 +629,6 @@ private void checkOrderForRating(String order_id, String productId, String uid) 
         builder.setPositiveButton("OK", null);
         builder.show();
     }
-
     private void showRating_byOrder() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thông báo");
