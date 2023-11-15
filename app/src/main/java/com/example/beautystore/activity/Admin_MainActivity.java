@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Members;
+import com.example.beautystore.model.OrderStatus;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -46,9 +48,12 @@ public class Admin_MainActivity extends AppCompatActivity{
     TextView tvProfile_name;
     ImageView ivProfileImg;
     String name, uri;
+    NavigationView navigation;
     public static BottomNavigationView bottomNavigationView;
     public static  MaterialToolbar toolbar;
     public static final String SHARE_PREFS = "sharedPrefs";
+    public static int counterOrderInProgess = 0,counterOrderPacking = 0, counterOrderInQueue;
+    public static TextView tvCounterOrderProgress, tvCounterPackingOrder, tvCounterOrderQueue;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     @Override
@@ -63,7 +68,7 @@ public class Admin_MainActivity extends AppCompatActivity{
 
         toolbar = findViewById(R.id.toolbarAdmin);
         setSupportActionBar(toolbar);
-        NavigationView navigation = findViewById(R.id.id_navigationviewAdmin);
+        navigation = findViewById(R.id.id_navigationviewAdmin);
 
 
         View header = navigation.getHeaderView(0);
@@ -155,8 +160,128 @@ public class Admin_MainActivity extends AppCompatActivity{
 
             }
         });
+        getCounterOrderInProgress();
+        getCoutneOrderPacking();
+        getCoutneOrderQueue();
+//        counterOrderInProgess = 2;
+        LayoutInflater layoutInflater = LayoutInflater.from(Admin_MainActivity.this);
+        tvCounterOrderProgress = (TextView) layoutInflater.inflate(R.layout.counter_order_in_progress, null);
+        tvCounterPackingOrder = (TextView) layoutInflater.inflate(R.layout.counter_order_packing, null);
+        tvCounterOrderQueue = (TextView) layoutInflater.inflate(R.layout.counter_order_queue, null);
+
+//    bottomNavigationView.getOrCreateBadge(R.id.fragment_admin_employees).setNumber(12);
+
+
     }
 
+    private void getCoutneOrderQueue() {
+        DatabaseReference reference = firebaseDatabase.getReference("OrderStatus");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    counterOrderInQueue = 0;
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        String status = dataSnapshot.child("status").getValue(String.class);
+                        if (status.equals("2") || status.equals("3") || status.equals("4") || status.equals("5")){
+                            counterOrderInQueue++;
+                            navigation.getMenu().findItem(R.id.fragment_order_queue).setActionView(tvCounterOrderQueue);
+                            Show_Counter_Order_Queue(counterOrderInQueue);
+                        }
+
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getCoutneOrderPacking() {
+        DatabaseReference reference = firebaseDatabase.getReference("OrderStatus");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    counterOrderPacking = 0;
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        String status = dataSnapshot.child("status").getValue(String.class);
+                        if (status.equals("1")){
+                            counterOrderPacking++;
+                            navigation.getMenu().findItem(R.id.fragment_packing_order).setActionView(tvCounterPackingOrder);
+                            Show_Counter_PackingOrder(counterOrderPacking);
+                        }
+
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getCounterOrderInProgress() {
+        DatabaseReference reference = firebaseDatabase.getReference("OrderStatus");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    counterOrderInProgess = 0;
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        String status = dataSnapshot.child("status").getValue(String.class);
+                        if (status.equals("0")){
+                            counterOrderInProgess++;
+                            navigation.getMenu().findItem(R.id.fragment_order_in_progress).setActionView(tvCounterOrderProgress);
+                            Show_Counter_ProgressOrder(counterOrderInProgess);
+                        }
+
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public static  void Show_Counter_ProgressOrder(int counter){
+        if (counter > 0){
+            tvCounterOrderProgress.setText(counter + "");
+        }
+        else{
+            tvCounterOrderProgress.setText("");
+        }
+    }
+    public static  void Show_Counter_PackingOrder(int counter){
+        if (counter > 0){
+            tvCounterPackingOrder.setText(counter + "");
+        }
+        else{
+            tvCounterPackingOrder.setText("");
+        }
+    }
+    public static  void Show_Counter_Order_Queue(int counter){
+        if (counter > 0){
+            tvCounterOrderQueue.setText(counter + "");
+        }
+        else{
+            tvCounterOrderQueue.setText("");
+        }
+    }
     @Override
     public boolean onSupportNavigateUp() {
 //        navController.navigateUp();
