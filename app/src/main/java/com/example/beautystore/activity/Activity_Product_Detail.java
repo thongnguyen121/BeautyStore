@@ -582,7 +582,7 @@ private void checkOrderForRating(String order_id, String productId, String uid) 
     private void showAlreadyReviewedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thông báo");
-        builder.setMessage("Bạn đã thêm đánh giá cho sản phẩm này.");
+        builder.setMessage("Chỉ được chỉnh sửa không được đánh giá 2 lần");
         builder.setPositiveButton("OK", null);
         builder.show();
     }
