@@ -11,16 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beautystore.R;
-import com.example.beautystore.model.Chat;
+import com.example.beautystore.model.ChatList;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<RecyclerView_Consultant_Message.ConsultantMessageViewHolder> {
-    private ArrayList<Chat> data;
+    private ArrayList<String> data;
     private Context context;
 
-    public RecyclerView_Consultant_Message(ArrayList<Chat> data, Context context) {
-        this.data = data;
+    public RecyclerView_Consultant_Message(Context context) {
         this.context = context;
     }
 
@@ -34,13 +38,27 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
 
     @Override
     public void onBindViewHolder(@NonNull ConsultantMessageViewHolder holder, int position) {
-        Chat chat = data.get(position);
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference chatListReference = firebaseDatabase.getReference().child("ChatList");
+        chatListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String chatID = snapshot.getKey();
+                    holder.tvCustomerName.setText(chatID);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return 3;
     }
 
     public static class ConsultantMessageViewHolder extends RecyclerView.ViewHolder{
