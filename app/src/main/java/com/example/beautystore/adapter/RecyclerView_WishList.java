@@ -15,7 +15,14 @@ import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Wish_List;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.Products;
 import com.example.beautystore.model.WishList;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -40,11 +47,22 @@ public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_Wis
     @Override
     public void onBindViewHolder(@NonNull WishListViewHolder holder, int position) {
         WishList wishList = data.get(position);
-        Glide.with(context)
-                .load(R.drawable.abc)
-                .into(holder.ivProductImage); //Fix replace image with image in firebase
+        String productId = wishList.getProduct_id();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Products");
+        databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Products products = snapshot.getValue(Products.class);
+                holder.tvProductName.setText(products.getProducts_name());
+                Glide.with(context).load(products.getImgProducts_1()).into(holder.ivProductImage);
+            }
 
-        holder.tvProductName.setText(wishList.getProduct_id()); //Fix replace product name with firebase
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
