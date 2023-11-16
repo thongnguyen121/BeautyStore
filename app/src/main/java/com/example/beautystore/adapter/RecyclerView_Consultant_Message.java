@@ -1,6 +1,7 @@
 package com.example.beautystore.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_Messenger;
+import com.example.beautystore.activity.Activity_Product_Detail;
 import com.example.beautystore.model.ChatList;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +49,14 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String chatID = snapshot.getKey();
                     holder.tvCustomerName.setText(chatID);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
+                            intent.putExtra("chatId", chatID);
+                            context.startActivity(intent);
+                        }
+                    });
                 }
             }
 
@@ -68,6 +79,7 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
 
         public ConsultantMessageViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView = itemView;
             tvCustomerName = itemView.findViewById(R.id.tvMessageConsultantCustomerName);
             tvDateReceived = itemView.findViewById(R.id.tvMessageConsultantDateReceived);
             tvMessageContent = itemView.findViewById(R.id.tvMessageConsultantMessageContent);
