@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.apply();
                                 Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();

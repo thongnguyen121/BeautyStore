@@ -140,7 +140,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Customer customer = new Customer(name,email,pass,phoneNum,"https://firebasestorage.googleapis.com/v0/b/beautystore-8082e.appspot.com/o/imgProfile%2Fprofile_default.jpg?alt=media&token=53a80567-0eb2-4584-a746-5359e4d08ac7","","");
+                    Customer customer = new Customer(name,email,pass,phoneNum,"https://firebasestorage.googleapis.com/v0/b/beautystore-8082e.appspot.com/o/imgProfile%2Fprofile_default.jpg?alt=media&token=53a80567-0eb2-4584-a746-5359e4d08ac7","","","");
                     databaseReference.child("Customer").child(firebaseAuth.getCurrentUser().getUid()).setValue(customer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

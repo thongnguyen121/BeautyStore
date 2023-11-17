@@ -45,6 +45,8 @@ import com.example.beautystore.model.Cart;
 import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.OrderStatus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -55,8 +57,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rememberLogin();
-        getCounterCartItem();
+
+
         drawerLayout = findViewById(R.id.idDrawer);
         toolbar = findViewById(R.id.toolbar);
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -110,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, controller);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
+            getCounterCartItem();
+            getFCMToken();
             Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.Login).setVisible(false);
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                         tvProfile_email.setVisibility(View.VISIBLE);
                         tvProfile_email.setText(email);
                         Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
+
                     }else{
                         tvProfile_name.setText("Guess");
                         tvProfile_email.setVisibility(View.GONE);
@@ -147,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
             navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
         }
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -155,7 +165,16 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                 } else if (idItem == R.id.Logout) {
+                    FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(MainActivity.this, "dang xuat thanh cong", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     FirebaseAuth.getInstance().signOut();
+
                     SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("check", "");
@@ -239,5 +258,33 @@ public class MainActivity extends AppCompatActivity {
         return check.equals("true");
     }
 
+    private  void getFCMToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()){
+                        String a  = task.getResult();
+//                        thong: dW7niY6pR1SgZxC3xNNv8a:APA91bHehiis-x-btmGAeTnfixDlFWnP36iRxwl0RXby_4a2ic6xvPI0_ePv7GK_SUTGs8-PDnq4xLqLPnG1noMYU648SCfN96MczA8yGFR104Gq6UjlvSDhm4Hd0aTmL1DcuTA53iig
+//                    binh: eqbK3ClFSpWy4FAhqFjITz:APA91bHgEMpBtVOXCcKdpnfcerFO1CSOZDEmV4CNz4gcikUdlzDoOiqEWV-cRHrz5CUAMCqY2b1GvNn4e2c3dtOE1w5nukJjGO6iiepaWNInPHdgIg6qQxrvRNQOWo9-DUwo5640wFen
+                    Log.d("TAG", "co token la: " + a);
+                    databaseReference = firebaseDatabase.getReference("Customer").child(FirebaseAuth.getInstance().getUid());
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()){
+                                Map<String, Object> update = new HashMap<>();
+                                update.put("fcmToken", a);
+                                databaseReference.updateChildren(update);
+                            }
+                        }
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
+        });
+    }
 }
