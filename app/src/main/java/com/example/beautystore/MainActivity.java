@@ -41,7 +41,10 @@ import com.example.beautystore.fragments.Fragment_profile;
 import com.example.beautystore.fragments.Fragment_transaction_history;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.fragments.Fragment_wishlist;
+import com.example.beautystore.model.Cart;
+import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
+import com.example.beautystore.model.OrderStatus;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -52,6 +55,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,12 +79,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    int counterCartItem=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rememberLogin();
+        getCounterCartItem();
         drawerLayout = findViewById(R.id.idDrawer);
         toolbar = findViewById(R.id.toolbar);
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -194,7 +201,38 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+    private void getCounterCartItem() {
 
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference orderStatusReference = firebaseDatabase.getReference().child("Cart").child(FirebaseAuth.getInstance().getUid()).child("items");
+        orderStatusReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                counterCartItem = 0;
+                if (snapshot.exists()){
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        CartDetail cartDetail = dataSnapshot.getValue(CartDetail.class);
+                        counterCartItem += Integer.parseInt(cartDetail.getQty());
+                        Log.d("TAG", "cart item: " + counterCartItem);
+                    }
+
+                }
+                if (counterCartItem>0){
+                    bottomNavigationView.getOrCreateBadge(R.id.fragment_cart).setNumber(counterCartItem);
+                }
+                else {
+                    bottomNavigationView.removeBadge(R.id.fragment_cart);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private boolean isUserLoggedin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
         String check = sharedPreferences.getString("check", "");
