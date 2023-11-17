@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,6 @@ public class Activity_Messenger extends AppCompatActivity {
     ImageView ivBack, ivSendButton;
     EditText edtMessage;
     FirebaseUser fuser;
-    DatabaseReference reference;
     RecyclerView_Messages messagesAdapter;
     RecyclerView messageRecyclerView;
     ArrayList<Chat> chats;
@@ -53,6 +53,9 @@ public class Activity_Messenger extends AppCompatActivity {
         products_id = intent.getStringExtra("products_id");
         chatId = intent.getStringExtra("chatId");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
 
         //Back button:
         ivBack.setOnClickListener(new View.OnClickListener() {
@@ -85,11 +88,17 @@ public class Activity_Messenger extends AppCompatActivity {
         DatabaseReference membersReference = FirebaseDatabase.getInstance().getReference().child("Member");
         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference().child("Customer");
         DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("Chats");
-        DatabaseReference chatListReference = FirebaseDatabase.getInstance().getReference().child("ChatList");
+        DatabaseReference chatGroupReference = FirebaseDatabase.getInstance().getReference().child("ChatGroup");
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender", sender);
-        hashMap.put("message", message);
+        HashMap<String, Object> chatHashMap = new HashMap<>();
+        chatHashMap.put("sender", sender);
+        chatHashMap.put("message", message);
+
+        HashMap<String, Object> chatGroupHashMap = new HashMap<>();
+        chatGroupHashMap.put("latestMessage", message);
+        String date = String.valueOf(LocalDateTime.now());
+        chatGroupHashMap.put("date", date);
+
 
         //Get Chat ID:
         //Check fuser.getUid is Customer or not
@@ -97,7 +106,10 @@ public class Activity_Messenger extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    chatReference.child(chatId).push().setValue(hashMap);
+                    chatReference.child(chatId).push().setValue(chatHashMap);
+                    chatGroupHashMap.put("id", chatId);
+                    chatGroupHashMap.put("status", "Unseen");
+                    chatGroupReference.child(chatId).push().setValue(chatGroupHashMap);
                 }
             }
 
@@ -111,8 +123,10 @@ public class Activity_Messenger extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    chatReference.child(fuser.getUid()).push().setValue(hashMap);
-                    chatListReference.child(fuser.getUid()).setValue(fuser.getUid());
+                    chatReference.child(fuser.getUid()).push().setValue(chatHashMap);
+                    chatGroupHashMap.put("id", fuser.getUid());
+                    chatGroupHashMap.put("status", "Unseen");
+                    chatGroupReference.child(fuser.getUid()).setValue(chatGroupHashMap);
                 }
             }
 
