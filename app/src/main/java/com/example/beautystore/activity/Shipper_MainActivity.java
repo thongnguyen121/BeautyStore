@@ -61,7 +61,6 @@ public class Shipper_MainActivity extends AppCompatActivity {
                 if (snapshot.exists()){
                     counterReceivedOrder = 0;
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        String status = dataSnapshot.child("status").getValue(String.class);
                         OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
                         if (orderStatus.getMember_id().equals(FirebaseAuth.getInstance().getUid())){
                         if( orderStatus.getStatus().equals("3"))
