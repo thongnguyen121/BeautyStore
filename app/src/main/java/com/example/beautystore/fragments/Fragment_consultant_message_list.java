@@ -13,9 +13,8 @@ import android.view.ViewGroup;
 
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Consultant_Message;
-import com.example.beautystore.adapter.RecyclerView_WishList;
 import com.example.beautystore.model.ChatGroup;
-import com.example.beautystore.model.WishList;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +38,7 @@ public class Fragment_consultant_message_list extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_consultant_message_list, container, false);
         messageRecyclerView = view.findViewById(R.id.rvConsultantMessageList);
+        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         chatGroups = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("ChatGroup");

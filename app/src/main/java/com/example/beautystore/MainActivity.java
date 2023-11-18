@@ -44,17 +44,21 @@ import com.example.beautystore.fragments.Fragment_wishlist;
 import com.example.beautystore.model.Cart;
 import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.example.beautystore.model.OrderStatus;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
@@ -85,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        if (getIntent().getExtras() != null){
+//            String userId = getIntent().getExtras().getString("userId");
+//
+//        }
+        getFCMToken();
         rememberLogin();
 
         drawerLayout = findViewById(R.id.idDrawer);
@@ -176,6 +185,25 @@ public class MainActivity extends AppCompatActivity {
         tvProfile_name = header.findViewById(R.id.tvProfile_name_drawer);
         tvProfile_email = header.findViewById(R.id.tvEmail_drawer);
         ivProfileImg = header.findViewById(R.id.ivProfileImg);
+
+
+    }
+
+    void getFCMToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()){
+                    String token = task.getResult();
+                    DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("Tokens");
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                    if (firebaseUser != null){
+                        tokenRef.child(firebaseUser.getUid()).setValue(token);
+                    }
+                }
+            }
+        });
     }
 
     @Override
