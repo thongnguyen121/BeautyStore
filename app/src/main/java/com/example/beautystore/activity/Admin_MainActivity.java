@@ -216,7 +216,11 @@ public class Admin_MainActivity extends AppCompatActivity{
                             navigation.getMenu().findItem(R.id.fragment_packing_order).setActionView(tvCounterPackingOrder);
                             Show_Counter_PackingOrder(counterOrderPacking);
                         }
-
+                        else{
+                            counterOrderPacking = 0;
+                            navigation.getMenu().findItem(R.id.fragment_packing_order).setActionView(tvCounterPackingOrder);
+                            Show_Counter_PackingOrder(counterOrderPacking);
+                        }
 
                     }
                 }
@@ -241,6 +245,11 @@ public class Admin_MainActivity extends AppCompatActivity{
                         String status = dataSnapshot.child("status").getValue(String.class);
                         if (status.equals("0")){
                             counterOrderInProgess++;
+                            navigation.getMenu().findItem(R.id.fragment_order_in_progress).setActionView(tvCounterOrderProgress);
+                            Show_Counter_ProgressOrder(counterOrderInProgess);
+                        }
+                        else{
+                            counterOrderInProgess = 0;
                             navigation.getMenu().findItem(R.id.fragment_order_in_progress).setActionView(tvCounterOrderProgress);
                             Show_Counter_ProgressOrder(counterOrderInProgess);
                         }

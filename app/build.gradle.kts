@@ -56,4 +56,5 @@ dependencies {
     implementation ("org.greenrobot:eventbus:3.3.1")
     implementation ("com.github.ybq:Android-SpinKit:1.4.0")
     implementation ("it.xabaras.android:recyclerview-swipedecorator:1.4")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 }

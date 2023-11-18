@@ -84,14 +84,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARE_PREFS = "sharedPrefs";
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    int counterCartItem=0;
+    int counterCartItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rememberLogin();
-
 
         drawerLayout = findViewById(R.id.idDrawer);
         toolbar = findViewById(R.id.toolbar);
@@ -104,11 +103,11 @@ public class MainActivity extends AppCompatActivity {
         configuration = new AppBarConfiguration.Builder(R.id.fragment_cart, R.id.fragment_home, R.id.fragment_profile, R.id.fragment_wishlist, R.id.fragment_order).setOpenableLayout(drawerLayout).build();
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         controller.addOnDestinationChangedListener((controller, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.fragment_editProfile){
+            if (navDestination.getId() == R.id.fragment_editProfile) {
                 bottomNavigationView.setVisibility(View.GONE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-            } else{
+            } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
@@ -116,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, controller);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
+            Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
             getCounterCartItem();
             getFCMToken();
-            Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.Login).setVisible(false);
             navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
@@ -131,14 +130,13 @@ public class MainActivity extends AppCompatActivity {
                     name = customer.getUsername();
                     email = customer.getEmail();
                     uri = customer.getProfileImage();
-                    if (customer != null){
+                    if (customer != null) {
                         tvProfile_name.setVisibility(View.VISIBLE);
                         tvProfile_name.setText(name);
                         tvProfile_email.setVisibility(View.VISIBLE);
                         tvProfile_email.setText(email);
                         Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
-
-                    }else{
+                    } else {
                         tvProfile_name.setText("Guess");
                         tvProfile_email.setVisibility(View.GONE);
                     }
@@ -149,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Cant", Toast.LENGTH_SHORT).show();
                 }
             });
+
         } else {
             Toast.makeText(this, "Chuaw dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.GONE);
@@ -156,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
             navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
             navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
         }
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -169,23 +167,31 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
-                                Toast.makeText(MainActivity.this, "dang xuat thanh cong", Toast.LENGTH_SHORT).show();
+                                FirebaseAuth.getInstance().signOut();
+                                SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("check", "");
+                                editor.apply();
+//                                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//                                startActivity(intent);
+//                                finish();
+                                tvProfile_name.setText("Guess");
+                                tvProfile_email.setVisibility(View.GONE);
+                                ivProfileImg.setImageResource(R.drawable.profile_default);
+                                bottomNavigationView.setVisibility(View.GONE);
+                                drawerLayout.close();
+                                navigationView.getMenu().findItem(R.id.Login).setVisible(true);
+                                navigationView.getMenu().findItem(R.id.Signup).setVisible(true);
+                                navigationView.getMenu().findItem(R.id.fragment_editProfile).setVisible(false);
+                                navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
+                                navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
                             }
                         }
                     });
-                    FirebaseAuth.getInstance().signOut();
 
-                    SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("check", "");
-                    editor.apply();
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-                else if (idItem == R.id.fragment_editProfile){
+                } else if (idItem == R.id.fragment_editProfile) {
                     controller.navigate(R.id.fragment_editProfile);
-                    return  true;
+                    return true;
                 }
                 return false;
             }
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean  onSupportNavigateUp() {
+    public boolean onSupportNavigateUp() {
         controller = Navigation.findNavController(this, R.id.nav_host_fragment_container_user);
         return NavigationUI.navigateUp(controller, configuration) || super.onSupportNavigateUp();
     }
@@ -220,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
     private void getCounterCartItem() {
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -229,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 counterCartItem = 0;
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         CartDetail cartDetail = dataSnapshot.getValue(CartDetail.class);
@@ -238,10 +245,9 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-                if (counterCartItem>0){
+                if (counterCartItem > 0) {
                     bottomNavigationView.getOrCreateBadge(R.id.fragment_cart).setNumber(counterCartItem);
-                }
-                else {
+                } else {
                     bottomNavigationView.removeBadge(R.id.fragment_cart);
                 }
             }
@@ -252,37 +258,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private boolean isUserLoggedin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
         String check = sharedPreferences.getString("check", "");
         return check.equals("true");
     }
 
-    private  void getFCMToken(){
+    private void getFCMToken() {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
             public void onComplete(@NonNull Task<String> task) {
-                if (task.isSuccessful()){
-                        String a  = task.getResult();
-//                        thong: dW7niY6pR1SgZxC3xNNv8a:APA91bHehiis-x-btmGAeTnfixDlFWnP36iRxwl0RXby_4a2ic6xvPI0_ePv7GK_SUTGs8-PDnq4xLqLPnG1noMYU648SCfN96MczA8yGFR104Gq6UjlvSDhm4Hd0aTmL1DcuTA53iig
-//                    binh: eqbK3ClFSpWy4FAhqFjITz:APA91bHgEMpBtVOXCcKdpnfcerFO1CSOZDEmV4CNz4gcikUdlzDoOiqEWV-cRHrz5CUAMCqY2b1GvNn4e2c3dtOE1w5nukJjGO6iiepaWNInPHdgIg6qQxrvRNQOWo9-DUwo5640wFen
-                    Log.d("TAG", "co token la: " + a);
-                    databaseReference = firebaseDatabase.getReference("Customer").child(FirebaseAuth.getInstance().getUid());
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()){
-                                Map<String, Object> update = new HashMap<>();
-                                update.put("fcmToken", a);
-                                databaseReference.updateChildren(update);
-                            }
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+                    Log.d("TAG", "token la: " + token);
+                databaseReference = firebaseDatabase.getReference("Customer").child(FirebaseAuth.getInstance().getUid());
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            Map<String, Object> updateToken = new HashMap<>();
+                            updateToken.put("fcmToken", token);
+                            databaseReference.updateChildren(updateToken);
+                            Log.d("TAG", "update thanh cong " );
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
+                    }
+                });
                 }
             }
         });

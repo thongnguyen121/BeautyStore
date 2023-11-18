@@ -136,7 +136,7 @@ double total = 0;
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
         btnAddCart.setOnClickListener(new View.OnClickListener() {
