@@ -183,6 +183,7 @@
                 android:textStyle="italic"
                 android:textSize="17dp"
                 android:id="@+id/tvClick_detail_order_shipper"
+                android:textColor="@color/red"
                 ></TextView>
             <TextView
                 android:layout_width="match_parent"
@@ -193,6 +194,7 @@
                 android:visibility="gone"
                 android:textStyle="italic"
                 android:id="@+id/tvClose_order_shipper"
+                android:textColor="@color/red"
                 ></TextView>
         </LinearLayout>
         <LinearLayout

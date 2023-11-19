@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewCategories;
@@ -35,6 +36,7 @@ public class Fragment_order extends Fragment {
     ArrayList<OrderStatus> data_OrderStatus = new ArrayList<>();
     FirebaseDatabase database;
     DatabaseReference databaseReference;
+    SearchView searchView;
     String uid;
 
     @Override
@@ -44,6 +46,8 @@ public class Fragment_order extends Fragment {
         view = inflater.inflate(R.layout.fragment_order, container, false);
         setControl(view);
         getData_orderList();
+
+        setSearchView();
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
@@ -53,6 +57,7 @@ public class Fragment_order extends Fragment {
 
     private void setControl(View view) {
         rcOrder_customer = view.findViewById(R.id.rcOrder_customer_fr);
+        searchView = view.findViewById(R.id.idsearchview_order_customer);
     }
 
     private void getData_orderList() {
@@ -113,49 +118,55 @@ public class Fragment_order extends Fragment {
             }
         });
 
-//        orderStatusReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (data_OrderStatus != null) {
-//                    data_OrderStatus.clear();
+    }
+    private void setSearchView()
+    {
+//            searchView.setOnSearchClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    isSearchViewExpanded = true;
 //                }
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
+//            });
 //
-//                        if (orderStatus != null && !orderStatus.getStatus().equals("4") && !orderStatus.getStatus().equals("5")) {
+//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
 //
-//                            String orderId = orderStatus.getOrder_id();
-//                            if (orderId != null) {
-//                                orderReference.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
-//                                    @Override
-//                                    public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
-//                                        if (orderSnapshot.exists()) {
-//                                            String orderUserId = orderSnapshot.child("customer_id").getValue(String.class);
+//                    if (isSearchViewExpanded) {
 //
-//                                            if (orderUserId != null && orderUserId.equals(currentUserId)) {
-//                                                data_OrderStatus.add(orderStatus);
-//
-//                                            }
-//                                            recyclerViewOderCustomer.notifyDataSetChanged();
-//
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onCancelled(@NonNull DatabaseError error) {
-//                                        // Xử lý lỗi nếu cần
-//                                    }
-//                                });
-//                            }
-//                        }
 //                    }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Xử lý lỗi nếu cần
-//            }
-//        });
+//                    return false;
+//                }
+//            });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+
+                filterList(newText);
+
+                return false;
+
+            }
+        });
+    }
+
+
+    private void filterList(String text) {
+        ArrayList<OrderStatus> filteredlist = new ArrayList<>();
+        for (OrderStatus item : data_OrderStatus) {
+            if (item.getOrder_id().toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+
+        recyclerViewOderCustomer.setFilterList(filteredlist);
     }
 }

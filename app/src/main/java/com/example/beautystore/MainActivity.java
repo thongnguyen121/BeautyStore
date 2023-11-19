@@ -161,6 +161,11 @@ public class MainActivity extends AppCompatActivity {
                     controller.navigate(R.id.fragment_editProfile);
                     return  true;
                 }
+                else if (idItem == R.id.fragment_transaction_history)
+                {
+                    controller.navigate(R.id.fragment_transaction_history);
+                    return true;
+                }
                 return false;
             }
         });

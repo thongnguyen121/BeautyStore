@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/All_order"
+        android:title="Chọn tất cả"
+        ></item>
+    <item android:id="@+id/Order_being_received"
+        android:title="Đang chờ vận chuyển"
+        ></item>
+</menu>

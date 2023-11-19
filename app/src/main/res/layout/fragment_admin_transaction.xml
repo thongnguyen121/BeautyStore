@@ -3,12 +3,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.Fragment_admin_transaction">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    tools:context=".fragments.Fragment_admin_transaction"
+    android:background="@color/background_admin"
+    >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="lich su giao dich" />
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        >
 
+        <SearchView
+            android:id="@+id/idsearchview_transaction_history_admin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:background="@drawable/bg_searchview"
+            android:clickable="true"
+            android:focusable="false"
+            android:gravity="center"
+            android:queryHint="Search"></SearchView>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:id="@+id/rdoGroup"
+            >
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tất cả"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:id="@+id/rdoAll_history_admin"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đã giao"
+                android:layout_marginRight="10dp"
+                android:id="@+id/rdoDelivered"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đã hủy"
+                android:layout_marginRight="10dp"
+                android:id="@+id/rdoCancel"/>
+<!--            <RadioButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Đã khóa"-->
+<!--                android:id="@+id/rdoLock"/>-->
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Danh sách đơn hàng"
+            android:textSize="20dp"
+            android:textColor="@color/pink"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            ></TextView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rcTransaction_history_admin"
+            ></androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
 </FrameLayout>
