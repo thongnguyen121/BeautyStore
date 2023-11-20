@@ -69,7 +69,10 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
         this.resource = resource;
         this.data = data;
     }
-
+    public void setFilterList(ArrayList<OrderStatus> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public RecyclerView_order_shipper.ShipperHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

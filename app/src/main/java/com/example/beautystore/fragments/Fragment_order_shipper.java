@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SearchView;
 
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
@@ -42,6 +43,7 @@ public class Fragment_order_shipper extends Fragment {
     public static final String SHARE_PREFS = "sharedPrefs";
     Button btnLogout;
     View view;
+    SearchView searchView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class Fragment_order_shipper extends Fragment {
 
         setControl(view);
         getData_order();
+        setSearchView();
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +73,7 @@ public class Fragment_order_shipper extends Fragment {
     private void setControl(View view) {
         btnLogout = view.findViewById(R.id.btnShipperLogout);
         rcOrderqueue_shipper = view.findViewById(R.id.rcOrder_shipper);
+        searchView = view.findViewById(R.id.idsearchview_orderShipper);
 
     }
     private void getData_order()
@@ -105,6 +109,55 @@ public class Fragment_order_shipper extends Fragment {
             }
         });
     }
+    private void setSearchView()
+    {
+//            searchView.setOnSearchClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    isSearchViewExpanded = true;
+//                }
+//            });
+//
+//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//
+//                    if (isSearchViewExpanded) {
+//
+//                    }
+//                    return false;
+//                }
+//            });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
 
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+
+                filterList(newText);
+
+                return false;
+
+            }
+        });
+    }
+
+
+    private void filterList(String text) {
+        ArrayList<OrderStatus> filteredlist = new ArrayList<>();
+        for (OrderStatus item : data_OrderStatus) {
+            if (item.getOrder_id().toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+
+        recyclerViewOrderQueue.setFilterList(filteredlist);
+    }
 
 }

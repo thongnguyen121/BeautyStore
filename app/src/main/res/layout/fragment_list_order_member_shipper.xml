@@ -18,7 +18,7 @@
             android:layout_margin="5dp"
             >
                 <SearchView
-                    android:id="@+id/idsearchview_Home_user"
+                    android:id="@+id/idsearchview_orderList_shipper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

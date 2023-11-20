@@ -3,7 +3,16 @@
     <item android:id="@+id/All_order"
         android:title="Chọn tất cả"
         ></item>
-    <item android:id="@+id/Order_being_received"
+    <item android:id="@+id/Order_awaiting_shipping"
         android:title="Đang chờ vận chuyển"
+        ></item>
+    <item android:id="@+id/Order_being_received"
+        android:title="Đang vận chuyển"
+        ></item>
+    <item android:id="@+id/Order_canceled"
+        android:title="Đơn hàng đã hủy"
+        ></item>
+    <item android:id="@+id/Order_received"
+        android:title="Đơn hàng đã nhận"
         ></item>
 </menu>

@@ -122,7 +122,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
         btnAddCart.setOnClickListener(new View.OnClickListener() {
