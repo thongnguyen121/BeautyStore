@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/fragment_order" android:title="Order" android:icon="@drawable/baseline_assignment_24"></item>
-    <item android:id="@+id/fragment_profile" android:title="Notification" android:icon="@drawable/baseline_notifications_24"></item>
+    <item android:id="@+id/fragment_profile" android:title="Messages" android:icon="@drawable/baseline_message_24"></item>
     <item android:id="@+id/fragment_home" android:title="Home"  android:icon="@drawable/baseline_home_24"></item>
     <item android:id="@+id/fragment_wishlist" android:title="Wishlist"  android:icon="@drawable/baseline_favorite_24"></item>
     <item android:id="@+id/fragment_cart" android:title="Cart" android:icon="@drawable/baseline_add_shopping_cart_24"></item>
