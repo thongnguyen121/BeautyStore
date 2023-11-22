@@ -64,6 +64,7 @@ public class RecyclerViewRating_admin extends RecyclerView.Adapter<RecyclerViewR
         }
         holder.tvProductsID.setText(products.getProducts_id());
         Glide.with(context).load(products.getImgProducts_1()).into(holder.imgProducts);
+
         calculateAverageRating(holder, products_id);
     }
 

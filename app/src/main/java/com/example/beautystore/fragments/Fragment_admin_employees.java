@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,8 +26,10 @@ import android.widget.Toast;
 
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_add_members;
+import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerView_Member;
 import com.example.beautystore.model.Members;
+import com.example.beautystore.model.OrderStatus;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,10 +37,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -52,6 +57,8 @@ public class Fragment_admin_employees extends Fragment {
     RadioGroup radioGroup;
     private List<String> selectedRoles = new ArrayList<>();
     public static  boolean statusEmployee = true;
+    private boolean isSearchViewExpanded = false;
+    SearchView searchView;
 
 
     @Override
@@ -64,6 +71,7 @@ public class Fragment_admin_employees extends Fragment {
         reference = FirebaseDatabase.getInstance().getReference("Member");
 
         getData();
+        setSearchView();
         data.clear();
         rdoAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -302,7 +310,57 @@ public class Fragment_admin_employees extends Fragment {
             }
         });
     }
+    private void setSearchView()
+    {
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Admin_MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                isSearchViewExpanded = true;
+            }
+        });
 
+
+      searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+          @Override
+          public boolean onClose() {
+              if (isSearchViewExpanded)
+              {
+                  Admin_MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+              }
+              return false;
+          }
+      });
+      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+          @Override
+          public boolean onQueryTextSubmit(String query) {
+              return false;
+          }
+
+          @Override
+          public boolean onQueryTextChange(String newText) {
+
+              String searchTerm = removeDiacritics(newText);
+              filterList(searchTerm);
+              return false;
+          }
+      });
+    }
+public static String removeDiacritics(String input) {
+    String nfdNormalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    return pattern.matcher(nfdNormalizedString).replaceAll("").toLowerCase();
+}
+    private void filterList(String text) {
+        ArrayList<Members> filteredlist = new ArrayList<>();
+        for (Members item : data) {
+            if (item.getUsername().toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+
+        memberAdapter.setFilterList(filteredlist);
+    }
     private void setControl(View view) {
         recyclerView = view.findViewById(R.id.rcMember);
         radioGroup = view.findViewById(R.id.rdoGroup);
@@ -310,5 +368,6 @@ public class Fragment_admin_employees extends Fragment {
         rdoShipper = view.findViewById(R.id.rdoShipper);
         rdoTVV = view.findViewById(R.id.rdoTVV);
         rdoLock = view.findViewById(R.id.rdoLock);
+        searchView = view.findViewById(R.id.idSearch_employees);
     }
 }

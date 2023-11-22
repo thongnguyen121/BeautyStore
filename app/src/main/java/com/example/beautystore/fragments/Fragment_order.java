@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewOder_Customer;
@@ -38,6 +39,7 @@ public class Fragment_order extends Fragment {
     DatabaseReference databaseReference;
     SearchView searchView;
     String uid;
+    private boolean isSearchViewExpanded = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,24 +123,27 @@ public class Fragment_order extends Fragment {
     }
     private void setSearchView()
     {
-//            searchView.setOnSearchClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    isSearchViewExpanded = true;
-//                }
-//            });
-//
-//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-//                @Override
-//                public boolean onClose() {
-//
-//                    if (isSearchViewExpanded) {
-//
-//                    }
-//                    return false;
-//                }
-//            });
+            searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                    MainActivity.toolbar.setVisibility(View.GONE);
+                    isSearchViewExpanded = true;
+
+                }
+            });
+
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+
+                    if (isSearchViewExpanded) {
+                        MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+                        MainActivity.toolbar.setVisibility(View.VISIBLE);
+                    }
+                    return false;
+                }
+            });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

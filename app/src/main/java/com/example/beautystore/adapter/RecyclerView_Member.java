@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.model.Members;
+import com.example.beautystore.model.OrderStatus;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,10 @@ public class RecyclerView_Member extends RecyclerView.Adapter<RecyclerView_Membe
     public RecyclerView_Member(Context context,  ArrayList<Members> data) {
         this.context = context;
         this.data = data;
+    }
+    public void setFilterList(ArrayList<Members> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
     }
 
     @NonNull

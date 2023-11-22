@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewOder_Customer;
 import com.example.beautystore.model.OrderStatus;
@@ -117,24 +118,26 @@ public class Fragment_transaction_history extends Fragment {
 
 
     private void setSearchView() {
-//            searchView.setOnSearchClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    isSearchViewExpanded = true;
-//                }
-//            });
-//
-//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-//                @Override
-//                public boolean onClose() {
-//
-//                    if (isSearchViewExpanded) {
-//
-//                    }
-//                    return false;
-//                }
-//            });
+            searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                    MainActivity.toolbar.setVisibility(View.GONE);
+                    isSearchViewExpanded = true;
+                }
+            });
+
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+
+                    if (isSearchViewExpanded) {
+                        MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+                        MainActivity.toolbar.setVisibility(View.VISIBLE);
+                    }
+                    return false;
+                }
+            });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

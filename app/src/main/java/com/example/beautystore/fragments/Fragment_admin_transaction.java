@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.SearchView;
 
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewOrder_queue;
 import com.example.beautystore.model.OrderStatus;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ public class Fragment_admin_transaction extends Fragment {
     SearchView searchView;
     RadioButton rdoAll, rdoDelivered, rdoCancled;
     ArrayList<OrderStatus> data_OrderStatus = new ArrayList<>();
+    private boolean isSearchViewExpanded = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -181,24 +183,24 @@ public class Fragment_admin_transaction extends Fragment {
 
     private void setSearchView()
     {
-//            searchView.setOnSearchClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    isSearchViewExpanded = true;
-//                }
-//            });
-//
-//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-//                @Override
-//                public boolean onClose() {
-//
-//                    if (isSearchViewExpanded) {
-//
-//                    }
-//                    return false;
-//                }
-//            });
+            searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Admin_MainActivity.bottomNavigationView.setVisibility(View.GONE);
+                    isSearchViewExpanded = true;
+                }
+            });
+
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+
+                    if (isSearchViewExpanded) {
+                        Admin_MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+                    }
+                    return false;
+                }
+            });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
