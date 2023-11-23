@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Messages;
 import com.example.beautystore.model.Chat;
+import com.example.beautystore.model.Members;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,10 +24,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Activity_Messenger extends AppCompatActivity {
 
@@ -37,11 +49,11 @@ public class Activity_Messenger extends AppCompatActivity {
     RecyclerView messageRecyclerView;
     ArrayList<Chat> chats;
     Intent intent;
+    String customerToken;
 
     ValueEventListener seenListener;
     String products_id;
     String chatId;
-    boolean notify = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +65,6 @@ public class Activity_Messenger extends AppCompatActivity {
         products_id = intent.getStringExtra("products_id");
         chatId = intent.getStringExtra("chatId");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-
-
 
 
         //Back button:
@@ -69,7 +79,6 @@ public class Activity_Messenger extends AppCompatActivity {
         ivSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notify = true;
                 String msg = edtMessage.getText().toString();
                 if (!msg.equals("")){
                     sendMessage(fuser.getUid(), msg);
@@ -106,10 +115,30 @@ public class Activity_Messenger extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+                    Members members = snapshot.getValue(Members.class);
                     chatReference.child(chatId).push().setValue(chatHashMap);
                     chatGroupHashMap.put("id", chatId);
                     chatGroupHashMap.put("status", "Unseen");
-                    chatGroupReference.child(chatId).push().setValue(chatGroupHashMap);
+                    chatGroupReference.child(chatId).setValue(chatGroupHashMap);
+
+                    DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("Tokens");
+                    tokenRef.child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            customerToken = (String) snapshot.getValue();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                    try {
+                        sendNotification(members.getUsername(), fuser.getUid(), customerToken, message);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -142,7 +171,6 @@ public class Activity_Messenger extends AppCompatActivity {
         DatabaseReference membersReference = FirebaseDatabase.getInstance().getReference().child("Member");
         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference().child("Customer");
         DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference().child("Chats");
-        DatabaseReference chatListReference = FirebaseDatabase.getInstance().getReference().child("ChatList");
 
         membersReference.child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -216,5 +244,49 @@ public class Activity_Messenger extends AppCompatActivity {
         ivBack = findViewById(R.id.ivMessengerBackButton);
         ivSendButton = findViewById(R.id.ivMessengerSendButton);
         edtMessage = findViewById(R.id.edtMessengerMessage);
+    }
+
+    void sendNotification(String currentUserName, String uid, String receiver, String message) throws JSONException {
+
+        JSONObject jsonObject  = new JSONObject();
+
+        JSONObject notificationObj = new JSONObject();
+        notificationObj.put("title",currentUserName);
+        notificationObj.put("body",message);
+
+        JSONObject dataObj = new JSONObject();
+        dataObj.put("userId",uid);
+
+        jsonObject.put("notification",notificationObj);
+        jsonObject.put("data",dataObj);
+        jsonObject.put("to",receiver);
+
+        callApi(jsonObject);
+
+    }
+
+    void callApi(JSONObject jsonObject){
+        MediaType JSON = MediaType.get("application/json");
+
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://fcm.googleapis.com/fcm/send";
+        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .header("Authorization", "Bearer AAAAQbWEeFk:APA91bEYQk7epdZpu9NBFEbXG4eosTgLvlIaOt2GDg_gxpatFvbOG7uz_MrRfwOPPJW8Chs09vF2XwSZtlUJTuKkczV8Oa9mcbnk2droxVPPSzsUb2033Y6y3eldGI7_gPGGOi3Eoupt")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+            }
+        });
+
     }
 }

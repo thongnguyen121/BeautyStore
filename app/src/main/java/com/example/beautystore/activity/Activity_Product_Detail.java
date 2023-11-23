@@ -50,6 +50,7 @@ import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
 import com.example.beautystore.model.Rating;
 import com.example.beautystore.model.WishList;
+import com.example.beautystore.notification.Token;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,6 +62,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -240,7 +242,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
         }
 
     }
-
     public static void updateTotalPrice(DatabaseReference reference, String uid) {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
