@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<String> task) {
                 if (task.isSuccessful()){
                     String token = task.getResult();
+                    Log.i("Token " , token);
                     DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("Tokens");
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 

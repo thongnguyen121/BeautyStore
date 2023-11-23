@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,12 +21,14 @@ import android.widget.Toast;
 
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
+import com.example.beautystore.adapter.PaymentMethodAdapter;
 import com.example.beautystore.adapter.RecyclerView_Order;
 import com.example.beautystore.model.Cart;
 import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
+import com.example.beautystore.model.PaymentMethod;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -47,6 +50,7 @@ public class Activity_Order extends AppCompatActivity {
     EditText edtUserName, edtAddress, edtPhoneNumber;
     TextView tvTotalPrice;
     Spinner spPaymentMethod;
+    PaymentMethodAdapter paymentMethodAdapter;
     Button btnOrder;
     ImageView ivBack;
     ArrayList<CartDetail> cartDetails = new ArrayList<>();
@@ -226,8 +230,44 @@ public class Activity_Order extends AppCompatActivity {
         edtPhoneNumber = findViewById(R.id.edtOrderPhoneNumber);
         ivBack = findViewById(R.id.ivBackOrder);
         tvTotalPrice = findViewById(R.id.tvOrderTotalMoney);
-        spPaymentMethod = findViewById(R.id.spOrderPaymentMethod);
+        setPaymentMethodSpinner();
         btnOrder = findViewById(R.id.btnOrderOrderButton);
+    }
+
+    public void setPaymentMethodSpinner(){
+        spPaymentMethod = findViewById(R.id.spOrderPaymentMethod);
+        List<PaymentMethod> list = new ArrayList<>();
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference paymentMethodRef = firebaseDatabase.getReference().child("PaymentMethod");
+        paymentMethodRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    PaymentMethod paymentMethod = dataSnapshot.getValue(PaymentMethod.class);
+                    list.add(paymentMethod);
+                }
+                paymentMethodAdapter = new PaymentMethodAdapter(Activity_Order.this, R.layout.item_spinner_payment_method_selected, list);
+                spPaymentMethod.setAdapter(paymentMethodAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        spPaymentMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(Activity_Order.this, paymentMethodAdapter.getItem(position).getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
     public void getIDOrder() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -254,7 +294,7 @@ public class Activity_Order extends AppCompatActivity {
                 }else {
 
                     autoID = "DH01";
-                    Log.d(TAG, "ko: " + autoID);
+                    Log.d("TAG", "ko: " + autoID);
                 }
 
             }
