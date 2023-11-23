@@ -25,8 +25,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,11 +40,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerView_order_shipper.ShipperHolder> {
 
@@ -59,6 +72,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
     String member_id = "";
     Button btnSave;
     EditText edtNote;
+    NotificationSender notificationSender;
 
     public RecyclerView_order_shipper(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
@@ -76,6 +90,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView_order_shipper.ShipperHolder holder, int position) {
         OrderStatus orderStatus = data.get(position);
+        notificationSender = new NotificationSender(context.getApplicationContext());
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
@@ -143,6 +158,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                    notificationSender.sendNotificationShipper("2", order_id);
                                 } else {
                                     Toast.makeText(context, "Hủy đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
@@ -200,6 +216,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(context, "Đơn hàng đã được giao", Toast.LENGTH_SHORT).show();
+                            notificationSender.sendNotificationAdmin("4", order_id);
                         } else {
                             Toast.makeText(context, "không thành công", Toast.LENGTH_SHORT).show();
                         }
@@ -246,6 +263,8 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Hoàn trả đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                notificationSender.sendNotification("5",order_id);
+                                notificationSender.sendNotificationAdmin("5",order_id);
                             } else {
                                 Toast.makeText(context, "Hoàn trả đơn hàng không thành công", Toast.LENGTH_SHORT).show();
                             }

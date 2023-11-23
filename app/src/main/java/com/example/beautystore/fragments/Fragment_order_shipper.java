@@ -21,6 +21,8 @@ import com.example.beautystore.R;
 import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewOrder_queue;
 import com.example.beautystore.model.OrderStatus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,14 +55,24 @@ public class Fragment_order_shipper extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("check", "");
-                editor.apply();
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                database = FirebaseDatabase.getInstance();
+                databaseReference = database.getReference("Member").child(FirebaseAuth.getInstance().getUid()).child("fcmToken");
+                databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            FirebaseAuth.getInstance().signOut();
+                            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("check", "");
+                            editor.apply();
+                            Intent intent = new Intent(requireContext(), MainActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    }
+                });
+
             }
         });
 
