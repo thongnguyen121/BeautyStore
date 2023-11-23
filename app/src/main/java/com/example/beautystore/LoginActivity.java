@@ -24,7 +24,6 @@ import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.activity.Tuvanvien_MainActivity;
 import com.example.beautystore.model.Members;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class LoginActivity extends AppCompatActivity {
     TextView tvForgotPass, tvSignUp;
@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     uid = firebaseAuth.getCurrentUser().getUid();
-                    databaseReference.child("Customer").addValueEventListener(new ValueEventListener() {
+                    databaseReference.child("Customer").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(uid)) {
@@ -129,9 +129,22 @@ public class LoginActivity extends AppCompatActivity {
 
                                 editor.apply();
                                 Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<String> task) {
+                                        if (task.isSuccessful()) {
+                                            String token = task.getResult();
+                                            Log.d("TAG", "token la: " + token);
+
+                                            firebaseDatabase.getReference("Customer").child(uid).child("fcmToken").setValue(token);
+
+                                            // Chuyển sang màn hình chính
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                });
                             } else {
                                 Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();
                                         checkRole(uid);
@@ -151,7 +164,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkRole(String uid) {
-        databaseReference.child("Member").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference referenceMember = firebaseDatabase.getReference("Member").child(uid);
+        referenceMember.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -166,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("check","1");
                             editor.apply();
+                            getFCMTokenMember(referenceMember);
                             Toast.makeText(LoginActivity.this, "sp", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, Shipper_MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -182,6 +197,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("check", "2");
                             editor.apply();
+                            getFCMTokenMember(referenceMember);
                             Toast.makeText(LoginActivity.this, "tv", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, Tuvanvien_MainActivity.class);
                             startActivity(intent);
@@ -198,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("email", email);
                             editor.putString("pass", pass);
                             editor.apply();
+                            getFCMTokenMember(referenceMember);
                             Toast.makeText(LoginActivity.this, "am", Toast.LENGTH_SHORT).show();
 
                             Intent i = new Intent(LoginActivity.this, Admin_MainActivity.class);
@@ -212,6 +229,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+    }
+
+    private void getFCMTokenMember(DatabaseReference referenceMember) {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()){
+                    String token = task.getResult();
+                    referenceMember.child("fcmToken").setValue(token);
+                }
             }
         });
     }

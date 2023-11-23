@@ -17,9 +17,9 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.model.CartDetail;
-import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,22 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerViewProgress_order.ProgressHolder> {
 
@@ -60,6 +49,7 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
 
     String order_id = "";
     String status = "";
+    NotificationSender notificationSender;
 
     public RecyclerViewProgress_order(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
@@ -76,6 +66,7 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewProgress_order.ProgressHolder holder, int position) {
+        notificationSender = new NotificationSender(context.getApplicationContext());
         OrderStatus orderStatus = data.get(position);
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
@@ -202,10 +193,11 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
                             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        String a = snapshot.getValue(String.class);
-                                        Log.d("TAG", "gia tri: " + a);
-                                        sendNotification(a, order_id);
+                                    if (snapshot.exists()) {
+                                        String status = snapshot.getValue(String.class);
+                                        Log.d("TAG", "gia tri: " + status);
+//                                        sendNotification(status, order_id);
+                                        notificationSender.sendNotification(status,order_id);
                                     }
                                 }
 
@@ -216,6 +208,9 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
                             });
                             Toast.makeText(context, "Đơn hàng đã được xử lý", Toast.LENGTH_SHORT).show();
                         } else {
+                            String status = "Xác nhận đã hủy đơn hàng";
+//                            sendNotification(status, order_id);
+                            notificationSender.sendNotification(status,order_id);
                             Toast.makeText(context, "Cập nhật trạng thái không thành công", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -233,10 +228,11 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
                             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        String a = snapshot.getValue(String.class);
-                                        Log.d("TAG", "gia tri: " + a);
-                                        sendNotification(a, order_id);
+                                    if (snapshot.exists()) {
+                                        String status = snapshot.getValue(String.class);
+                                        Log.d("TAG", "gia tri: " + status);
+                                        notificationSender.sendNotification(status, order_id);
+                                        notificationSender.sendNotificationShipper(status, order_id);
                                     }
                                 }
 
@@ -299,70 +295,7 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
         });
     }
 
-    private void sendNotification(String a, String order_id) {
-        final String[] fcmToken = new String[1];
-        final String[] status = new String[1];
-        databaseReference.child("Status").child(a).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    status[0] = snapshot.getValue(String.class);
 
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        databaseReference.child("Order").child(order_id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    Order order = snapshot.getValue(Order.class);
-                    String userID = order.getCustomer_id();
-                    databaseReference.child("Customer").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()){
-                                Customer customer = snapshot.getValue(Customer.class);
-                                fcmToken[0] = customer.getFcmToken();
-                                Log.d("TAG", "id cua nguoi order: " + snapshot.getKey());
-                                Log.d("TAG", "id cua nguoi order: " + status[0]);
-                                Log.d("TAG", "fcm cua nguoi dung la: " + customer.getFcmToken());
-                                try {
-                                    JSONObject jsonObject = new JSONObject();
-                                    JSONObject notificationObj = new JSONObject();
-                                    notificationObj.put("title", customer.getUsername());
-                                    notificationObj.put("body", order_id +" "+ status[0]);
-                                    JSONObject dataObj = new JSONObject();
-                                    dataObj.put("userID", snapshot.getKey());
-
-                                    jsonObject.put("notification", notificationObj);
-                                    jsonObject.put("data", dataObj);
-                                    jsonObject.put("to", customer.getFcmToken());
-                                    callAPI(jsonObject);
-                                }catch (Exception e){
-
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
 
     @Override
@@ -399,28 +332,5 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
             linearLayout = itemView.findViewById(R.id.linner_orderDetail_admin);
             linner_button = itemView.findViewById(R.id.linner_button_order_admin);
         }
-    }
-
-    private void callAPI(JSONObject jsonObject) {
-        MediaType type = MediaType.get("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
-        String url = "https://fcm.googleapis.com/fcm/send";
-        RequestBody body = RequestBody.create(jsonObject.toString(), type);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .header("Authorization", "key=AAAAQbWEeFk:APA91bEYQk7epdZpu9NBFEbXG4eosTgLvlIaOt2GDg_gxpatFvbOG7uz_MrRfwOPPJW8Chs09vF2XwSZtlUJTuKkczV8Oa9mcbnk2droxVPPSzsUb2033Y6y3eldGI7_gPGGOi3Eoupt")
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
-            }
-        });
     }
 }

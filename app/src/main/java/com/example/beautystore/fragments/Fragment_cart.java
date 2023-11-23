@@ -64,7 +64,7 @@ public class Fragment_cart extends Fragment {
 
 
     private void getDataCart() {
-        cartDetailAdapter = new RecyclerView_Cart_Detail(cartDetails,this, R.layout.layout_item_cart_detail);
+        cartDetailAdapter = new RecyclerView_Cart_Detail(cartDetails,getContext(), R.layout.layout_item_cart_detail);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         cartDetaiRecyclerView.setLayoutManager(layoutManager);

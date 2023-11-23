@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.beautystore.MainActivity;
+import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Order;
 import com.example.beautystore.model.Cart;
@@ -26,6 +27,7 @@ import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
+import com.example.beautystore.model.Products;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -56,7 +58,9 @@ public class Activity_Order extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     List<CartDetail> detail = new ArrayList<>();
-    String autoID ="", total, address, phoneNum, name;
+    String autoID = "", total, address, phoneNum, name, productId, price, productQty;
+    boolean check;
+    NotificationSender notificationSender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +68,25 @@ public class Activity_Order extends AppCompatActivity {
         setContentView(R.layout.activity_order);
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
+        check = getIntent().getBooleanExtra("buynow", false);
+        productId = getIntent().getStringExtra("productId");
+        price = getIntent().getStringExtra("price");
+        productQty = getIntent().getStringExtra("productQty");
         databaseReference = database.getReference();
+        notificationSender = new NotificationSender(getApplicationContext());
         setScreenElement();
         getIDOrder();
+        if (check) {
+            cartDetails.clear();
+            cartDetails.add(new CartDetail(productId, price, productQty));
+            detail.add(new CartDetail(productId, price, productQty));
+            orderDetailAdapter.notifyDataSetChanged();
+        } else {
+            getCartItem(databaseReference, uid);
+            saveCartItem(databaseReference, uid);
+        }
+        getUserInfo(databaseReference, uid);
 
-        getUserInfo( databaseReference, uid);
-        getCartItem(databaseReference, uid);
-        saveCartItem(databaseReference, uid);
         getTotalPrice();
 
         Calendar calendar = Calendar.getInstance();
@@ -83,22 +99,49 @@ public class Activity_Order extends AppCompatActivity {
                 address = edtAddress.getText().toString();
                 phoneNum = edtPhoneNumber.getText().toString();
                 name = edtUserName.getText().toString();
-                Order order = new Order(autoID,uid,"0",savedate,total,address,phoneNum,name,detail);
-                OrderStatus orderStatus = new OrderStatus(order.getOrder_id(),"0","", "", "");
+                Order order = new Order(autoID, uid, "0", savedate, total, address, phoneNum, name, detail);
+                OrderStatus orderStatus = new OrderStatus(order.getOrder_id(), "0", "", "", "");
                 databaseReference.child("Order").child(autoID).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(Activity_Order.this, "thanh cong", Toast.LENGTH_SHORT).show();
-                                databaseReference.child("Cart").child(uid).removeValue();
-                            }
-                        });
+                        for (CartDetail item : detail) {
+                            DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("Products").child(item.getProduct_id());
+                            productRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        Products products = snapshot.getValue(Products.class);
+                                        int newQty = Integer.parseInt(products.getQuantity()) - Integer.parseInt(item.getQty());
+                                        productRef.child("quantity").setValue(String.valueOf(newQty)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        String order_id = order.getOrder_id();
+                                                        Toast.makeText(Activity_Order.this, "thanh cong", Toast.LENGTH_SHORT).show();
+                                                        notificationSender.sendNotificationAdmin("0", order_id);
+                                                        if (!check) {
+                                                            databaseReference.child("Cart").child(uid).removeValue();
+                                                        }
 
-                        Intent intent = new Intent(Activity_Order.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                                                    }
+                                                });
+
+                                                Intent intent = new Intent(Activity_Order.this, MainActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
 
 
                     }
@@ -122,10 +165,10 @@ public class Activity_Order extends AppCompatActivity {
         databaseReference.child("Cart").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     Cart cart = snapshot.getValue(Cart.class);
-                     List<CartDetail>items = cart.getItems();
-                    for (CartDetail cartDetail : items){
+                    List<CartDetail> items = cart.getItems();
+                    for (CartDetail cartDetail : items) {
                         detail.add(cartDetail);
                         Log.d("TAG", "onDataChange: " + detail);
                     }
@@ -140,7 +183,12 @@ public class Activity_Order extends AppCompatActivity {
     }
 
     private void getTotalPrice() {
-            DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        if (check) {
+            int totalmoney = Integer.parseInt(price) * Integer.parseInt(productQty);
+            total = String.valueOf(totalmoney);
+            tvTotalPrice.setText(decimalFormat.format(totalmoney) + " Đ");
+        } else {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference reference = database.getReference("Cart").child(FirebaseAuth.getInstance().getUid());
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -148,10 +196,10 @@ public class Activity_Order extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     total = snapshot.child("total").getValue(String.class);
 //                holder.tvPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
                         tvTotalPrice.setText(decimalFormat.format(Integer.valueOf(total.trim())) + " Đ");
-                    }else{
-                        tvTotalPrice.setText( "0 Đ");
+                    } else {
+                        tvTotalPrice.setText("0 Đ");
                     }
 
                 }
@@ -161,19 +209,16 @@ public class Activity_Order extends AppCompatActivity {
 
                 }
             });
-
+        }
     }
 
     private void getCartItem(DatabaseReference databaseReference, String uid) {
-        orderDetailAdapter = new RecyclerView_Order(cartDetails,this,R.layout.layout_item_order);
 
-        orderDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        orderDetailRecyclerView.setAdapter(orderDetailAdapter);
         databaseReference.child("Cart").child(uid).child("items").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 cartDetails.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     CartDetail item = dataSnapshot.getValue(CartDetail.class);
                     cartDetails.add(item);
                 }
@@ -191,15 +236,14 @@ public class Activity_Order extends AppCompatActivity {
         reference.child("Customer").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     Customer customer = snapshot.getValue(Customer.class);
                     edtUserName.setText(customer.getUsername());
                     edtAddress.setText(customer.getAddress());
                     edtPhoneNumber.setText(customer.getPhoneNumber());
 
 
-                }
-                else{
+                } else {
                     Log.d("TAG", "khong co: ");
                 }
             }
@@ -211,7 +255,7 @@ public class Activity_Order extends AppCompatActivity {
         });
     }
 
-    private void setScreenElement(){
+    private void setScreenElement() {
 
         //Recyclerview:
         orderDetailRecyclerView = findViewById(R.id.rvOrderDetail);
@@ -228,7 +272,12 @@ public class Activity_Order extends AppCompatActivity {
         tvTotalPrice = findViewById(R.id.tvOrderTotalMoney);
         spPaymentMethod = findViewById(R.id.spOrderPaymentMethod);
         btnOrder = findViewById(R.id.btnOrderOrderButton);
+        orderDetailAdapter = new RecyclerView_Order(cartDetails, this, R.layout.layout_item_order);
+
+        orderDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        orderDetailRecyclerView.setAdapter(orderDetailAdapter);
     }
+
     public void getIDOrder() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("Order");
@@ -236,14 +285,14 @@ public class Activity_Order extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<String> dsUser = new ArrayList<>();
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         dsUser.add(dataSnapshot.getKey());
                     }
                     String[] temp = dsUser.get(dsUser.size() - 1).split("DH");
                     String id = "";
-                    int idNumber = Integer.parseInt(temp[1])+1;
+                    int idNumber = Integer.parseInt(temp[1]) + 1;
                     if (idNumber < 10) {
                         id = "DH0" + idNumber;
                     } else {
@@ -251,7 +300,7 @@ public class Activity_Order extends AppCompatActivity {
                     }
                     autoID = id;
                     Log.d("TAG", "cco: " + autoID);
-                }else {
+                } else {
 
                     autoID = "DH01";
                     Log.d(TAG, "ko: " + autoID);

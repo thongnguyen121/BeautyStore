@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -31,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.beautystore.LoginActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewCategories;
 import com.example.beautystore.adapter.RecyclerViewProducts;
@@ -68,10 +72,10 @@ import java.util.Map;
 
 public class Activity_Product_Detail extends AppCompatActivity {
 
-  Boolean isOnWishList;
-    String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3,uid, price, autoId_rating;
-double total = 0;
-    int productQty = 1;
+    Boolean isOnWishList;
+    String productId = "", cate_id = "", imgProduct1, imgProduct2, imgProduct3, uid, price, autoId_rating, autoID;
+    double total = 0;
+    int productQty = 1, maxQty;
 
     String UID;
 
@@ -81,7 +85,7 @@ double total = 0;
     private RecyclerView_Rating recyclerViewRating;
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
-    TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc;
+    TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc, tvMaxQty;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
     private ArrayList<WishList> wishLists;
@@ -90,6 +94,7 @@ double total = 0;
     private RecyclerView ratingRecyclerView, rcDSlienquan;
     private ArrayList<Rating> data_ratings = new ArrayList<>();
     float numberStar = 0;
+    public static final String SHARE_PREFS = "sharedPrefs";
     private ArrayList<Products> data_products = new ArrayList<>();
 
     private String user_id = "";
@@ -100,19 +105,21 @@ double total = 0;
         setContentView(R.layout.activity_product_detail);
         setScreenElement();
         setAddWishListButton();
-        setScreenData();
+
         changeBigProductImage();
-        increaseProductQty();
-        decreaseProductQty();
+
 
         productId = getIntent().getStringExtra("products_id");
         uid = FirebaseAuth.getInstance().getUid();
         cate_id = getIntent().getStringExtra("categories_id");
         user_id = getIntent().getStringExtra("user_id");
-        Toast.makeText(this, "cate_id" + cate_id, Toast.LENGTH_SHORT).show();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Products");
         getDataFromFireBase(productId);
+
+//        setScreenData();
+        increaseProductQty();
+        decreaseProductQty();
         getData_DSLienquan(cate_id);
         createRatingsList();
 //        checkOrderForRating(productId);
@@ -123,15 +130,26 @@ double total = 0;
 
         addOrRemoveProductToWishList();
         //intent_getData(productId);
-        ivMessenger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
-                intent.putExtra("products_id", productId);
-                intent.putExtra("user_id", UID);
-                startActivity(intent);
-            }
-        });
+        if (isUserLoggedin()) {
+            ivMessenger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
+                    intent.putExtra("products_id", productId);
+                    intent.putExtra("user_id", UID);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            ivMessenger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loginDialog();
+                }
+            });
+
+        }
+
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,51 +163,82 @@ double total = 0;
                 addToCart(uid);
             }
         });
+        btnBuyNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buyNow();
+            }
+        });
+    }
+
+    private void buyNow() {
+        if (isUserLoggedin()) {
+            if (maxQty == 0) {
+                Toast.makeText(this, "Sản phẩm này hiện tại đã hết", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(Activity_Product_Detail.this, Activity_Order.class);
+                intent.putExtra("buynow", true);
+                intent.putExtra("productId", productId);
+                intent.putExtra("price", price);
+                intent.putExtra("productQty", String.valueOf(productQty));
+                startActivity(intent);
+            }
+        } else {
+            loginDialog();
+        }
     }
 
     private void addToCart(String uid) {
-        CartDetail cartDetail = new CartDetail(productId, price,String.valueOf(productQty));
-        DatabaseReference  reference = firebaseDatabase.getReference("Cart").child(uid);
-        Double total = Double.valueOf(price) * productQty;
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Cart cart = snapshot.getValue(Cart.class);
-                if (cart == null) {
-                    cart = new Cart(uid, new ArrayList<>(), String.valueOf(total));
-                }
-                for (CartDetail item : cart.getItems()){
-                    if (item.getProduct_id().equals(cartDetail.getProduct_id())){
-                        int currentQty = Integer.parseInt(item.getQty());
-                        int newQty = currentQty + Integer.parseInt(cartDetail.getQty());
-                        item.setQty(String.valueOf(newQty));
-                        productExist = true;
-                        break;
-                    }
-                }
-                if (!productExist) {
-                    cart.getItems().add(cartDetail);
-                }
-                updateTotalPrice(reference, uid);
-                reference.setValue(cart, new DatabaseReference.CompletionListener() {
+        if (isUserLoggedin()) {
+            if (maxQty == 0) {
+                Toast.makeText(this, "Sản phẩm này hiện tại đã hết", Toast.LENGTH_SHORT).show();
+            } else {
+                CartDetail cartDetail = new CartDetail(productId, price, String.valueOf(productQty));
+                DatabaseReference reference = firebaseDatabase.getReference("Cart").child(uid);
+                Double total = Double.valueOf(price) * productQty;
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                      if (error == null){
-                          Toast.makeText(Activity_Product_Detail.this, "thanh cong ", Toast.LENGTH_SHORT).show();
-                      }
-                      else {
-                          Toast.makeText(Activity_Product_Detail.this, "loi " + error, Toast.LENGTH_SHORT).show();
-                      }
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Cart cart = snapshot.getValue(Cart.class);
+                        if (cart == null) {
+                            cart = new Cart(uid, new ArrayList<>(), String.valueOf(total));
+                        }
+                        for (CartDetail item : cart.getItems()) {
+                            if (item.getProduct_id().equals(cartDetail.getProduct_id())) {
+                                int currentQty = Integer.parseInt(item.getQty());
+                                int newQty = currentQty + Integer.parseInt(cartDetail.getQty());
+                                item.setQty(String.valueOf(newQty));
+                                productExist = true;
+                                break;
+                            }
+                        }
+                        if (!productExist) {
+                            cart.getItems().add(cartDetail);
+                        }
+                        updateTotalPrice(reference, uid);
+                        reference.setValue(cart, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                if (error == null) {
+                                    Toast.makeText(Activity_Product_Detail.this, "thanh cong ", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Activity_Product_Detail.this, "loi " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
-
             }
+        } else {
+            loginDialog();
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     public static void updateTotalPrice(DatabaseReference reference, String uid) {
@@ -198,9 +247,9 @@ double total = 0;
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Cart cart = snapshot.getValue(Cart.class);
                 int total = 0;
-                if (cart != null){
+                if (cart != null) {
                     List<CartDetail> items = cart.getItems();
-                    for (CartDetail cartDetail: items){
+                    for (CartDetail cartDetail : items) {
                         double productPrice = Double.parseDouble(cartDetail.getPrice());
                         double productQty = Double.parseDouble(cartDetail.getQty());
                         total += productPrice * productQty;
@@ -219,29 +268,35 @@ double total = 0;
         });
     }
 
-    private void setAddWishListButton(){
-        wishLists = new ArrayList<>();
-        databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
-        databaseReference.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(productId).exists()){
-                    Log.d("TAG", "onDataChange: sp co trong wishlist");
-                    isOnWishList = true;
-                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+    private void setAddWishListButton() {
+        if (isUserLoggedin()) {
+            wishLists = new ArrayList<>();
+            databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
+            databaseReference.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.child(productId).exists()) {
+                        Log.d("TAG", "onDataChange: sp co trong wishlist");
+                        isOnWishList = true;
+                        ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                    } else {
+                        isOnWishList = false;
+                        ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+                    }
                 }
-                else {
-                    isOnWishList = false;
-                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
-            }
+            });
+        } else {
+            isOnWishList = false;
+            ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        }
     }
+
     private void getDataFromFireBase(String productId) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
         databaseReference.child(productId).addValueEventListener(new ValueEventListener() {
@@ -252,20 +307,30 @@ double total = 0;
                     tvProductName.setText(products.getProducts_name());
                     tvProductDesc.setText(products.getDescription());
                     price = products.getPrice();
+                    maxQty = Integer.parseInt(products.getQuantity());
                     tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim())) + " Đ");
                     imgProduct1 = products.getImgProducts_1();
                     imgProduct2 = products.getImgProducts_2();
                     imgProduct3 = products.getImgProducts_3();
-                    Glide.with(Activity_Product_Detail.this)
+                    tvMaxQty.setText(products.getQuantity());
+                    if (maxQty == 0){
+                        productQty = 0;
+                    }
+                    else {
+                        productQty = 1;
+
+                    }
+                    tvProductQty.setText(String.valueOf(productQty));
+                    Glide.with(getApplicationContext())
                             .load(products.getImgProducts_1())
                             .into(ivProductBig);
-                    Glide.with(Activity_Product_Detail.this)
+                    Glide.with(getApplicationContext())
                             .load(products.getImgProducts_1())
                             .into(ivProductSmall1);
-                    Glide.with(Activity_Product_Detail.this)
+                    Glide.with(getApplicationContext())
                             .load(products.getImgProducts_2())
                             .into(ivProductSmall2);
-                    Glide.with(Activity_Product_Detail.this)
+                    Glide.with(getApplicationContext())
                             .load(products.getImgProducts_3())
                             .into(ivProductSmall3);
                     calculateAverageRating();
@@ -285,8 +350,12 @@ double total = 0;
         ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                productQty++;
-                tvProductQty.setText(String.valueOf(productQty));
+                if (productQty < maxQty) {
+                    productQty++;
+                    tvProductQty.setText(String.valueOf(productQty));
+                    ivIncreaseQty.setEnabled(productQty < maxQty);
+                    ivDecreaseQty.setEnabled(productQty > 1);
+                }
             }
         });
     }
@@ -295,12 +364,12 @@ double total = 0;
         ivDecreaseQty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (productQty <= 1) {
-                    ivDecreaseQty.setEnabled(false);
-
+                if (productQty > 1) {
+                    productQty--;
+                    tvProductQty.setText(String.valueOf(productQty));
+                    ivDecreaseQty.setEnabled(productQty > 1);
+                    ivIncreaseQty.setEnabled(productQty < maxQty);
                 }
-                productQty--;
-                tvProductQty.setText(String.valueOf(productQty));
             }
         });
     }
@@ -391,29 +460,57 @@ double total = 0;
         });
     }
 
-    protected void addOrRemoveProductToWishList(){
-        ivAddWishList.setOnClickListener(new View.OnClickListener() {
+    protected void addOrRemoveProductToWishList() {
+        if (isUserLoggedin()) {
+            ivAddWishList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isOnWishList) {
+                        databaseReference = firebaseDatabase.getReference().child("WishList");
+                        WishList wishList = new WishList(UID, productId, "");
+                        databaseReference.child(UID).child(productId).setValue(wishList).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(Activity_Product_Detail.this, "Add Wish List Successfully!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        isOnWishList = true;
+                        ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
+                    } else {
+                        firebaseDatabase.getReference().child("WishList").child(uid).child(productId).removeValue();
+                        isOnWishList = false;
+                        ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
+                    }
+                }
+            });
+        } else {
+            ivAddWishList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loginDialog();
+                }
+            });
+        }
+    }
+
+    private void loginDialog() {
+        AlertDialog.Builder loginDialog = new AlertDialog.Builder(Activity_Product_Detail.this);
+        loginDialog.setTitle("Thông báo");
+        loginDialog.setMessage("Bạn cần phải đăng nhập để thực hiện hành động này");
+        loginDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!isOnWishList){
-                    databaseReference = firebaseDatabase.getReference().child("WishList");
-                    WishList wishList = new WishList(UID, productId, "");
-                    databaseReference.child(UID).child(productId).setValue(wishList).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(Activity_Product_Detail.this, "Add Wish List Successfully!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    isOnWishList = true;
-                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
-                }
-                else {
-                    firebaseDatabase.getReference().child("WishList").child(uid).child(productId).removeValue();
-                    isOnWishList = false;
-                    ivAddWishList.setImageResource(R.drawable.baseline_favorite_border_24);
-                }
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Activity_Product_Detail.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
+        loginDialog.setNegativeButton("Khong", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        loginDialog.create().show();
     }
 
     protected void setScreenElement() {
@@ -437,6 +534,7 @@ double total = 0;
         rbProductRating = findViewById(R.id.rbProductDetailProductRating);
 
         tvProductDesc = findViewById(R.id.tvProductDetailProductDesc);
+        tvMaxQty = findViewById(R.id.tvMaxQty);
 
         btnAddCart = findViewById(R.id.btnProductDetailAddCart);
         btnBuyNow = findViewById(R.id.btnProductDetailBuyNow);
@@ -453,68 +551,72 @@ double total = 0;
     }
 
     private void reView_products() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String savedate = simpleDateFormat.format(calendar.getTime());
-        String UserID = FirebaseAuth.getInstance().getUid();
-        rbUserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                numberStar = ratingBar.getRating();
-            }
-        });
-        ivComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(numberStar == 0 || TextUtils.isEmpty(edtComment.getText()))
-                {
-                    showRating_empty();
+        if (isUserLoggedin()) {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String savedate = simpleDateFormat.format(calendar.getTime());
+            String UserID = FirebaseAuth.getInstance().getUid();
+            rbUserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    numberStar = ratingBar.getRating();
                 }
-                else {
-                    DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
-                    userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                rbUserRating.setRating(0);
-                                edtComment.setText("");
-                                showAlreadyReviewedDialog();
-                            } else {
+            });
+            ivComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (numberStar == 0 || TextUtils.isEmpty(edtComment.getText())) {
+                        showRating_empty();
+                    } else {
+                        DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                        userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    rbUserRating.setRating(0);
+                                    edtComment.setText("");
+                                    showAlreadyReviewedDialog();
+                                } else {
 
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
-                                final HashMap<String, Object> ratinglist = new HashMap<>();
-                                Rating rating = new Rating(productId, UserID, edtComment.getText().toString(), String.valueOf(numberStar), savedate);
-                                ratinglist.put("product_id", productId);
-                                ratinglist.put("customer_id", UserID);
-                                ratinglist.put("comment", rating.getComment());
-                                ratinglist.put("startNumber", rating.getStartNumber());
-                                ratinglist.put("create_at", savedate);
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
+                                    final HashMap<String, Object> ratinglist = new HashMap<>();
+                                    Rating rating = new Rating(productId, UserID, edtComment.getText().toString(), String.valueOf(numberStar), savedate);
+                                    ratinglist.put("product_id", productId);
+                                    ratinglist.put("customer_id", UserID);
+                                    ratinglist.put("comment", rating.getComment());
+                                    ratinglist.put("startNumber", rating.getStartNumber());
+                                    ratinglist.put("create_at", savedate);
 
-                                reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        rbUserRating.setRating(0);
-                                        edtComment.setText("");
-                                        Toast.makeText(Activity_Product_Detail.this, "Đánh giá thành công", Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Activity_Product_Detail.this, "Lưu không thành công", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                    reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            rbUserRating.setRating(0);
+                                            edtComment.setText("");
+                                            Toast.makeText(Activity_Product_Detail.this, "Đánh giá thành công", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(Activity_Product_Detail.this, "Lưu không thành công", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
+
                 }
-
-            }
-        });
+            });
+        } else {
+            rbUserRating.setVisibility(View.GONE);
+            edtComment.setVisibility(View.GONE);
+            ivComment.setVisibility(View.GONE);
+        }
 
     }
 //    private void checkOrderStatusForRating(String productId) {
@@ -608,7 +710,6 @@ double total = 0;
     }
 
 
-
 //    private void updateProductAverageRating(float averageRating) {
 //        DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
 //        productRef.child("averageRating").setValue(averageRating);
@@ -629,6 +730,7 @@ double total = 0;
         builder.setPositiveButton("OK", null);
         builder.show();
     }
+
     private void showRating_byOrder() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thông báo");
@@ -663,6 +765,12 @@ double total = 0;
 
             }
         });
+    }
+
+    private boolean isUserLoggedin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);
+        String check = sharedPreferences.getString("check", "");
+        return check.equals("true");
     }
 
     private void getData_DSLienquan(String categories_id) {

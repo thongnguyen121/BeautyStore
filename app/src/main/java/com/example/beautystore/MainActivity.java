@@ -3,12 +3,8 @@ package com.example.beautystore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -16,11 +12,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 
-import android.graphics.drawable.Drawable;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,23 +29,14 @@ import com.bumptech.glide.Glide;
 import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.activity.Tuvanvien_MainActivity;
-import com.example.beautystore.fragments.Fragment_cart;
-import com.example.beautystore.fragments.Fragment_editProfile;
-import com.example.beautystore.fragments.Fragment_home;
-import com.example.beautystore.fragments.Fragment_order;
-import com.example.beautystore.fragments.Fragment_profile;
-import com.example.beautystore.fragments.Fragment_transaction_history;
-import com.example.beautystore.fragments.Fragment_warehouse_list;
-import com.example.beautystore.fragments.Fragment_wishlist;
-import com.example.beautystore.model.Cart;
 import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Customer;
+import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -58,10 +45,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,12 +99,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
             Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
-            getCounterCartItem();
-            getFCMToken();
             bottomNavigationView.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.Login).setVisible(false);
             navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
             String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            getCounterCartItem(UID);
             databaseReference = firebaseDatabase.getReference("Customer");
             databaseReference.child(UID).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -135,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         tvProfile_name.setText(name);
                         tvProfile_email.setVisibility(View.VISIBLE);
                         tvProfile_email.setText(email);
-                        Glide.with(MainActivity.this).load(uri).into(ivProfileImg);
+                        Glide.with(getApplicationContext()).load(uri).into(ivProfileImg);
                     } else {
                         tvProfile_name.setText("Guess");
                         tvProfile_email.setVisibility(View.GONE);
@@ -161,20 +143,22 @@ public class MainActivity extends AppCompatActivity {
                 int idItem = item.getItemId();
                 if (idItem == R.id.Login) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+//                    finish();
                 } else if (idItem == R.id.Logout) {
-                    FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    databaseReference = firebaseDatabase.getReference("Customer").child(FirebaseAuth.getInstance().getUid()).child("fcmToken");
+                    databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 FirebaseAuth.getInstance().signOut();
+                                controller.navigate(R.id.fragment_home);
+                                Toast.makeText(MainActivity.this, "Dang xuat thanh cong", Toast.LENGTH_SHORT).show();
                                 SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("check", "");
+                                editor.putString("check", "false");
                                 editor.apply();
-//                                Intent intent = new Intent(MainActivity.this, MainActivity.class);
-//                                startActivity(intent);
-//                                finish();
                                 tvProfile_name.setText("Guess");
                                 tvProfile_email.setVisibility(View.GONE);
                                 ivProfileImg.setImageResource(R.drawable.profile_default);
@@ -185,9 +169,14 @@ public class MainActivity extends AppCompatActivity {
                                 navigationView.getMenu().findItem(R.id.fragment_editProfile).setVisible(false);
                                 navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
                                 navigationView.getMenu().findItem(R.id.Logout).setVisible(false);
+
+//                                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                startActivity(intent);
                             }
                         }
                     });
+
 
                 } else if (idItem == R.id.fragment_editProfile) {
                     controller.navigate(R.id.fragment_editProfile);
@@ -202,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         ivProfileImg = header.findViewById(R.id.ivProfileImg);
     }
 
+
     @Override
     public boolean onSupportNavigateUp() {
         controller = Navigation.findNavController(this, R.id.nav_host_fragment_container_user);
@@ -215,22 +205,22 @@ public class MainActivity extends AppCompatActivity {
         if (check.equals("0")) {
             Intent intent = new Intent(MainActivity.this, Admin_MainActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         } else if (check.equals("1")) {
             Intent intent = new Intent(MainActivity.this, Shipper_MainActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         } else if (check.equals("2")) {
             Intent intent = new Intent(MainActivity.this, Tuvanvien_MainActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         }
     }
 
-    private void getCounterCartItem() {
+    private void getCounterCartItem(String UID) {
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference orderStatusReference = firebaseDatabase.getReference().child("Cart").child(FirebaseAuth.getInstance().getUid()).child("items");
+        DatabaseReference orderStatusReference = firebaseDatabase.getReference().child("Cart").child(UID).child("items");
         orderStatusReference.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -240,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         CartDetail cartDetail = dataSnapshot.getValue(CartDetail.class);
-                        counterCartItem += Integer.parseInt(cartDetail.getQty());
+                        counterCartItem += 1;
                         Log.d("TAG", "cart item: " + counterCartItem);
                     }
 
@@ -265,32 +255,5 @@ public class MainActivity extends AppCompatActivity {
         return check.equals("true");
     }
 
-    private void getFCMToken() {
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if (task.isSuccessful()) {
-                    String token = task.getResult();
-                    Log.d("TAG", "token la: " + token);
-                databaseReference = firebaseDatabase.getReference("Customer").child(FirebaseAuth.getInstance().getUid());
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()){
-                            Map<String, Object> updateToken = new HashMap<>();
-                            updateToken.put("fcmToken", token);
-                            databaseReference.updateChildren(updateToken);
-                            Log.d("TAG", "update thanh cong " );
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-                }
-            }
-        });
-    }
 }

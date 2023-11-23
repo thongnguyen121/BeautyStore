@@ -121,7 +121,7 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
                     Customer customer = snapshot.getValue(Customer.class);
                     if (customer != null) {
                         holder.tvUserName.setText(customer.getUsername());
-                        Glide.with(context).load(customer.getProfileImage()).into(holder.ivUserAvatar);
+                        Glide.with(context.getApplicationContext()).load(customer.getProfileImage()).into(holder.ivUserAvatar);
                     }
                 }
             }
