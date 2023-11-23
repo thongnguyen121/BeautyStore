@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
             Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
-            getCounterCartItem();
             bottomNavigationView.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.Login).setVisible(false);
             navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
