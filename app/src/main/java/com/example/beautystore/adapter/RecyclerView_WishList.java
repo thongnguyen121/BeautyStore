@@ -58,7 +58,7 @@ public class RecyclerView_WishList extends RecyclerView.Adapter<RecyclerView_Wis
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Products products = snapshot.getValue(Products.class);
                 holder.tvProductName.setText(products.getProducts_name());
-                Glide.with(context).load(products.getImgProducts_1()).into(holder.ivProductImage);
+                Glide.with(context.getApplicationContext()).load(products.getImgProducts_1()).into(holder.ivProductImage);
             }
 
             @Override

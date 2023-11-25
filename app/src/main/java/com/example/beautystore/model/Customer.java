@@ -1,9 +1,10 @@
 package com.example.beautystore.model;
 
 public class Customer {
-    String username, email, password, phoneNumber, profileImage, address, status;
+    String username, email, password, phoneNumber, profileImage, address, status, fcmToken;
 
-    public Customer(String username, String email, String password, String phoneNumber, String profileImage, String address, String status) {
+
+    public Customer(String username, String email, String password, String phoneNumber, String profileImage, String address, String status, String fcmToken) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -11,9 +12,18 @@ public class Customer {
         this.profileImage = profileImage;
         this.address = address;
         this.status = status;
+        this.fcmToken = fcmToken;
     }
 
     public Customer() {
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public String getUsername() {
