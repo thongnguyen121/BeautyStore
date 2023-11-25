@@ -1,22 +1,33 @@
 package com.example.beautystore.fragments;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.beautystore.R;
 import com.example.beautystore.model.OrderStatus;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -33,27 +44,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Fragment_admin_statistic extends Fragment {
 
     View view;
     ArrayList lineArray;
-    LineChart lineChart_day, lineChart_month, lineChart_year;
+    LineChart lineChart_day, lineChart_month;
+    BarChart barChart_year;
     RadioButton rdNgay, rdThang, rdNam;
-    int feefilter1,feefilter2,feefilter3,feefilter4,feefilter5,feefilter6,feefilter7,feefilter8,feefilter9,
-            feefilter10,feefilter11,feefilter12,feefilter13,feefilter14,feefilter15,feefilter16,feefilter17,
-            feefilter18,feefilter19,feefilter20,feefilter21,feefilter22,feefilter23,feefilter24, feefilter25,
-            feefilter26,feefilter27,feefilter28,feefilter29,feefilter30 = 0 ;
+    ImageView ivdateTimePicker;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,15 +74,18 @@ public class Fragment_admin_statistic extends Fragment {
         view = inflater.inflate(R.layout.fragment_admin_statistic, container, false);
 
         setControl(view);
-        calculateRevenue();
+        Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH) + 1; // Tháng hiện tại
+        int currentYear = calendar.get(Calendar.YEAR); // Năm hiện tại
+        calculateRevenue(currentMonth, currentYear);
         rdNgay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (compoundButton.isChecked()){
                     lineChart_month.setVisibility(View.GONE);
                     lineChart_day.setVisibility(View.VISIBLE);
-//                   displaySampleChart_day();
-                   calculateRevenue();
+                    barChart_year.setVisibility(View.GONE);
+                   calculateRevenue(currentMonth, currentYear);
 
                 }
 
@@ -81,7 +97,7 @@ public class Fragment_admin_statistic extends Fragment {
                 if (compoundButton.isChecked()){
                     lineChart_month.setVisibility(View.VISIBLE);
                     lineChart_day.setVisibility(View.GONE);
-//                 displaySampleChart_month();
+                    barChart_year.setVisibility(View.GONE);
                     Calendar calendar = Calendar.getInstance();
                     int currentYear = calendar.get(Calendar.YEAR);
 
@@ -93,9 +109,21 @@ public class Fragment_admin_statistic extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (compoundButton.isChecked()){
-
+                    barChart_year.setVisibility(View.VISIBLE);
+                    lineChart_month.setVisibility(View.GONE);
+                    lineChart_day.setVisibility(View.GONE);
+//                    setBarChart_year();
+                    calculateRevenueByYear();
                 }
 
+            }
+        });
+
+
+        ivdateTimePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMonthYearPickerDialog();
             }
         });
         return view;
@@ -107,124 +135,64 @@ public class Fragment_admin_statistic extends Fragment {
         rdNgay = view.findViewById(R.id.rd_doanhthu_ngay);
         rdThang = view.findViewById(R.id.rd_doanhthu_thang);
         rdNam = view.findViewById(R.id.rd_doanhthu_nam);
+        barChart_year = view.findViewById(R.id.barChart_year);
+        ivdateTimePicker = view.findViewById(R.id.ivDatetiemPicker);
     }
 
-    private void getData(){
-//        lineArray = new ArrayList();
-//        lineArray.add(new BarEntry(1, bundle.getInt("fee1")));
-//        lineArray.add(new BarEntry(2, bundle.getInt("fee2")));
-//        lineArray.add(new BarEntry(3, bundle.getInt("fee3")));
-//        lineArray.add(new BarEntry(4, bundle.getInt("fee4")));
-//        lineArray.add(new BarEntry(8, bundle.getInt("fee5")));
-//        lineArray.add(new BarEntry(5, bundle.getInt("fee6")));
-//        lineArray.add(new BarEntry(6, bundle.getInt("fee7")));
-//        lineArray.add(new BarEntry(7, bundle.getInt("fee8")));
-//        lineArray.add(new BarEntry(9, bundle.getInt("fee9")));
-//        lineArray.add(new BarEntry(10, bundle.getInt("fee10")));
-//        lineArray.add(new BarEntry(11, bundle.getInt("fee11")));
-//        lineArray.add(new BarEntry(12, bundle.getInt("fee12")));
-    }
-    private void displaySampleChart_day() {
-        ArrayList<Entry> entries = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
 
-        // Giả sử doanh thu của 30 ngày trong tháng
-        int[] sampleData = {100, 150, 200, 180, 250, 300, 280, 320, 400, 380, 350, 420, 390, 370, 410, 430, 450, 470, 490, 520, 540, 550, 530, 580, 560, 590, 620, 610, 630, 640};
+    // Thống kê doanh thu của ngày trong tháng hiện tại và năm hiện tại
 
-        for (int i = 0; i < sampleData.length; i++) {
-            // Tạo dữ liệu cho biểu đồ
-            entries.add(new Entry(i, sampleData[i])); // i là vị trí của ngày, sampleData[i] là doanh thu
-            labels.add("Ngày " + (i + 1)); // Nhãn của trục x
-        }
-
-        // Tạo dataSet từ dữ liệu đã tạo
-        LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo ngày");
-        dataSet.setColor(Color.BLUE);
-        dataSet.setValueTextColor(Color.BLACK);
-
-        // Tạo LineData từ dataSet
-        LineData lineData = new LineData(dataSet);
-
-        // Set các thuộc tính cho biểu đồ
-        lineChart_day.setData(lineData);
-        lineChart_day.getDescription().setEnabled(false);
-        lineChart_day.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels)); // Đặt nhãn ngày
-        lineChart_day.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM); // Đặt nhãn ngày ở dưới
-        lineChart_day.animateY(1000);
-        lineChart_day.invalidate();
-    }
-    private void displaySampleChart_month() {
-        ArrayList<Entry> entries = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
-
-        int[] sampleData = {1500, 1800, 2200, 1900, 2500, 3000, 2800, 3200, 4000, 3800, 3500, 4200}; // Doanh thu của từng tháng
-
-        for (int i = 0; i < sampleData.length; i++) {
-            // Tạo dữ liệu cho biểu đồ
-            entries.add(new Entry(i, sampleData[i])); // i là vị trí của tháng, sampleData[i] là doanh thu của tháng đó
-            labels.add("Tháng " + (i + 1)); // Nhãn của trục x
-        }
-
-
-        LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo tháng");
-        dataSet.setColor(Color.BLUE);
-        dataSet.setValueTextColor(Color.BLACK);
-
-
-        LineData lineData = new LineData(dataSet);
-
-        lineChart_month.setData(lineData);
-        lineChart_month.getDescription().setEnabled(false);
-        lineChart_month.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels)); // Đặt nhãn tháng
-        lineChart_month.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM); // Đặt nhãn tháng ở dưới
-        lineChart_month.animateY(1000);
-        lineChart_month.invalidate();
-    }
-
-    private void calculateRevenue() {
+    private void calculateRevenue(int currentMonth, int currentYear) {
         DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
         DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
 
-        Map<String, Integer> dailyRevenue = new HashMap<>();
+        Map<String, Integer> dailyRevenue = new LinkedHashMap<>();
 
-        for (int i = 1; i <= 30; i++) {
-            dailyRevenue.put(String.valueOf(i), 0); // Khởi tạo doanh thu là 0 cho mỗi ngày từ 1 đến 30
+        for (int i = 1; i <= 31; i++) {
+            dailyRevenue.put(String.valueOf(i), 0);
         }
 
-        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean checkMonth = false;
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
-                    String dayKey = convertCreateAtToDay(createAt);
+                    int month = extractMonth(createAt);
+                    int year = extractYear(createAt);
 
-                    if (dayKey != null && dailyRevenue.containsKey(dayKey)) {
-                        String status = statusSnapshot.child("status").getValue(String.class);
-                        if (status != null && (status.equals("4") || status.equals("6"))) {
-                            String orderID = statusSnapshot.child("order_id").getValue(String.class);
-                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
-                                    String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
-                                    int currentRevenue = dailyRevenue.get(dayKey);
-                                    int revenue = currentRevenue + (totalAmount != null ? Integer.parseInt(totalAmount) : 0);
-                                    dailyRevenue.put(dayKey, revenue);
+                    if (month != -1 && year == currentYear) {
+                        if (month == currentMonth) {
+                            String dayKey = convertCreateAtToDay(createAt);
 
-                                    // Kiểm tra nếu dayKey thuộc tháng hiện tại, hiển thị doanh thu
-                                    if (extractMonth(createAt) == Calendar.getInstance().get(Calendar.MONTH) + 1) {
-                                        displayRevenueByDay(dailyRevenue);
-                                    }
+                            if (dayKey != null && dailyRevenue.containsKey(dayKey)) {
+                                String status = statusSnapshot.child("status").getValue(String.class);
+
+                                if (status != null && (status.equals("4") || status.equals("6"))) {
+                                    String orderID = statusSnapshot.child("order_id").getValue(String.class);
+                                    orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                            String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
+                                            if (totalAmount != null && !totalAmount.isEmpty()) {
+                                                int currentRevenue = dailyRevenue.get(dayKey);
+                                                int revenue = currentRevenue + Integer.parseInt(totalAmount);
+                                                dailyRevenue.put(dayKey, revenue);
+                                            }
+                                            displayRevenueByDay(dailyRevenue);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            // Xử lý lỗi nếu cần
+                                        }
+                                    });
                                 }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    // Xử lý lỗi nếu cần
-                                }
-                            });
+                            }
                         }
                     }
                 }
+                // hiện khi tháng đó không có ngày nào có doanh thu
+                displayRevenueByDay(dailyRevenue);
             }
 
             @Override
@@ -258,7 +226,19 @@ public class Fragment_admin_statistic extends Fragment {
         lineChart_day.animateY(1000);
         lineChart_day.invalidate();
     }
+    private int extractYear(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.YEAR);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
     private int extractMonth(String createAt) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 
@@ -284,13 +264,14 @@ public class Fragment_admin_statistic extends Fragment {
             return null;
         }
     }
+
+    // Thống kê thang theo năm hiện tại
     private Map<String, Integer> calculateRevenueByYearAndMonth(int currentYear) {
         DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
         DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
 
         Map<String, Integer> monthlyRevenue = new HashMap<>();
 
-        // Khởi tạo doanh thu là 0 cho mỗi tháng từ 1 đến 12
         for (int i = 1; i <= 12; i++) {
             monthlyRevenue.put(String.valueOf(i), 0);
         }
@@ -315,7 +296,6 @@ public class Fragment_admin_statistic extends Fragment {
                                     int revenue = currentRevenue + (totalAmount != null ? Integer.parseInt(totalAmount) : 0);
                                     monthlyRevenue.put(String.valueOf(monthKey), revenue);
 
-                                    // Hiển thị doanh thu nếu có thay đổi trong dữ liệu
                                     displayRevenueByMonth(monthlyRevenue);
                                 }
 
@@ -328,7 +308,7 @@ public class Fragment_admin_statistic extends Fragment {
                     }
                 }
 
-                // Hiển thị doanh thu với tất cả các tháng, bao gồm cả những tháng không có doanh thu
+                // hiện tháng có doanh thu không doanh thu
                 displayRevenueByMonth(monthlyRevenue);
             }
 
@@ -336,6 +316,7 @@ public class Fragment_admin_statistic extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Xử lý lỗi nếu cần
             }
+
         });
 
         return monthlyRevenue;
@@ -389,6 +370,145 @@ public class Fragment_admin_statistic extends Fragment {
         lineChart_month.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         lineChart_month.animateY(1000);
         lineChart_month.invalidate();
+    }
+
+    // Thông kê tổng doanh thu các năm
+
+    private void calculateRevenueByYear() {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
+
+        Map<String, Integer> yearlyRevenue = new HashMap<>();
+
+        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
+                    String createAt = statusSnapshot.child("create_at").getValue(String.class);
+                    String year = convertCreateAtToYear(createAt);
+                    if (year != null) {
+                        String status = statusSnapshot.child("status").getValue(String.class);
+                        if (status != null && (status.equals("4") || status.equals("6"))) {
+                            String orderID = statusSnapshot.child("order_id").getValue(String.class);
+                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                    String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
+                                    int currentYearlyRevenue = yearlyRevenue.getOrDefault(year, 0);
+                                    int revenue = currentYearlyRevenue + (totalAmount != null ? Integer.parseInt(totalAmount) : 0);
+                                    yearlyRevenue.put(year, revenue);
+                                    displayRevenueByYear(yearlyRevenue);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Xử lý lỗi nếu cần
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
+
+
+    private void displayRevenueByYear(Map<String, Integer> yearlyRevenue) {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(yearlyRevenue.entrySet());
+        Collections.sort(sortedList, (o1, o2) -> {
+            try {
+                return Integer.parseInt(o1.getKey()) - Integer.parseInt(o2.getKey());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        });
+
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : sortedList) {
+            String year = entry.getKey();
+            int revenue = entry.getValue();
+            entries.add(new BarEntry(index, revenue));
+            labels.add(year);
+            index++;
+        }
+
+        // Tạo DataSet và thiết lập dữ liệu cho BarChart
+        BarDataSet dataSet = new BarDataSet(entries, "Doanh thu theo năm");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        BarData barData = new BarData(dataSet);
+
+        barChart_year.setData(barData);
+        barChart_year.getDescription().setEnabled(false);
+        barChart_year.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        barChart_year.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        barChart_year.animateY(1000);
+        barChart_year.invalidate();
+    }
+    private String convertCreateAtToYear(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private void showMonthYearPickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
+                        String selectedDate = (selectedMonth + 1) + "/" + selectedYear;
+                        calculateRevenue(selectedMonth + 1, selectedYear);
+                        calculateRevenueByYearAndMonth(selectedYear);
+
+                    }
+                },
+                currentYear,
+                currentMonth,
+                1
+        );
+
+        // Ẩn cột ngày
+        try {
+            Field datePickerDialogField = datePickerDialog.getClass().getDeclaredField("mDatePicker");
+            datePickerDialogField.setAccessible(true);
+            DatePicker datePicker = (DatePicker) datePickerDialogField.get(datePickerDialog);
+
+            Field[] datePickerFields = datePickerDialogField.getType().getDeclaredFields();
+            for (Field datePickerField : datePickerFields) {
+                if ("mDaySpinner".equals(datePickerField.getName())) {
+                    datePickerField.setAccessible(true);
+                    View daySpinner = (View) datePickerField.get(datePicker);
+                    daySpinner.setVisibility(View.GONE);
+                }
+            }
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        datePickerDialog.setTitle("Chọn tháng và năm");
+        datePickerDialog.show();
     }
 }
 

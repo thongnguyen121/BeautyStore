@@ -61,15 +61,15 @@ public class Fragment_admin_home extends Fragment {
 
         setControl(view);
 //        getDataRating();
-//        checkOrderStatusForRating();
-//        getNew_order("0");
-//        getOrder_cancel();
-////        getOrder_Exportwarehouse();
-//        getTotalProductQuantity();
-//        getTotal_member();
-////        getTotalAmount();
+        checkOrderStatusForRating();
+        getNew_order("0");
+        getOrder_cancel();
+//        getOrder_Exportwarehouse();
+        getTotalProductQuantity();
+        getTotal_member();
 //        getTotalAmount();
-//        getExport_Warehouse();
+        getTotalAmount();
+        getExport_Warehouse();
 
 
         return view;

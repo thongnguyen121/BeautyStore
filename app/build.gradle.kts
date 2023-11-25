@@ -52,4 +52,5 @@ dependencies {
     implementation ("com.github.ybq:Android-SpinKit:1.4.0")
     implementation ("it.xabaras.android:recyclerview-swipedecorator:1.4")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }
