@@ -44,6 +44,9 @@ dependencies {
     //okhttp
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
+    //momo
+    implementation("com.github.momo-wallet:mobile-sdk:1.0.7")
+
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     implementation("com.google.android.material:material:1.10.0")
