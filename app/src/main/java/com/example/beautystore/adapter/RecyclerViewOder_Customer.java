@@ -183,7 +183,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final HashMap<String, Object> orderStatuslist = new HashMap<>();
-                        OrderStatus orderStatus = new OrderStatus(order_id, "5", "","",savedate);
+                        OrderStatus orderStatus = new OrderStatus(order_id, "7", "","",savedate);
                         orderStatuslist.put("order_id", orderStatus.getOrder_id());
                         orderStatuslist.put("status", orderStatus.getStatus());
                         orderStatuslist.put("member_id", orderStatus.getMember_id());

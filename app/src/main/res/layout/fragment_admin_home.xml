@@ -56,8 +56,10 @@
 
                             android:layout_gravity="center"
                             android:layout_marginRight="10dp"
-                            android:text="Doanh thu "
-                            android:textSize="17dp"></TextView>
+                            android:text="Doanh thu"
+
+                            android:textColor="@color/btn_blue_shipper"
+                            android:textSize="18dp"></TextView>
 
                     </LinearLayout>
 
@@ -67,7 +69,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:text="5.000.000Đ"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                 </LinearLayout>
 
@@ -92,20 +95,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Nhân sự: "
-                            android:textSize="17dp"></TextView>
+                            android:text="Nhân sự"
+                            android:textColor="@color/btn_blue_shipper"
+                            android:textSize="18dp"></TextView>
 
                         <TextView
                             android:id="@+id/tvNhansu"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="4"
-                            android:textSize="17dp"></TextView>
+                            android:textColor="@color/btn_blue_shipper"
+                            android:textSize="18dp"></TextView>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -138,14 +145,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Số lượng sản phẩm"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                     <TextView
                         android:id="@+id/tvTongsanpham"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="50"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
 
                 </LinearLayout>
@@ -172,14 +181,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Đơn hàng bị hủy"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                     <TextView
                         android:id="@+id/tvDonhangbihuy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="7"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                 </LinearLayout>
             </LinearLayout>
@@ -218,7 +229,8 @@
                             android:layout_gravity="center"
                             android:layout_marginRight="10dp"
                             android:text="Đơn hàng mới"
-                            android:textSize="17dp"></TextView>
+                            android:textColor="@color/btn_blue_shipper"
+                            android:textSize="18dp"></TextView>
 
                     </LinearLayout>
 
@@ -228,7 +240,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:text="5"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -253,14 +266,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Xuất kho"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                     <TextView
                         android:id="@+id/tvXuatkho"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="7"
-                        android:textSize="17dp"></TextView>
+                        android:textColor="@color/btn_blue_shipper"
+                        android:textSize="18dp"></TextView>
 
                 </LinearLayout>
             </LinearLayout>

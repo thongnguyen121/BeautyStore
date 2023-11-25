@@ -23,6 +23,7 @@ import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewRating_admin;
 import com.example.beautystore.adapter.RecyclerView_Brands_WH;
 import com.example.beautystore.model.Brands;
+import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
@@ -60,14 +61,15 @@ public class Fragment_admin_home extends Fragment {
 
         setControl(view);
 //        getDataRating();
-        checkOrderStatusForRating();
-        getNew_order("0");
-        getOrder_cancel();
-        getOrder_Exportwarehouse();
-        getTotalProductQuantity();
-        getTotal_member();
+//        checkOrderStatusForRating();
+//        getNew_order("0");
+//        getOrder_cancel();
+////        getOrder_Exportwarehouse();
+//        getTotalProductQuantity();
+//        getTotal_member();
+////        getTotalAmount();
 //        getTotalAmount();
-        getTotalAmount();
+//        getExport_Warehouse();
 
 
         return view;
@@ -271,14 +273,14 @@ public class Fragment_admin_home extends Fragment {
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
 
                 List<Long> amounts = new ArrayList<>();
-
+                data_ratingProducts.clear();
                 for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
 
                     if (orderStatus != null && (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6"))) {
                         String orderId = orderStatus.getOrder_id();
                         DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                        orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        orderRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 long totalAmount = 0;
@@ -315,5 +317,58 @@ public class Fragment_admin_home extends Fragment {
             total += amount;
         }
         return total;
+    }
+    private void getExport_Warehouse() {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
+
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+
+                List<Long> amounts = new ArrayList<>();
+                data_ratingProducts.clear();
+                for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
+                    OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
+
+                    if (orderStatus != null && (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6"))) {
+                        String orderId = orderStatus.getOrder_id();
+                        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
+                        orderRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                long totalAmount = 0;
+
+                                Order order = dataSnapshot.getValue(Order.class);
+
+                                    if (order.getOrder_id() != null) {
+                                        for (CartDetail item : order.getItems()) {
+                                            String totalAmountString = item.getQty();
+                                            if (totalAmountString != null) {
+                                                long amount = Long.parseLong(totalAmountString);
+                                                amounts.add(amount);
+                                                Log.d("as", "amount: " + amount);
+                                            }
+                                        }
+                                        totalAmount = calculateTotal(amounts);
+                                        String totalAmountString_1 = String.valueOf(totalAmount);
+                                        tvXuatkho.setText(totalAmountString_1);
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+            }
+        });
     }
 }

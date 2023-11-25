@@ -5,10 +5,53 @@
     android:layout_height="match_parent"
     tools:context=".fragments.Fragment_admin_statistic">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="thong ke" />
+        android:orientation="vertical"
+        android:padding="5dp"
+        >
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:id="@+id/rdoGroup"
+            >
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:id="@+id/rd_doanhthu_ngay"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tháng"
+                android:layout_marginRight="10dp"
+                android:id="@+id/rd_doanhthu_thang"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Năm"
+                android:layout_marginRight="10dp"
+                android:id="@+id/rd_doanhthu_nam"/>
+
+
+        </RadioGroup>
+        <com.github.mikephil.charting.charts.LineChart
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lineChart_date"
+            ></com.github.mikephil.charting.charts.LineChart>
+        <com.github.mikephil.charting.charts.LineChart
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lineChart_month"
+            android:visibility="gone"
+            ></com.github.mikephil.charting.charts.LineChart>
+    </LinearLayout>
+
 
 </FrameLayout>

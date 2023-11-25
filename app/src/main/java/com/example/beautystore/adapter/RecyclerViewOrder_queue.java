@@ -297,7 +297,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
 
         edtNote = dialog.findViewById(R.id.edt_Note);
         btnSave = dialog.findViewById(R.id.btn_save_dialogNote);
-
+        edtNote.setEnabled(false);
         btnSave.setVisibility(View.GONE);
         dialog.show();
 
