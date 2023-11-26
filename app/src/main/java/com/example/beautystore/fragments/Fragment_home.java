@@ -152,33 +152,33 @@ public class Fragment_home extends Fragment {
 
     private void setSearchView() {
 
-        recyclerViewSearchProducts = new RecyclerView_search_products(this, R.layout.layout_item_search, data_products);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        layoutManager.setOrientation(RecyclerView.VERTICAL);
-        rcSearch.setLayoutManager(layoutManager);
-        rcSearch.setAdapter(recyclerViewSearchProducts);
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Products");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (data_products != null) {
-                    data_products.clear();
-                }
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Products products = dataSnapshot.getValue(Products.class);
-                    data_products.add(products);
-                }
-                recyclerViewProducts.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        recyclerViewSearchProducts = new RecyclerView_search_products(this, R.layout.layout_item_search, data_products);
+//        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+//        layoutManager.setOrientation(RecyclerView.VERTICAL);
+//        rcSearch.setLayoutManager(layoutManager);
+//        rcSearch.setAdapter(recyclerViewSearchProducts);
+//        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Products");
+//
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (data_products != null) {
+//                    data_products.clear();
+//                }
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    Products products = dataSnapshot.getValue(Products.class);
+//                    data_products.add(products);
+//                }
+//                recyclerViewProducts.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -214,16 +214,6 @@ public class Fragment_home extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 String searchTerm = removeDiacritics(newText);
-
-                if (newText.equals("")) {
-
-                    rcSearch.setVisibility(View.GONE);
-
-                }
-                else {
-                    rcSearch.setVisibility(View.VISIBLE);
-                }
-
 
                 filterList(searchTerm);
 
@@ -460,13 +450,12 @@ public class Fragment_home extends Fragment {
             }
         }
 
-        recyclerViewSearchProducts.setFilterList(filteredlist);
+        recyclerViewProducts.setFilterList_Products(filteredlist);
     }
 
     private void setGonehome() {
         rcBrans.setVisibility(View.GONE);
         rcCategories.setVisibility(View.GONE);
-        rcProducts.setVisibility(View.GONE);
         viewFlipper.setVisibility(View.GONE);
         tvTitle_products.setVisibility(View.GONE);
         tvTitle_categories.setVisibility(View.GONE);
@@ -490,7 +479,6 @@ public class Fragment_home extends Fragment {
 private void setVisibityhome() {
     rcBrans.setVisibility(View.VISIBLE);
     rcCategories.setVisibility(View.VISIBLE);
-    rcProducts.setVisibility(View.VISIBLE);
     viewFlipper.setVisibility(View.VISIBLE);
     tvTitle_products.setVisibility(View.VISIBLE);
     tvTitle_categories.setVisibility(View.VISIBLE);

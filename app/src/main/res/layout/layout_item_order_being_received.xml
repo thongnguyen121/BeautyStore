@@ -164,7 +164,7 @@
                     android:background="@drawable/bg_btn"
                     android:layout_marginTop="10dp"
                     android:backgroundTint="@color/btn_blue_shipper"
-                    android:text="Hoàn Hoàng"
+                    android:text="Hoàn Hàng"
                     android:textColor="@color/white"
                     android:id="@+id/btnReturns_order_shipper"
                     ></androidx.appcompat.widget.AppCompatButton>

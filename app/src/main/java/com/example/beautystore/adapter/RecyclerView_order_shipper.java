@@ -311,6 +311,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Hoàn trả đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             } else {
                                 Toast.makeText(context, "Hoàn trả đơn hàng không thành công", Toast.LENGTH_SHORT).show();
                             }

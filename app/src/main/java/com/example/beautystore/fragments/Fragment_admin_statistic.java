@@ -441,7 +441,6 @@ public class Fragment_admin_statistic extends Fragment {
             index++;
         }
 
-        // Tạo DataSet và thiết lập dữ liệu cho BarChart
         BarDataSet dataSet = new BarDataSet(entries, "Doanh thu theo năm");
         dataSet.setColor(Color.BLUE);
         dataSet.setValueTextColor(Color.BLACK);
