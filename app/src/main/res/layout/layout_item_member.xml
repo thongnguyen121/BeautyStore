@@ -16,7 +16,8 @@
         android:layout_weight="2.5"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
+            android:scaleType="fitXY"
             android:layout_height="100dp"
             android:id="@+id/ivMemberAvt"
             android:src="@drawable/profile_default"/>

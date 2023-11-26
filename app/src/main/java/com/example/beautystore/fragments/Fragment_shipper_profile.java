@@ -106,7 +106,7 @@ DatabaseReference databaseReference;
                 Members members = snapshot.getValue(Members.class);
                 tvMailShipper.setText(members.getEmail());
                 tvNameShipper.setText(members.getUsername());
-                Glide.with(getContext().getApplicationContext()).load(members.getProfileImage()).into(imageView);
+//                Glide.with(getContext().getApplicationContext()).load(members.getProfileImage()).into(imageView);
             }
 
             @Override

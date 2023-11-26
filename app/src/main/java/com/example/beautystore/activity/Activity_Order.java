@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -67,7 +68,7 @@ public class Activity_Order extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     List<CartDetail> detail = new ArrayList<>();
-    String autoID = "", total, address, phoneNum, name, productId, price, productQty,savedate;
+    String autoID = "", total, address, phoneNum, name, productId, price, productQty, savedate;
     boolean check;
     NotificationSender notificationSender;
     int paymentMethod = 0;
@@ -116,10 +117,9 @@ public class Activity_Order extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (paymentMethod != 0){
+                if (paymentMethod != 0) {
                     requestPayment();
-                }
-                else {
+                } else {
                     createOrder();
                 }
 
@@ -133,74 +133,85 @@ public class Activity_Order extends AppCompatActivity {
         });
     }
 
-    private void createOrder(){
+    private void createOrder() {
 
         Log.d("TAG", "auto id: " + autoID);
         address = edtAddress.getText().toString();
         phoneNum = edtPhoneNumber.getText().toString();
         name = edtUserName.getText().toString();
-        Order order = new Order(autoID, uid, "0",savedate , total, address, phoneNum, name, detail);
-        OrderStatus orderStatus = new OrderStatus(order.getOrder_id(), "0", "", "", "");
-        databaseReference.child("Order").child(autoID).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                for (CartDetail item : detail) {
-                    DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("Products").child(item.getProduct_id());
-                    productRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                Products products = snapshot.getValue(Products.class);
-                                int newQty = Integer.parseInt(products.getQuantity()) - Integer.parseInt(item.getQty());
-                                productRef.child("quantity").setValue(String.valueOf(newQty)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+        if (TextUtils.isEmpty(address) || TextUtils.isEmpty(phoneNum) || TextUtils.isEmpty(name)) {
+            Toast.makeText(this, "Hãy nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+        } else {
+            Order order = new Order(autoID, uid, "0", savedate, total, address, phoneNum, name, detail);
+            OrderStatus orderStatus = new OrderStatus(order.getOrder_id(), "0", "", "", "");
+            Boolean aBoolean = detail.isEmpty();
+            if (aBoolean){
+                Toast.makeText(this, "Không có sản phẩm để order", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                databaseReference.child("Order").child(autoID).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        for (CartDetail item : detail) {
+                            DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("Products").child(item.getProduct_id());
+                            productRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        Products products = snapshot.getValue(Products.class);
+                                        int newQty = Integer.parseInt(products.getQuantity()) - Integer.parseInt(item.getQty());
+                                        productRef.child("quantity").setValue(String.valueOf(newQty)).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                String order_id = order.getOrder_id();
-                                                Toast.makeText(Activity_Order.this, "thanh cong", Toast.LENGTH_SHORT).show();
-                                                notificationSender.sendNotificationAdmin("0", order_id);
-                                                if (!check) {
-                                                    databaseReference.child("Cart").child(uid).removeValue();
-                                                }
+                                                databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        String order_id = order.getOrder_id();
+                                                        Toast.makeText(Activity_Order.this, "Thành công", Toast.LENGTH_SHORT).show();
+                                                        notificationSender.sendNotificationAdmin("0", order_id);
+                                                        if (!check) {
+                                                            databaseReference.child("Cart").child(uid).removeValue();
+                                                        }
 
+                                                    }
+                                                });
+
+                                                Intent intent = new Intent(Activity_Order.this, MainActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
                                             }
                                         });
-
-                                        Intent intent = new Intent(Activity_Order.this, MainActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
                                     }
-                                });
-                            }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
-                }
-
-
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(Activity_Order.this, "Không thành công", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Activity_Order.this, "khong thanh cong", Toast.LENGTH_SHORT).show();
-            }
-        });
+        }
+
     }
 
     private void saveCartItem(DatabaseReference databaseReference, String uid) {
         databaseReference.child("Cart").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     Cart cart = snapshot.getValue(Cart.class);
-                     List<CartDetail>items = cart.getItems();
-                    for (CartDetail cartDetail : items){
+                    List<CartDetail> items = cart.getItems();
+                    for (CartDetail cartDetail : items) {
                         detail.add(cartDetail);
                         Log.d("TAG", "onDataChange: " + detail);
                     }
@@ -245,7 +256,7 @@ public class Activity_Order extends AppCompatActivity {
     }
 
     private void getCartItem(DatabaseReference databaseReference, String uid) {
-        orderDetailAdapter = new RecyclerView_Order(cartDetails,this,R.layout.layout_item_order);
+        orderDetailAdapter = new RecyclerView_Order(cartDetails, this, R.layout.layout_item_order);
 
         orderDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         orderDetailRecyclerView.setAdapter(orderDetailAdapter);
@@ -253,7 +264,7 @@ public class Activity_Order extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 cartDetails.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     CartDetail item = dataSnapshot.getValue(CartDetail.class);
                     cartDetails.add(item);
                 }
@@ -271,15 +282,14 @@ public class Activity_Order extends AppCompatActivity {
         reference.child("Customer").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     Customer customer = snapshot.getValue(Customer.class);
                     edtUserName.setText(customer.getUsername());
                     edtAddress.setText(customer.getAddress());
                     edtPhoneNumber.setText(customer.getPhoneNumber());
 
 
-                }
-                else{
+                } else {
                     Log.d("TAG", "khong co: ");
                 }
             }
@@ -291,7 +301,7 @@ public class Activity_Order extends AppCompatActivity {
         });
     }
 
-    private void setScreenElement(){
+    private void setScreenElement() {
 
         //Recyclerview:
         orderDetailRecyclerView = findViewById(R.id.rvOrderDetail);
@@ -314,7 +324,7 @@ public class Activity_Order extends AppCompatActivity {
         orderDetailRecyclerView.setAdapter(orderDetailAdapter);
     }
 
-    public void setPaymentMethodSpinner(){
+    public void setPaymentMethodSpinner() {
         spPaymentMethod = findViewById(R.id.spOrderPaymentMethod);
         List<PaymentMethod> list = new ArrayList<>();
 
@@ -324,7 +334,7 @@ public class Activity_Order extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     PaymentMethod paymentMethod = dataSnapshot.getValue(PaymentMethod.class);
                     list.add(paymentMethod);
                 }
@@ -349,6 +359,7 @@ public class Activity_Order extends AppCompatActivity {
             }
         });
     }
+
     public void getIDOrder() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("Order");
@@ -356,14 +367,14 @@ public class Activity_Order extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<String> dsUser = new ArrayList<>();
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         dsUser.add(dataSnapshot.getKey());
                     }
                     String[] temp = dsUser.get(dsUser.size() - 1).split("DH");
                     String id = "";
-                    int idNumber = Integer.parseInt(temp[1])+1;
+                    int idNumber = Integer.parseInt(temp[1]) + 1;
                     if (idNumber < 10) {
                         id = "DH0" + idNumber;
                     } else {
@@ -371,7 +382,7 @@ public class Activity_Order extends AppCompatActivity {
                     }
                     autoID = id;
                     Log.d("TAG", "cco: " + autoID);
-                }else {
+                } else {
 
                     autoID = "DH01";
                     Log.d("TAG", "ko: " + autoID);
@@ -407,7 +418,7 @@ public class Activity_Order extends AppCompatActivity {
         eventValue.put("description", description); //mô tả đơn hàng - short description
 
         //client extra data
-        eventValue.put("requestId",  merchantCode+"merchant_billId_"+System.currentTimeMillis());
+        eventValue.put("requestId", merchantCode + "merchant_billId_" + System.currentTimeMillis());
         eventValue.put("partnerCode", merchantCode);
         //Example extra data
         JSONObject objExtraData = new JSONObject();
@@ -428,32 +439,33 @@ public class Activity_Order extends AppCompatActivity {
 
 
     }
+
     //Get token callback from MoMo app an submit to server side
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == -1) {
-            if(data != null) {
-                if(data.getIntExtra("status", -1) == 0) {
+        if (requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == -1) {
+            if (data != null) {
+                if (data.getIntExtra("status", -1) == 0) {
                     //TOKEN IS AVAILABLE
                     String token = data.getStringExtra("data"); //Token response
                     String phoneNumber = data.getStringExtra("phonenumber");
                     String env = data.getStringExtra("env");
-                    if(env == null){
+                    if (env == null) {
                         env = "app";
                     }
 
-                    if(token != null && !token.equals("")) {
+                    if (token != null && !token.equals("")) {
                         // TODO: send phoneNumber & token to your server side to process payment with MoMo server
                         // IF Momo topup success, continue to process your order
                         createOrder();
                     } else {
 //                        tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
                     }
-                } else if(data.getIntExtra("status", -1) == 1) {
+                } else if (data.getIntExtra("status", -1) == 1) {
                     //TOKEN FAIL
-                    String message = data.getStringExtra("message") != null?data.getStringExtra("message"):"Thất bại";
+                    String message = data.getStringExtra("message") != null ? data.getStringExtra("message") : "Thất bại";
 //                    tvMessage.setText("message: " + message);
-                } else if(data.getIntExtra("status", -1) == 2) {
+                } else if (data.getIntExtra("status", -1) == 2) {
                     //TOKEN FAIL
 //                    tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
                 } else {

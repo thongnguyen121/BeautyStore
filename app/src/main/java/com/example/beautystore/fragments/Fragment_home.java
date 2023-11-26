@@ -26,6 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.AnimationTypes;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewBrands;
@@ -61,8 +65,9 @@ public class Fragment_home extends Fragment {
 
     public static RecyclerView rcProducts, rcCategories, rcBrans, rcSearch;
     SearchView searchView;
-    ViewFlipper viewFlipper;
+//    ViewFlipper viewFlipper;
     ImageView btnFilter;
+    ImageSlider imageSlider;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     public static ArrayList<Products> data_products = new ArrayList<>();
@@ -107,7 +112,8 @@ public class Fragment_home extends Fragment {
         rcProducts = view.findViewById(R.id.rcProducts);
         rcBrans = view.findViewById(R.id.rcBrand);
         rcCategories = view.findViewById(R.id.rcCategories);
-        viewFlipper = view.findViewById(R.id.viewflipper);
+//        viewFlipper = view.findViewById(R.id.viewflipper);\
+        imageSlider = view.findViewById(R.id.imgSlider);
         searchView = view.findViewById(R.id.idsearchview_Home_user);
         rcSearch = view.findViewById(R.id.rc_search);
         tvTitle_products = view.findViewById(R.id.title_products);
@@ -272,7 +278,7 @@ public class Fragment_home extends Fragment {
             rcCategories.setVisibility(View.VISIBLE);
             tvTitle_categories.setVisibility(View.VISIBLE);
             tvTitle_brands.setVisibility(View.VISIBLE);
-            viewFlipper.setVisibility(View.VISIBLE);
+            imageSlider.setVisibility(View.VISIBLE);
             Fragment_home.recylerViewCategories.notifyDataSetChanged();
             Fragment_home.recyclerViewBands.notifyDataSetChanged();
             return true;
@@ -321,29 +327,31 @@ public class Fragment_home extends Fragment {
         rcCategories.setVisibility(View.VISIBLE);
         tvTitle_categories.setVisibility(View.VISIBLE);
         tvTitle_brands.setVisibility(View.VISIBLE);
-        viewFlipper.setVisibility(View.VISIBLE);
+        imageSlider.setVisibility(View.VISIBLE);
 
     }
 
     private void RunWiewLipper() {
 
 
-        ArrayList<String> litsviewlippers = new ArrayList<>();
-        litsviewlippers.add("https://firebasestorage.googleapis.com/v0/b/bookstoreapp-b0b38.appspot.com/o/qc1.jpg?alt=media&token=1dd1c8b2-ee28-47a4-9deb-051db1eccb2c");
-        litsviewlippers.add("https://firebasestorage.googleapis.com/v0/b/bookstoreapp-b0b38.appspot.com/o/qc2.webp?alt=media&token=a28991f9-7414-443f-8e3e-1977c6c19b04");
-        litsviewlippers.add("https://firebasestorage.googleapis.com/v0/b/bookstoreapp-b0b38.appspot.com/o/qc4.jpg?alt=media&token=52360472-2605-4206-a924-e7909d82838b");
-        litsviewlippers.add("https://firebasestorage.googleapis.com/v0/b/bookstoreapp-b0b38.appspot.com/o/qc5.jpg?alt=media&token=7c8fdf14-f6ea-44cd-920d-2ccb4362c953");
-        for (int i = 0; i < litsviewlippers.size(); i++) {
-            ImageView imageView = new ImageView(getContext());
-            Picasso.get().load(litsviewlippers.get(i)).into(imageView);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            viewFlipper.addView(imageView);
-        }
-        viewFlipper.setFlipInterval(3000);
-        viewFlipper.setAutoStart(true);
-
-        viewFlipper.setInAnimation(getContext(), android.R.anim.slide_in_left);
-        viewFlipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
+        ArrayList<SlideModel> litsviewlippers = new ArrayList<>();
+        litsviewlippers.add(new SlideModel("https://intphcm.com/data/upload/banner-my-pham-dep.jpg", ScaleTypes.FIT));
+        litsviewlippers.add(new SlideModel("https://thegioidohoa.com/wp-content/uploads/2018/12/thi%E1%BA%BFt-k%E1%BA%BF-banner-m%E1%BB%B9-ph%E1%BA%A9m-6.png", ScaleTypes.FIT));
+        litsviewlippers.add(new SlideModel("https://topprint.vn/wp-content/uploads/2021/07/banner-my-pham-dep-10.png", ScaleTypes.FIT));
+        imageSlider.setImageList(litsviewlippers, ScaleTypes.FIT);
+        imageSlider.setSlideAnimation(AnimationTypes.ZOOM_OUT);
+//        litsviewlippers.add("https://intphcm.com/data/upload/banner-my-pham-dep.jpg");
+//        for (int i = 0; i < litsviewlippers.size(); i++) {
+//            ImageView imageView = new ImageView(getContext());
+//            Picasso.get().load(litsviewlippers.get(i)).into(imageView);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//            viewFlipper.addView(imageView);
+//        }
+//        viewFlipper.setFlipInterval(3000);
+//        viewFlipper.setAutoStart(true);
+//
+//        viewFlipper.setInAnimation(getContext(), android.R.anim.slide_in_left);
+//        viewFlipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
 
     }
 
@@ -357,7 +365,7 @@ public class Fragment_home extends Fragment {
                     rcCategories.setVisibility(View.GONE);
                     tvTitle_categories.setVisibility(View.GONE);
                     tvTitle_brands.setVisibility(View.GONE);
-                    viewFlipper.setVisibility(View.GONE);
+                    imageSlider.setVisibility(View.GONE);
                     getProducts();
                     showPopupMenu(v);
 
@@ -461,7 +469,7 @@ public class Fragment_home extends Fragment {
     private void setGonehome() {
         rcBrans.setVisibility(View.GONE);
         rcCategories.setVisibility(View.GONE);
-        viewFlipper.setVisibility(View.GONE);
+        imageSlider.setVisibility(View.GONE);
         tvTitle_products.setVisibility(View.GONE);
         tvTitle_categories.setVisibility(View.GONE);
         tvTitle_brands.setVisibility(View.GONE);
@@ -484,7 +492,7 @@ public class Fragment_home extends Fragment {
 private void setVisibityhome() {
     rcBrans.setVisibility(View.VISIBLE);
     rcCategories.setVisibility(View.VISIBLE);
-    viewFlipper.setVisibility(View.VISIBLE);
+    imageSlider.setVisibility(View.VISIBLE);
     tvTitle_products.setVisibility(View.VISIBLE);
     tvTitle_categories.setVisibility(View.VISIBLE);
     tvTitle_brands.setVisibility(View.VISIBLE);

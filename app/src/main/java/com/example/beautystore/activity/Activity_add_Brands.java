@@ -150,14 +150,14 @@ public class Activity_add_Brands extends AppCompatActivity {
                 setEnable(false);
                 spinKitView.setVisibility(View.VISIBLE);
                 if (imageUri_Brands == null || TextUtils.isEmpty(edtBrand_name.getText())) {
-                    Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_Brands.this, "Vui lòng cung cấp đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                     setEnable(true);
                     spinKitView.setVisibility(View.GONE);
 
                 } else {
                     if (edtBrand_name.length() > 50)
                     {
-                        Toast.makeText(Activity_add_Brands.this, "Ban nhap ten hang qua 7 ki tu", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Activity_add_Brands.this, "Tên hãng quá dài", Toast.LENGTH_SHORT).show();
                         setEnable(true);
                         spinKitView.setVisibility(View.GONE);
                     }
@@ -180,10 +180,10 @@ public class Activity_add_Brands extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Activity_add_Brands.this, "Them thong tin hang khong thanh cong", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Activity_add_Brands.this, "Không thể thêm hãng", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Toast.makeText(Activity_add_Brands.this, "Them thong tin hang thanh cong" + autoId_brands, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Activity_add_Brands.this, "Thêm hãng thành công" + autoId_brands, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -209,19 +209,18 @@ public class Activity_add_Brands extends AppCompatActivity {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands").child(brands_id);
 
                 if (TextUtils.isEmpty(edtBrand_name.getText())){
-                    Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_Brands.this, "Vui lòng cung cấp đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                     setEnable(true);
                     spinKitView.setVisibility(View.GONE);
                 }
                 else if (edtBrand_name.length() > 50 )
                 {
-                    Toast.makeText(Activity_add_Brands.this, "Ban da cap nhat ten hang qua ki tu cho phep ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_Brands.this, "Tên hãng quá dài", Toast.LENGTH_SHORT).show();
                     setEnable(true);
                     spinKitView.setVisibility(View.GONE);
                 }
                 else {
                     if (imageUri_Brands == null) {
-                        Toast.makeText(Activity_add_Brands.this, "Không có hình", Toast.LENGTH_SHORT).show();
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("brands_name", nameBrand);
                         databaseReference.updateChildren(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -238,7 +237,6 @@ public class Activity_add_Brands extends AppCompatActivity {
                             }
                         });
                     } else {
-                        Toast.makeText(Activity_add_Brands.this, "Có hình", Toast.LENGTH_SHORT).show();
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(brands_id);
                         storageReference.putFile(imageUri_Brands).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -286,10 +284,8 @@ public class Activity_add_Brands extends AppCompatActivity {
                 try {
                     imageUri_Brands = result.getData().getData();
                     imgBrand.setImageURI(imageUri_Brands);
-                    Log.d("TAG", "hinh anh: " + "." + imageUri_Brands.getLastPathSegment());
                 } catch (Exception e) {
-
-                    Toast.makeText(Activity_add_Brands.this, "No image select", Toast.LENGTH_SHORT).show();
+                    Log.e("TAG", "onActivityResult: ",e );
                 }
             }
         });
@@ -300,11 +296,9 @@ public class Activity_add_Brands extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT > 30) {
             i = new Intent(MediaStore.ACTION_PICK_IMAGES);
-            Toast.makeText(Activity_add_Brands.this, "android 13", Toast.LENGTH_SHORT).show();
         } else {
             i.setType("image/*");
             i.setAction(Intent.ACTION_GET_CONTENT);
-            Toast.makeText(Activity_add_Brands.this, "android 10", Toast.LENGTH_SHORT).show();
         }
         resultLaucher.launch(i);
     }

@@ -64,70 +64,71 @@ public class Fragment_cart extends Fragment {
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Cart cart = snapshot.getValue(Cart.class);
-                        List<CartDetail> item = cart.getItems();
-                        Iterator<CartDetail> iterator = item.iterator();
-                        final boolean[] check = {false};
-                        while (iterator.hasNext()){
-                            CartDetail detail = iterator.next();
-                            productRef.child(detail.getProduct_id()).child("quantity").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    String qty = snapshot.getValue(String.class);
-                                    if (qty.equals("0")){
-                                        check[0] = true;
-                                        item.remove(detail);
-                                        Log.d("TAG", "san pham: " + item);
-                                        Activity_Product_Detail.updateTotalPrice(databaseReference, FirebaseAuth.getInstance().getUid());
+                        if (snapshot.exists()){
+                            Cart cart = snapshot.getValue(Cart.class);
+                            List<CartDetail> item = cart.getItems();
+                            Iterator<CartDetail> iterator = item.iterator();
+                            final boolean[] check = {false};
+                            while (iterator.hasNext()){
+                                CartDetail detail = iterator.next();
+                                productRef.child(detail.getProduct_id()).child("quantity").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String qty = snapshot.getValue(String.class);
+                                        if (qty.equals("0")){
+                                            check[0] = true;
+                                            item.remove(detail);
+                                            Log.d("TAG", "san pham: " + item);
+                                            Activity_Product_Detail.updateTotalPrice(databaseReference, FirebaseAuth.getInstance().getUid());
 
-                                        databaseReference.child("items").setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()){
-                                                    Toast.makeText(getContext(), "xoa thanh cong", Toast.LENGTH_SHORT).show();
-                                                    RecyclerView_Cart_Detail.getTotal();
+                                            databaseReference.child("items").setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                        Toast.makeText(getContext(), "Order các sản phẩm còn khả dụng trong hệ thống", Toast.LENGTH_SHORT).show();
+                                                        RecyclerView_Cart_Detail.getTotal();
 
+                                                    }
                                                 }
-                                            }
-                                        });
-                                    }
-                                    else if (Integer.parseInt(detail.getQty())>Integer.parseInt(qty)){
-                                        Log.d("TAG", "san pham : " + detail.getProduct_id());
+                                            });
+                                        }
+                                        else if (Integer.parseInt(detail.getQty())>Integer.parseInt(qty)){
+                                            detail.setQty(qty);
+                                            item.remove(detail);
+                                            item.add(detail);
+                                            Activity_Product_Detail.updateTotalPrice(databaseReference, FirebaseAuth.getInstance().getUid());
 
-                                        detail.setQty(qty);
-                                        Log.d("TAG", "san pham : " + detail.getProduct_id() + detail.getQty());
-                                        item.remove(detail);
-                                        item.add(detail);
-                                        Log.d("TAG", "san pham : " + item);
-                                        Activity_Product_Detail.updateTotalPrice(databaseReference, FirebaseAuth.getInstance().getUid());
+                                            databaseReference.child("items").setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()){
+                                                        Toast.makeText(getContext(), "Order các sản phẩm còn khả dụng trong hệ thống", Toast.LENGTH_SHORT).show();
+                                                        RecyclerView_Cart_Detail.getTotal();
 
-                                        databaseReference.child("items").setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()){
-                                                    Toast.makeText(getContext(), "xoa thanh cong", Toast.LENGTH_SHORT).show();
-                                                    RecyclerView_Cart_Detail.getTotal();
-
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
+
                                     }
 
-                                }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        }
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(getActivity(), Activity_Order.class);
-                                startActivity(intent);
+                                    }
+                                });
                             }
-                        }, 500);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(getActivity(), Activity_Order.class);
+                                    startActivity(intent);
+                                }
+                            }, 500);
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Không có sản phẩm", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override

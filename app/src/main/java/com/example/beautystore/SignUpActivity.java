@@ -168,7 +168,7 @@ public class SignUpActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignUpActivity.this, "Mail da ton tai", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Mail đã đăng kí", Toast.LENGTH_SHORT).show();
             }
         });
     }

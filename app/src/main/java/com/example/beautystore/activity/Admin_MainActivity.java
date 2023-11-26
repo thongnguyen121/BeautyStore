@@ -74,7 +74,6 @@ public class Admin_MainActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = findViewById(R.id.dwLayout);
 
         String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("TAG", "UID cua admin: " + UID);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Member");
         databaseReference.child(UID).addValueEventListener(new ValueEventListener() {
@@ -94,7 +93,7 @@ public class Admin_MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(Admin_MainActivity.this, "Cant", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Admin_MainActivity.this, "Lỗi", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -102,11 +101,7 @@ public class Admin_MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         navController.addOnDestinationChangedListener((controller, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.fragment_customer_list) {
-                bottomNavigationView.setVisibility(View.GONE);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-            } else if (navDestination.getId() == R.id.fragment_order_in_progress) {
+           if (navDestination.getId() == R.id.fragment_order_in_progress) {
                 bottomNavigationView.setVisibility(View.GONE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             } else if (navDestination.getId() == R.id.fragment_packing_order) {
@@ -142,14 +137,10 @@ public class Admin_MainActivity extends AppCompatActivity {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
-                                Toast.makeText(Admin_MainActivity.this, "da logout", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
 
-                } else if (idItem == R.id.fragment_customer_list) {
-                    navController.navigate(R.id.fragment_customer_list);
-                    return true;
                 } else if (idItem == R.id.fragment_order_in_progress) {
                     navController.navigate(R.id.fragment_order_in_progress);
                     return true;
