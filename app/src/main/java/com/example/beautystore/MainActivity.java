@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static BottomNavigationView bottomNavigationView;
 
     TextView tvProfile_name, tvProfile_email;
-    DrawerLayout drawerLayout;
+     DrawerLayout drawerLayout;
     public static MaterialToolbar toolbar;
     FragmentManager fragmentManager;
 
@@ -190,6 +190,10 @@ public class MainActivity extends AppCompatActivity {
                 } else if (idItem == R.id.fragment_editProfile) {
                     controller.navigate(R.id.fragment_editProfile);
                     return true;
+                } else if (idItem == R.id.Signup) {
+                    Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
                 return false;
             }

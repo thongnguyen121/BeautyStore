@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.Tuvanvien_MainActivity">
 
-    <Button
-        android:id="@+id/btnConsultantLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_container_consultant"
@@ -24,7 +16,7 @@
         app:layout_constraintBottom_toTopOf="@+id/idBottomNavigationConsultant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConsultantLogout"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_consultant_graph" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/idBottomNavigationConsultant"

@@ -87,7 +87,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     private RecyclerView_Rating recyclerViewRating;
     Button btnAddCart, btnBuyNow;
     ImageView ivComment, ivMessenger, ivDecreaseQty, ivIncreaseQty, ivAddWishList, ivBack, ivProductBig, ivProductSmall1, ivProductSmall2, ivProductSmall3;
-    TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc, tvMaxQty;
+    TextView tvProductName, tvProductPrice, tvProductQty, tvProductDesc, tvMaxQty, tvCartExist;
     RatingBar rbProductRating, rbUserRating;
     EditText edtComment;
     private ArrayList<WishList> wishLists;
@@ -124,6 +124,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         decreaseProductQty();
         getData_DSLienquan(cate_id);
         createRatingsList();
+        checkProductExistInCart();
 //        checkOrderForRating(productId);
         reView_products();
         Log.d("TAG", "onCreate: " + productId);
@@ -173,6 +174,36 @@ public class Activity_Product_Detail extends AppCompatActivity {
         });
     }
 
+    private void checkProductExistInCart() {
+        if (isUserLoggedin()){
+            DatabaseReference reference = firebaseDatabase.getReference("Cart").child(uid);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+                        Cart cart = snapshot.getValue(Cart.class);
+                        List<CartDetail> cartDetails = cart.getItems();
+                        for (CartDetail detail : cartDetails){
+                            if (detail.getProduct_id().equals(productId)){
+                                tvCartExist.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                    else{
+                        tvCartExist.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }else{
+            tvCartExist.setVisibility(View.GONE);
+        }
+    }
+
     private void buyNow() {
         if (isUserLoggedin()) {
             if (maxQty == 0) {
@@ -208,9 +239,15 @@ public class Activity_Product_Detail extends AppCompatActivity {
                         for (CartDetail item : cart.getItems()) {
                             if (item.getProduct_id().equals(cartDetail.getProduct_id())) {
                                 int currentQty = Integer.parseInt(item.getQty());
-                                int newQty = currentQty + Integer.parseInt(cartDetail.getQty());
-                                item.setQty(String.valueOf(newQty));
-                                productExist = true;
+                                if (currentQty < maxQty) {
+                                    // If it's less than maxQty, increase the quantity.
+                                    item.setQty(String.valueOf(currentQty + 1));
+                                    productExist = true;
+                                } else {
+                                    // If it's not less than maxQty, show a message and return.
+                                    Toast.makeText(Activity_Product_Detail.this, "Sản phẩm đã đạt số lượng tối đa trong giỏ hàng", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 break;
                             }
                         }
@@ -535,6 +572,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         rbProductRating = findViewById(R.id.rbProductDetailProductRating);
 
         tvProductDesc = findViewById(R.id.tvProductDetailProductDesc);
+        tvCartExist = findViewById(R.id.tvProductExistInCart);
         tvMaxQty = findViewById(R.id.tvMaxQty);
 
         btnAddCart = findViewById(R.id.btnProductDetailAddCart);

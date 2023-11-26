@@ -26,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class Tuvanvien_MainActivity extends AppCompatActivity {
-    Button btnLogout;
     BottomNavigationView bottomNavigationView;
     public static final String SHARE_PREFS = "sharedPrefs";
     NavController navController;
@@ -40,20 +39,6 @@ public class Tuvanvien_MainActivity extends AppCompatActivity {
                 (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_container_consultant);
         navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        btnLogout = findViewById(R.id.btnConsultantLogout);
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("check", "");
-                editor.apply();
-                Intent intent = new Intent(Tuvanvien_MainActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
     }
 
     private void checkStatus() {

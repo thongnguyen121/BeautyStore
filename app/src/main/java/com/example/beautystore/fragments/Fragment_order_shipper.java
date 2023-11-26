@@ -41,8 +41,6 @@ public class Fragment_order_shipper extends Fragment {
     DatabaseReference databaseReference;
     String uid;
 
-    public static final String SHARE_PREFS = "sharedPrefs";
-    Button btnLogout;
     View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,35 +50,11 @@ public class Fragment_order_shipper extends Fragment {
 
         setControl(view);
         getData_order();
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                database = FirebaseDatabase.getInstance();
-                databaseReference = database.getReference("Member").child(FirebaseAuth.getInstance().getUid()).child("fcmToken");
-                databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            FirebaseAuth.getInstance().signOut();
-                            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("check", "");
-                            editor.apply();
-                            Intent intent = new Intent(requireContext(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }
-                    }
-                });
-
-            }
-        });
 
         return view;
     }
 
     private void setControl(View view) {
-        btnLogout = view.findViewById(R.id.btnShipperLogout);
         rcOrderqueue_shipper = view.findViewById(R.id.rcOrder_shipper);
 
     }

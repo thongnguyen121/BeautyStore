@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.EditProfileShipperActivity">
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveMember"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/profile_background">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvImageMember"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_centerInParent="true"
+                app:cardCornerRadius="100dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/white">
+
+                <ImageView
+                    android:id="@+id/imgAnhMember"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/profile_default" />
+
+                <View
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:background="@drawable/profileimg_bg" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:paddingBottom="10dp"
+                    android:text="Sửa ảnh"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tvEmailMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cvImageMember"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/abeezeeregular"
+                android:paddingBottom="10dp"
+                android:text="Email"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/fullname"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:id="@+id/edtFullnameMember"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/setup_now"
+            android:paddingLeft="13dp"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/phonenum"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:id="@+id/edtPhonenumMember"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/setup_now"
+            android:inputType="number"
+            android:paddingLeft="13dp"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_login_layout"
+            android:fontFamily="@font/abeezeeregular"
+            android:text="@string/address"
+            android:textSize="@dimen/button_textsize" />
+
+        <EditText
+            android:id="@+id/edtAddressMember"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/margin_login_layout"
+            android:background="@drawable/edt_login_background"
+            android:fontFamily="@font/abeezeeregular"
+            android:hint="@string/setup_now"
+            android:paddingLeft="13dp"
+            android:singleLine="true"
+            android:textSize="@dimen/button_textsize" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSaveMember"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="fill_vertical"
+        android:layout_margin="@dimen/margin_login_layout"
+        android:layout_marginStart="@dimen/margin_login_layout"
+        android:layout_marginEnd="@dimen/margin_login_layout"
+        android:background="@drawable/btn_login_bg"
+        android:fontFamily="@font/abeezeeregular"
+        android:text="@string/save_change"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_textsize"
+        app:layout_constraintBottom_toTopOf="@+id/btnBackMember"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBackMember"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_margin="@dimen/margin_login_layout"
+        android:background="@drawable/btnback_login_bg"
+        android:text="@string/back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/button_textsize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/spin_kitMember"
+            style="@style/SpinKitView.Large.FoldingCube"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:SpinKit_Color="@color/darwer_use_home" />
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

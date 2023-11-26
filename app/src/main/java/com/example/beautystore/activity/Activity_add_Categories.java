@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -32,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.example.beautystore.R;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Categories;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -60,8 +62,9 @@ public class Activity_add_Categories extends AppCompatActivity {
     DatabaseReference databaseReference, reference;
     private MaterialCardView cardView;
     private TextView tvCondition_cate, tvTile;
-    private LinearLayout linearLayout;
+    private ConstraintLayout linearLayout;
     boolean status;
+    SpinKitView spinKitView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +139,8 @@ public class Activity_add_Categories extends AppCompatActivity {
         btnAddCate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 if (imageURI == null || TextUtils.isEmpty(edtNameCate.getText())) {
                     Toast.makeText(Activity_add_Categories.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
                 } else {
@@ -153,6 +158,8 @@ public class Activity_add_Categories extends AppCompatActivity {
                                 imageURI = uriTask.getResult();
                                 Categories categories = new Categories(autoId_category, edtNameCate.getText().toString(), imageURI.toString());
                                 reference.setValue(categories);
+                                setEnable(true);
+                                spinKitView.setVisibility(View.GONE);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -160,7 +167,6 @@ public class Activity_add_Categories extends AppCompatActivity {
                                 Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Toast.makeText(Activity_add_Categories.this, "dep chai" + autoId_category, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -170,6 +176,8 @@ public class Activity_add_Categories extends AppCompatActivity {
             public void onClick(View view) {
                 nameCate = edtNameCate.getText().toString();
                 reference = FirebaseDatabase.getInstance().getReference("Categories").child(id_cate);
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 if(edtNameCate.length()> 50)
                 {
                     Toast.makeText(Activity_add_Categories.this, "Ban nhap qua ky tu cho phep", Toast.LENGTH_SHORT).show();
@@ -185,6 +193,8 @@ public class Activity_add_Categories extends AppCompatActivity {
                                     updates.put("categories_name", nameCate);
                                     reference.updateChildren(updates);
                                     Toast.makeText(Activity_add_Categories.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                                    setEnable(true);
+                                    spinKitView.setVisibility(View.GONE);
                                 }
                             }
                             @Override
@@ -210,6 +220,8 @@ public class Activity_add_Categories extends AppCompatActivity {
                                             updatesCategory.put("img_categories",imageURI.toString());
                                             reference.updateChildren(updatesCategory);
                                             Toast.makeText(Activity_add_Categories.this, "update thanh cong", Toast.LENGTH_SHORT).show();
+                                            setEnable(true);
+                                            spinKitView.setVisibility(View.GONE);
                                         }
                                     }
                                     @Override
@@ -270,6 +282,13 @@ public class Activity_add_Categories extends AppCompatActivity {
             }
         });
     }
+    private void setEnable(boolean b) {
+        ivBack.setEnabled(b);
+        btnAddCate.setEnabled(b);
+        btnEditCate.setEnabled(b);
+        edtNameCate.setEnabled(b);
+        imgCategory.setEnabled(b);
+    }
 
     private void setControl() {
         ivBack = findViewById(R.id.ivBack);
@@ -281,6 +300,7 @@ public class Activity_add_Categories extends AppCompatActivity {
         cardView = findViewById(R.id.card_add_cate_screen);
         tvCondition_cate = findViewById(R.id.tv_addCate_screen);
         tvTile = findViewById(R.id.tvTitle_add_cate_screen);
+        spinKitView = findViewById(R.id.spin_kitCate);
 
     }
     private void condition_cate_name() {
