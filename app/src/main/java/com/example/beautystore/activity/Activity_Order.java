@@ -69,7 +69,7 @@ public class Activity_Order extends AppCompatActivity {
 
     int paymentMethod = 0;
 
-    private String amount = "5000000";
+    private String amount = "1";
     private String fee = "0";
     int environment = 0;//developer default
     private String merchantName = "Merchant123556666";

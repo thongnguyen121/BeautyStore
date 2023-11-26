@@ -66,6 +66,7 @@ public class Fragment_consultant_message_list extends Fragment {
 
         messageRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(false);
         messageRecyclerView.setLayoutManager(linearLayoutManager);
     return view;
     }

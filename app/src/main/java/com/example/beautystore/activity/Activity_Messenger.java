@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerView_Messages;
 import com.example.beautystore.model.Chat;
+import com.example.beautystore.model.ChatGroup;
+import com.example.beautystore.model.ChatNoti;
 import com.example.beautystore.model.Members;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,8 +31,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,11 +70,56 @@ public class Activity_Messenger extends AppCompatActivity {
         chatId = intent.getStringExtra("chatId");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
+        DatabaseReference customerRef = FirebaseDatabase.getInstance().getReference().child("Customer");
+        customerRef.child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    FirebaseDatabase.getInstance().getReference().child("InChat").child(fuser.getUid()).setValue("1");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         //Back button:
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseReference membersReference = FirebaseDatabase.getInstance().getReference().child("Member");
+                DatabaseReference customerRef = FirebaseDatabase.getInstance().getReference().child("Customer");
+                membersReference.child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            DatabaseReference chatGroupRef = FirebaseDatabase.getInstance().getReference().child("ChatGroup").child(chatId);
+                            Map<String, Object> status = new HashMap<>();
+                            status.put("status","3");
+                            chatGroupRef.updateChildren(status);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                customerRef.child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            FirebaseDatabase.getInstance().getReference().child("InChat").child(fuser.getUid()).setValue("0");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 onBackPressed();
             }
         });
@@ -105,8 +154,11 @@ public class Activity_Messenger extends AppCompatActivity {
 
         HashMap<String, Object> chatGroupHashMap = new HashMap<>();
         chatGroupHashMap.put("latestMessage", message);
-        String date = String.valueOf(LocalDateTime.now());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        String date = dtf.format(now);
         chatGroupHashMap.put("date", date);
+        chatGroupHashMap.put("status", "1");
 
 
         //Get Chat ID:
@@ -117,9 +169,25 @@ public class Activity_Messenger extends AppCompatActivity {
                 if (snapshot.exists()){
                     Members members = snapshot.getValue(Members.class);
                     chatReference.child(chatId).push().setValue(chatHashMap);
+                    chatGroupReference.child(chatId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()){
+                                ChatGroup chatGroup = snapshot.getValue(ChatGroup.class);
+                                if (chatGroup.getStatus().equals("2")){
+                                    chatGroupHashMap.put("status", "2");
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                     chatGroupHashMap.put("id", chatId);
-                    chatGroupHashMap.put("status", "Unseen");
                     chatGroupReference.child(chatId).setValue(chatGroupHashMap);
+
 
                     DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference().child("Tokens");
                     tokenRef.child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -139,6 +207,25 @@ public class Activity_Messenger extends AppCompatActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    ChatNoti chatNoti = new ChatNoti(fuser.getUid(), message, "0", dtf.format(now), chatId);
+                    DatabaseReference inChatRef = FirebaseDatabase.getInstance().getReference().child("InChat").child(chatId);
+                    inChatRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String inChat = (String) snapshot.getValue();
+                            if (inChat.equals("0")){
+                                FirebaseDatabase.getInstance().getReference().child("ChatNoti").child(fuser.getUid()).setValue(chatNoti);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
                 }
             }
 
@@ -153,8 +240,23 @@ public class Activity_Messenger extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
                     chatReference.child(fuser.getUid()).push().setValue(chatHashMap);
+                    chatGroupReference.child(fuser.getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()){
+                                ChatGroup chatGroup = snapshot.getValue(ChatGroup.class);
+                                if (chatGroup.getStatus().equals("2")){
+                                    chatGroupHashMap.put("status", "2");
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                     chatGroupHashMap.put("id", fuser.getUid());
-                    chatGroupHashMap.put("status", "Unseen");
                     chatGroupReference.child(fuser.getUid()).setValue(chatGroupHashMap);
                 }
             }
