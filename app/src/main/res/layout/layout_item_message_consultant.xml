@@ -4,8 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="10dp"
-    android:background="@drawable/bg_consultant_messages"
-    android:padding="10dp">
+    android:background="@drawable/bg_consultant_messages_seen"
+    android:padding="10dp"
+    android:id="@+id/chatGroupItem">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

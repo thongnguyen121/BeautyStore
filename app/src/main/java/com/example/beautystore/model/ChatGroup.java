@@ -5,15 +5,17 @@ public class ChatGroup {
     private String date;
     private String status;
     private String latestMessage;
+    private String inChat;
 
-    public ChatGroup() {
-    }
-
-    public ChatGroup(String id, String date, String status, String latestMessage) {
+    public ChatGroup(String id, String date, String status, String latestMessage, String inChat) {
         this.id = id;
         this.date = date;
         this.status = status;
         this.latestMessage = latestMessage;
+        this.inChat = inChat;
+    }
+
+    public ChatGroup() {
     }
 
     public String getId() {
@@ -46,5 +48,13 @@ public class ChatGroup {
 
     public void setLatestMessage(String latestMessage) {
         this.latestMessage = latestMessage;
+    }
+
+    public String getInChat() {
+        return inChat;
+    }
+
+    public void setInChat(String inChat) {
+        this.inChat = inChat;
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<RecyclerView_Consultant_Message.ConsultantMessageViewHolder> {
     private ArrayList<ChatGroup> data;
@@ -59,14 +61,26 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
         });
         holder.tvDateReceived.setText(chatGroup.getDate());
         holder.tvMessageContent.setText(chatGroup.getLatestMessage());
-        holder.tvStatus.setText(chatGroup.getStatus());
+        if (chatGroup.getStatus().equals("1")){
+            holder.tvStatus.setText("Chưa tiếp nhận");
+            holder.chatGroupItem.setBackgroundResource(R.drawable.bg_consultant_messages_unseen);
+        }else if(chatGroup.getStatus().equals("2")) {
+            holder.tvStatus.setText("Đang tư vấn");
+            holder.chatGroupItem.setBackgroundResource(R.drawable.bg_consultant_messages_seen);
+        }else {
+            holder.tvStatus.setText("Đã tiếp nhận");
+            holder.chatGroupItem.setBackgroundResource(R.drawable.bg_consultant_messages_seen);
+        }
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Chat group status: 1: not in conversation, 2: in conversation
                 Intent intent = new Intent(v.getContext(), Activity_Messenger.class);
                 intent.putExtra("chatId", chatGroup.getId());
                 context.startActivity(intent);
+                chatGroup.setStatus("2");
             }
         });
     }
@@ -80,6 +94,7 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
 
         TextView tvCustomerName, tvDateReceived, tvMessageContent, tvStatus;
         ImageView ivButtonGoMessenger;
+        LinearLayout chatGroupItem;
 
         public ConsultantMessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,6 +104,7 @@ public class RecyclerView_Consultant_Message extends RecyclerView.Adapter<Recycl
             tvMessageContent = itemView.findViewById(R.id.tvMessageConsultantMessageContent);
             tvStatus = itemView.findViewById(R.id.tvMessageConsultantReceivedStatus);
             ivButtonGoMessenger = itemView.findViewById(R.id.ivConsultantGoMessenger);
+            chatGroupItem = itemView.findViewById(R.id.chatGroupItem);
         }
     }
 }
