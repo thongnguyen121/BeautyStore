@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, controller);
         NavigationUI.setupWithNavController(bottomNavigationView, controller);
         if (isUserLoggedin()) {
-            Toast.makeText(this, "dax dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.VISIBLE);
             navigationView.getMenu().findItem(R.id.Login).setVisible(false);
             navigationView.getMenu().findItem(R.id.Signup).setVisible(false);
@@ -139,12 +138,11 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(MainActivity.this, "Cant", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Không thể", Toast.LENGTH_SHORT).show();
                 }
             });
 
         } else {
-            Toast.makeText(this, "Chuaw dang nhap", Toast.LENGTH_SHORT).show();
             bottomNavigationView.setVisibility(View.GONE);
             navigationView.getMenu().findItem(R.id.fragment_editProfile).setVisible(false);
             navigationView.getMenu().findItem(R.id.fragment_transaction_history).setVisible(false);
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseAuth.getInstance().signOut();
                                 controller.navigate(R.id.fragment_home);
-                                Toast.makeText(MainActivity.this, "Dang xuat thanh cong", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
                                 SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("check", "false");
@@ -273,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         CartDetail cartDetail = dataSnapshot.getValue(CartDetail.class);
                         counterCartItem += 1;
-                        Log.d("TAG", "cart item: " + counterCartItem);
                     }
 
                 }

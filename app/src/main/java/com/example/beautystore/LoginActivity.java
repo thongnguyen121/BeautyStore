@@ -130,43 +130,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     uid = firebaseAuth.getCurrentUser().getUid();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-//                    databaseReference.child("Customer").addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                            if (snapshot.hasChild(uid)) {
-//                                SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-//                                SharedPreferences.Editor editor = sharedPreferences.edit();
-//                                editor.putString("check","true");
-//
-//                                editor.apply();
-//                                Toast.makeText(LoginActivity.this, "Khach", Toast.LENGTH_SHORT).show();
-//                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<String> task) {
-//                                        if (task.isSuccessful()) {
-//                                            String token = task.getResult();
-//                                            Log.d("TAG", "token la: " + token);
-//
-//                                            firebaseDatabase.getReference("Customer").child(uid).child("fcmToken").setValue(token);
-//
-//                                            // Chuyển sang màn hình chính
-//                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                            startActivity(intent);
-//                                        }
-//                                    }
-//                                });
-//                            } else {
-//                                Toast.makeText(LoginActivity.this, "Khong phai khach", Toast.LENGTH_SHORT).show();
-//                                        checkRole(uid);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError error) {
-//
-//                        }
-//                    });
                     databaseReference.child("Member").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -186,19 +149,16 @@ public class LoginActivity extends AppCompatActivity {
                                             String password = sharedPreferencesUser.getString("password", "");
                                             String phoneNum = sharedPreferencesUser.getString("phoneNum", "");
                                             // Save user info to Firebase Realtime Database
-                                            Toast.makeText(LoginActivity.this, "Mail chua ton tai trong firebase " + name + " " + email, Toast.LENGTH_SHORT).show();
                                             Customer customer = new Customer(name, email, password, phoneNum, "https://firebasestorage.googleapis.com/v0/b/beautystore-8082e.appspot.com/o/imgProfile%2Fprofile_default.jpg?alt=media&token=53a80567-0eb2-4584-a746-5359e4d08ac7", "", "", "");
                                             databaseReference.child("Customer").child(firebaseAuth.getCurrentUser().getUid()).setValue(customer).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        Toast.makeText(LoginActivity.this, "Thành công", Toast.LENGTH_SHORT).show();
                                                         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<String> task) {
                                                                 if (task.isSuccessful()) {
                                                                     String token = task.getResult();
-                                                                    Log.d("TAG", "token la: " + token);
 
                                                                     firebaseDatabase.getReference("Customer").child(uid).child("fcmToken").setValue(token);
 
@@ -210,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                                                             }
                                                         });
                                                     } else {
-                                                        Toast.makeText(LoginActivity.this, "Không thanh công", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(LoginActivity.this, "Không thành công", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                             });
@@ -228,7 +188,6 @@ public class LoginActivity extends AppCompatActivity {
                                             editor.apply();
 
                                         } else {
-                                            Toast.makeText(LoginActivity.this, "Mail da ton tai trong firebase", Toast.LENGTH_SHORT).show();
                                             SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             editor.putString("check", "true");
@@ -257,9 +216,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                     }
                                 });
-                                Toast.makeText(LoginActivity.this, "Mail da xac minh", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(LoginActivity.this, "Mail chua xac minh", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Mail chưa được xác minh", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -269,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(LoginActivity.this, "Khong thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -285,7 +244,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (members.getRole().equals("1")) {
                         if (members.getStatus().equals("1")) {
                             FirebaseAuth.getInstance().signOut();
-                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
                         } else {
                             SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -301,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else if (members.getRole().equals("2")) {
                         if (members.getStatus().equals("1")) {
                             FirebaseAuth.getInstance().signOut();
-                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
                         } else {
                             SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -315,7 +274,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         if (members.getStatus().equals("1")) {
                             FirebaseAuth.getInstance().signOut();
-                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa, hãy liên hệ với shủ shọp đẹp chai để lấy lại nick", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_LONG).show();
                         } else {
                             SharedPreferences sharedPreferences = getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -360,10 +319,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Members members = snapshot.getValue(Members.class);
-                    Log.d("TAG", "status cua mem ber la: ." + members.getStatus());
                     if (members.getStatus().equals("1")) {
                         FirebaseAuth.getInstance().signOut();
-                        Toast.makeText(LoginActivity.this, "Lmao tài khoản của bạn đã bị khóa", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Tài khoản của bạn đã bị khóa", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

@@ -107,7 +107,6 @@ public class Activity_add_members extends AppCompatActivity {
 
         } else {
             btnAddEmployee.setVisibility(View.GONE);
-            Log.d("TAG", "sua nhan vien: " + id);
             edtEmail.setEnabled(false);
             edtPassword.setEnabled(false);
             getDataMember(id);
@@ -125,7 +124,6 @@ public class Activity_add_members extends AppCompatActivity {
         btnAddEmployee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Activity_add_members.this, "asdasdasdasfbb", Toast.LENGTH_SHORT).show();
                 SaveDataMember();
 
             }
@@ -138,7 +136,6 @@ public class Activity_add_members extends AppCompatActivity {
                     seletedImage = false;
                 } else {
                     updateDataMemberWithoutImage();
-                    Toast.makeText(Activity_add_members.this, "chua chom amj", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -174,20 +171,18 @@ public class Activity_add_members extends AppCompatActivity {
                     update.put("cccd", cccd);
                     update.put("role", role);
                     reference.child(id).updateChildren(update);
-                    Toast.makeText(Activity_add_members.this, "cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_members.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(Activity_add_members.this, "cap nhat khong thanh cong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity_add_members.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void updateDataMember() {
-
-        Log.d("TAG", "updateDataMember: " + id);
         storageReference.child(id).putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -195,13 +190,13 @@ public class Activity_add_members extends AppCompatActivity {
                 while (!uriTask.isSuccessful()) ;
                 uri = uriTask.getResult();
                 updateIntoFirebaseRealTime();
-                Toast.makeText(Activity_add_members.this, "hinh anh thanh cong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity_add_members.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Activity_add_members.this, "khonf thanh cong " + e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity_add_members.this, "Cập nhật không thành công " + e, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -230,13 +225,13 @@ public class Activity_add_members extends AppCompatActivity {
                     update.put("role", role);
                     update.put("profileImage", uri.toString());
                     reference.child(id).updateChildren(update);
-                    Toast.makeText(Activity_add_members.this, "cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_members.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(Activity_add_members.this, "cap nhat khong thanh cong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity_add_members.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -281,7 +276,7 @@ public class Activity_add_members extends AppCompatActivity {
             role = "2";
         }
         if (uri == null) {
-            Toast.makeText(this, "hay cap nhat hinh anh " + role, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "hãy cập nhật hình ảnh ", Toast.LENGTH_SHORT).show();
         } else {
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -301,15 +296,14 @@ public class Activity_add_members extends AppCompatActivity {
                                 reference.child(mAuth.getCurrentUser().getUid()).setValue(members).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(Activity_add_members.this, " da them nhan vien", Toast.LENGTH_SHORT).show();
-                                        Log.d("TAG", "dang xuat: " + mAuth.getCurrentUser().getUid());
+                                        Toast.makeText(Activity_add_members.this, "Thêm nhân viên thành công", Toast.LENGTH_SHORT).show();
                                         mAuth.signOut();
                                         loginAdminAccount();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Activity_add_members.this, "khong the them", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Activity_add_members.this, "Thêm không thành công", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -327,16 +321,14 @@ public class Activity_add_members extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(Activity_add_members.this, "thanh cong", Toast.LENGTH_SHORT).show();
-                    Log.d("TAG", "dang nhap lai admin thanh cong: " + task.getResult().getUser().getUid());
+                    Log.d("TAG", "Dang nhạp admin thanh cong");
                 } else {
-                    Toast.makeText(Activity_add_members.this, "ko thanh cong", Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Activity_add_members.this, "ko thanh cong " + e, Toast.LENGTH_SHORT).show();
+                Log.e("TAG", "Dang nhập ko thnahf cong: ",e );
             }
         });
     }
@@ -405,11 +397,9 @@ public class Activity_add_members extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT > 30) {
             i = new Intent(MediaStore.ACTION_PICK_IMAGES);
-            Toast.makeText(Activity_add_members.this, "android 13", Toast.LENGTH_SHORT).show();
         } else {
             i.setType("image/*");
             i.setAction(Intent.ACTION_GET_CONTENT);
-            Toast.makeText(Activity_add_members.this, "android 10", Toast.LENGTH_SHORT).show();
         }
         resultLaucher.launch(i);
     }
@@ -439,7 +429,6 @@ public class Activity_add_members extends AppCompatActivity {
             public void onActivityResult(ActivityResult o) {
                 if (o.getResultCode() == RESULT_OK && o.getData() != null) {
                     ivImage.setImageURI(uri);
-                    Log.d("TAG", "uri hinh anh: " + uri);
                 }
             }
         });
@@ -454,7 +443,7 @@ public class Activity_add_members extends AppCompatActivity {
                     ivImage.setImageURI(uri);
                     seletedImage = true;
                 } catch (Exception e) {
-                    Toast.makeText(Activity_add_members.this, "No img selected", Toast.LENGTH_SHORT).show();
+                    Log.e("TAG", "onActivityResult: ",e );
                 }
             }
         });

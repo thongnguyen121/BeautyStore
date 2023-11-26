@@ -111,10 +111,8 @@ public class Activity_add_Categories extends AppCompatActivity {
         if (status) {
             btnEditCate.setVisibility(View.GONE);
 
-            Log.d("TAG", "id cua loai " + id_cate);
         } else {
             btnAddCate.setVisibility(View.GONE);
-            Log.d("TAG", "id cua loai " + id_cate);
         }
         registerResult();
         imgCategory.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +121,6 @@ public class Activity_add_Categories extends AppCompatActivity {
                 Intent i = new Intent();
                 if (Build.VERSION.SDK_INT > 30) {
                     i = new Intent(MediaStore.ACTION_PICK_IMAGES);
-                    Toast.makeText(Activity_add_Categories.this, "android 13", Toast.LENGTH_SHORT).show();
                 } else {
                     i.setType("image/*");
                     i.setAction(Intent.ACTION_GET_CONTENT);
@@ -142,11 +139,11 @@ public class Activity_add_Categories extends AppCompatActivity {
                 setEnable(false);
                 spinKitView.setVisibility(View.VISIBLE);
                 if (imageURI == null || TextUtils.isEmpty(edtNameCate.getText())) {
-                    Toast.makeText(Activity_add_Categories.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_Categories.this, "Vui lòng cung cấp đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else {
                     if (edtNameCate.length() > 50)
                     {
-                        Toast.makeText(Activity_add_Categories.this, "Ban nhap qua 7 chu", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Activity_add_Categories.this, "Tên loại quá dài", Toast.LENGTH_SHORT).show();
                     } else {
                         reference = FirebaseDatabase.getInstance().getReference("Categories/" + autoId_category);
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(autoId_category);
@@ -164,7 +161,7 @@ public class Activity_add_Categories extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Activity_add_Categories.this, "Không thể thêm loại", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -180,11 +177,10 @@ public class Activity_add_Categories extends AppCompatActivity {
                 spinKitView.setVisibility(View.VISIBLE);
                 if(edtNameCate.length()> 50)
                 {
-                    Toast.makeText(Activity_add_Categories.this, "Ban nhap qua ky tu cho phep", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_add_Categories.this, "Tên loại quá dài", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     if (imageURI == null ){
-                        Toast.makeText(Activity_add_Categories.this, "ko co hinh", Toast.LENGTH_SHORT).show();
                         reference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -192,18 +188,17 @@ public class Activity_add_Categories extends AppCompatActivity {
                                     Map<String, Object> updates = new HashMap<>();
                                     updates.put("categories_name", nameCate);
                                     reference.updateChildren(updates);
-                                    Toast.makeText(Activity_add_Categories.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Activity_add_Categories.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                                     setEnable(true);
                                     spinKitView.setVisibility(View.GONE);
                                 }
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Toast.makeText(Activity_add_Categories.this, "Ko dc", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Activity_add_Categories.this, "Không thể cập nhật", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }else {
-                        Toast.makeText(Activity_add_Categories.this, "co hinh", Toast.LENGTH_SHORT).show();
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(id_cate);
                         storageReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -219,21 +214,21 @@ public class Activity_add_Categories extends AppCompatActivity {
                                             updatesCategory.put("categories_name", nameCate);
                                             updatesCategory.put("img_categories",imageURI.toString());
                                             reference.updateChildren(updatesCategory);
-                                            Toast.makeText(Activity_add_Categories.this, "update thanh cong", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Activity_add_Categories.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                                             setEnable(true);
                                             spinKitView.setVisibility(View.GONE);
                                         }
                                     }
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Toast.makeText(Activity_add_Categories.this, "ko dc", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Activity_add_Categories.this, "Không thể cập nhật", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Activity_add_Categories.this, "ko ther", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Activity_add_Categories.this, "Không thể cập nhật", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -249,9 +244,8 @@ public class Activity_add_Categories extends AppCompatActivity {
                 try {
                     imageURI = o.getData().getData();
                     imgCategory.setImageURI(imageURI);
-                    Log.d("TAG", "hinh anh: " + imageURI.getLastPathSegment());
                 } catch (Exception e) {
-                    Toast.makeText(Activity_add_Categories.this, "no img selected", Toast.LENGTH_SHORT).show();
+                    Log.e("TAG", "onActivityResult: ",e );
                 }
             }
         });

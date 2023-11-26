@@ -135,10 +135,8 @@ public class Fragment_editProfile extends Fragment {
 
                 if (seletedImage == false) {
 
-                    Toast.makeText(getContext(), "Chua co chon cai con me gi het " + imageUri, Toast.LENGTH_SHORT).show();
                     updateAccountIntoFirebaseWithoutImg();
                 } else {
-                    Toast.makeText(getContext(), "da chon hinh anh", Toast.LENGTH_SHORT).show();
                     saveInfo();
                     seletedImage = false;
                 }
@@ -167,7 +165,7 @@ public class Fragment_editProfile extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "khong the" + e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không thể " + e, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "khong the: " + e);
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -207,7 +205,7 @@ public class Fragment_editProfile extends Fragment {
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
 
-                    Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getContext(), MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -244,16 +242,16 @@ public class Fragment_editProfile extends Fragment {
                     databaseReference.updateChildren(updates);
                     spinKitView.setVisibility(View.GONE);
                     setViewEnable(true);
-                    Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -302,11 +300,9 @@ public class Fragment_editProfile extends Fragment {
 
         if (Build.VERSION.SDK_INT > 30) {
             i = new Intent(MediaStore.ACTION_PICK_IMAGES);
-            Toast.makeText(getContext(), "android 13", Toast.LENGTH_SHORT).show();
         } else {
             i.setType("image/*");
             i.setAction(Intent.ACTION_GET_CONTENT);
-            Toast.makeText(getContext(), "android 10", Toast.LENGTH_SHORT).show();
         }
         resultLaucher.launch(i);
     }

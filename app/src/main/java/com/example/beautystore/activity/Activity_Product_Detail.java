@@ -127,7 +127,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
         checkProductExistInCart();
 //        checkOrderForRating(productId);
         reView_products();
-        Log.d("TAG", "onCreate: " + productId);
 
         UID = FirebaseAuth.getInstance().getUid();
 
@@ -240,11 +239,16 @@ public class Activity_Product_Detail extends AppCompatActivity {
                             if (item.getProduct_id().equals(cartDetail.getProduct_id())) {
                                 int currentQty = Integer.parseInt(item.getQty());
                                 if (currentQty < maxQty) {
-                                    // If it's less than maxQty, increase the quantity.
-                                    item.setQty(String.valueOf(currentQty + 1));
+                                    int epxQty = productQty + currentQty;
+                                    if (epxQty >= maxQty){
+                                        item.setQty(String.valueOf(maxQty));
+                                    }
+                                    else{
+                                        item.setQty(String.valueOf(currentQty + productQty));
+                                    }
+
                                     productExist = true;
                                 } else {
-                                    // If it's not less than maxQty, show a message and return.
                                     Toast.makeText(Activity_Product_Detail.this, "Sản phẩm đã đạt số lượng tối đa trong giỏ hàng", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -293,7 +297,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
                         total += productPrice * productQty;
 
                     }
-                    Log.d("TAG", "tong tien la: " + total);
                     cart.setTotal(String.valueOf(total));
                     reference.setValue(cart);
                 }
@@ -314,7 +317,6 @@ public class Activity_Product_Detail extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.child(productId).exists()) {
-                        Log.d("TAG", "onDataChange: sp co trong wishlist");
                         isOnWishList = true;
                         ivAddWishList.setImageResource(R.drawable.baseline_favorite_24);
                     } else {
@@ -535,14 +537,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
         AlertDialog.Builder loginDialog = new AlertDialog.Builder(Activity_Product_Detail.this);
         loginDialog.setTitle("Thông báo");
         loginDialog.setMessage("Bạn cần phải đăng nhập để thực hiện hành động này");
-        loginDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        loginDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(Activity_Product_Detail.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
-        loginDialog.setNegativeButton("Khong", new DialogInterface.OnClickListener() {
+        loginDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
