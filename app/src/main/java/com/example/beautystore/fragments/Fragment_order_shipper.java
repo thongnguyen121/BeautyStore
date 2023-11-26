@@ -53,19 +53,6 @@ public class Fragment_order_shipper extends Fragment {
         setControl(view);
         getData_order();
         setSearchView();
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARE_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("check", "");
-                editor.apply();
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
 
         return view;
     }
