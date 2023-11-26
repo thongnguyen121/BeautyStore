@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -33,6 +34,7 @@ import com.example.beautystore.R;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -63,8 +65,9 @@ public class Activity_add_Brands extends AppCompatActivity {
     String brands_id = "", autoId_brands,  nameBrand,  oldImageURI;
     private MaterialCardView cardView;
     private  TextView tvCondition_brands;
-    private LinearLayout linearLayout;
+    private ConstraintLayout linearLayout;
     private boolean status;
+    SpinKitView spinKitView;
 
 
     @Override
@@ -106,6 +109,7 @@ public class Activity_add_Brands extends AppCompatActivity {
         cardView = findViewById(R.id.card_add_brands);
         tvCondition_brands = findViewById(R.id.tv_addBrands_screen);
         linearLayout = findViewById(R.id.liner_add_brands);
+        spinKitView = findViewById(R.id.spin_kitBrand);
     }
 
     private void edit_getData(String brand_id) {
@@ -143,13 +147,19 @@ public class Activity_add_Brands extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 if (imageUri_Brands == null || TextUtils.isEmpty(edtBrand_name.getText())) {
                     Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+                    setEnable(true);
+                    spinKitView.setVisibility(View.GONE);
 
                 } else {
                     if (edtBrand_name.length() > 50)
                     {
                         Toast.makeText(Activity_add_Brands.this, "Ban nhap ten hang qua 7 ki tu", Toast.LENGTH_SHORT).show();
+                        setEnable(true);
+                        spinKitView.setVisibility(View.GONE);
                     }
                     else {
 
@@ -161,6 +171,8 @@ public class Activity_add_Brands extends AppCompatActivity {
                                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                                 while (!uriTask.isComplete()) ;
                                 imageUri_Brands = uriTask.getResult();
+                                setEnable(true);
+                                spinKitView.setVisibility(View.GONE);
                                 Brands brands = new Brands(autoId_brands, edtBrand_name.getText().toString(), imageUri_Brands.toString());
                                 databaseReference.setValue(brands);
                                 onBackPressed();
@@ -178,16 +190,34 @@ public class Activity_add_Brands extends AppCompatActivity {
         });
 
     }
+
+    private void setEnable(boolean b) {
+        imgBack.setEnabled(b);
+        btnAdd.setEnabled(b);
+        btnEdit.setEnabled(b);
+        edtBrand_name.setEnabled(b);
+        imgBrand.setEnabled(b);
+    }
+
     private void edit_Brands() {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 nameBrand = edtBrand_name.getText().toString();
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Brands").child(brands_id);
 
-                if (edtBrand_name.length() > 50 )
+                if (TextUtils.isEmpty(edtBrand_name.getText())){
+                    Toast.makeText(Activity_add_Brands.this, "Vui long cung cap day du thong tin", Toast.LENGTH_SHORT).show();
+                    setEnable(true);
+                    spinKitView.setVisibility(View.GONE);
+                }
+                else if (edtBrand_name.length() > 50 )
                 {
                     Toast.makeText(Activity_add_Brands.this, "Ban da cap nhat ten hang qua ki tu cho phep ", Toast.LENGTH_SHORT).show();
+                    setEnable(true);
+                    spinKitView.setVisibility(View.GONE);
                 }
                 else {
                     if (imageUri_Brands == null) {
@@ -198,6 +228,8 @@ public class Activity_add_Brands extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                setEnable(true);
+                                spinKitView.setVisibility(View.GONE);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -223,6 +255,8 @@ public class Activity_add_Brands extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(Activity_add_Brands.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                        setEnable(true);
+                                        spinKitView.setVisibility(View.GONE);
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override

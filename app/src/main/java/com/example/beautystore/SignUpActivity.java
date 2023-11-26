@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -136,33 +137,38 @@ public class SignUpActivity extends AppCompatActivity {
             edtSDT.requestFocus();
             return;
         }
+        SharedPreferences sharedPreferences = getSharedPreferences("user_info", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("name", name);
+        editor.putString("email", email);
+        editor.putString("password", pass);
+        editor.putString("phoneNum", phoneNum);
+        editor.apply();
         firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Customer customer = new Customer(name,email,pass,phoneNum,"https://firebasestorage.googleapis.com/v0/b/beautystore-8082e.appspot.com/o/imgProfile%2Fprofile_default.jpg?alt=media&token=53a80567-0eb2-4584-a746-5359e4d08ac7","","","");
-                    databaseReference.child("Customer").child(firebaseAuth.getCurrentUser().getUid()).setValue(customer).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                Toast.makeText(SignUpActivity.this, "Thành công", Toast.LENGTH_SHORT).show();
-                                Intent i  = new Intent(SignUpActivity.this, LoginActivity.class);
-                                startActivity(i);
-                                finish();
-                            }else {
-                                Toast.makeText(SignUpActivity.this, "Không thanh công", Toast.LENGTH_SHORT).show();
+                            if(task.isSuccessful()){
+                                Toast.makeText(SignUpActivity.this, "Mail xác thực đã được gửi đến địa chỉ mail của bạn, hãy xác thực trước khi đăng nhập", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+//                                finish();
+                            } else {
+                                // Failed to send email verification
+                                Toast.makeText(SignUpActivity.this, "Gửi mail thất bại", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
-                }
-                else {
-                    Toast.makeText(SignUpActivity.this, "Thất bại", Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignUpActivity.this, "khong the", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Mail da ton tai", Toast.LENGTH_SHORT).show();
             }
         });
     }

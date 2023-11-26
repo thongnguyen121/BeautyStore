@@ -23,14 +23,26 @@
         tools:targetApi="31"
         tools:replace="android:theme">
         <activity
+            android:name=".activity.HistoryTransactionShipperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.EditProfileShipperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ChangePasswordShipperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ForgetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.Activity_Messenger"
             android:exported="false" />
-      <activity
+        <activity
             android:name=".activity.Activity_add_members"
             android:exported="false" />
         <activity
             android:name=".activity.Activity_Cart_Detail"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Tuvanvien_MainActivity"
             android:exported="false" />
@@ -39,16 +51,16 @@
             android:exported="false" />
         <activity
             android:name=".activity.Admin_MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_Order"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_Wish_List"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_Product_Detail"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.Admin_MainActivity"
             android:exported="false" />
@@ -57,8 +69,7 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false"
-            android:noHistory="true" />
+            android:exported="false" />
         <activity
             android:name=".activity.Activity_add_Brands"
             android:exported="false" />
@@ -83,16 +94,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".FCMNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-              </intent-filter>
+            </intent-filter>
         </service>
-        <service android:name=".notification.FCMNotificationService" android:exported="false">
+        <service
+            android:name=".notification.FCMNotificationService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
