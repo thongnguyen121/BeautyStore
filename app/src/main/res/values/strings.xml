@@ -5,12 +5,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="fragment_home">Home</string>
-    <string name="fragment_profile">Notification</string>
+    <string name="fragment_profile">Tin nhắn</string>
     <string name="fragment_orders">My Orders</string>
-    <string name="fragment_wishlist">My Wishlist</string>
-    <string name="fragment_cart">My Cart</string>
-    <string name="fragment_edit_profile">Edit Profile</string>
-    <string name="fragment_transaction_history">Transaction history</string>
+    <string name="fragment_wishlist">Danh sách yêu thích</string>
+    <string name="fragment_cart">Giỏ hàng</string>
+    <string name="fragment_edit_profile">Sửa thông tin</string>
+    <string name="fragment_transaction_history">Lịch sử giao dịch</string>
     <string name="fragment_notification">Thông báo</string>
     <string name="hang">Hãng</string>
     <string name="loai">Loại sản phẩm</string>

@@ -8,14 +8,14 @@
         >
 
         <item android:id="@+id/fragment_editProfile"
-            android:title="Edit Profile"
+            android:title="@string/fragment_edit_profile"
             ></item>
         <item android:id="@+id/fragment_transaction_history"
-            android:title="Transaction history"
+            android:title="@string/fragment_transaction_history"
             ></item>
 
         <item android:id="@+id/Logout"
-            android:title="Logout"
+            android:title="@string/logout"
             ></item>
         <item android:id="@+id/Login"
             android:title="Đăng nhập"

@@ -123,6 +123,7 @@ public class Fragment_warehouse_list extends Fragment {
         if (id == R.id.appBar_home){
             getProducts();
             getData_brands();
+            setVisibityhome();
             getData_categories();
             RecyclerView_Brands_WH.selectedPosition_brands= -1;
             RecyclerView_cate_WH.selectedPosition_cate= -1;
