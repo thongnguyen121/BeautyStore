@@ -267,6 +267,7 @@ NotificationSender notificationSender;
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Xác nhạn đơn hàng đã giao", Toast.LENGTH_SHORT).show();
+                                notificationSender.sendNotification("6",order_id);
                             } else {
                                 Toast.makeText(context, "Thất bại", Toast.LENGTH_SHORT).show();
                             }
@@ -282,6 +283,7 @@ NotificationSender notificationSender;
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Xác nhận hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                notificationSender.sendNotification("7",order_id);
                             } else {
                                 Toast.makeText(context, "Thất bại", Toast.LENGTH_SHORT).show();
                             }

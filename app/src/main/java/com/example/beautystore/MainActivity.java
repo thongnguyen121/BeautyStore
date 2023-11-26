@@ -99,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.setVisibility(View.GONE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
+            } else if (navDestination.getId() == R.id.fragment_transaction_history) {
+                bottomNavigationView.setVisibility(View.GONE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
             } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
