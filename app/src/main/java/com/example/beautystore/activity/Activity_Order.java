@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.beautystore.MainActivity;
+import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.PaymentMethodAdapter;
 import com.example.beautystore.adapter.RecyclerView_Order;
@@ -27,6 +28,7 @@ import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.PaymentMethod;
+import com.example.beautystore.model.Products;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -65,8 +67,9 @@ public class Activity_Order extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     List<CartDetail> detail = new ArrayList<>();
-    String autoID ="", total, address, phoneNum, name;
-
+    String autoID = "", total, address, phoneNum, name, productId, price, productQty,savedate;
+    boolean check;
+    NotificationSender notificationSender;
     int paymentMethod = 0;
 
     private String amount = "1";
@@ -85,13 +88,30 @@ public class Activity_Order extends AppCompatActivity {
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
+        check = getIntent().getBooleanExtra("buynow", false);
+        productId = getIntent().getStringExtra("productId");
+        price = getIntent().getStringExtra("price");
+        productQty = getIntent().getStringExtra("productQty");
+        databaseReference = database.getReference();
+        notificationSender = new NotificationSender(getApplicationContext());
         setScreenElement();
         getIDOrder();
+        if (check) {
+            cartDetails.clear();
+            cartDetails.add(new CartDetail(productId, price, productQty));
+            detail.add(new CartDetail(productId, price, productQty));
+            orderDetailAdapter.notifyDataSetChanged();
+        } else {
+            getCartItem(databaseReference, uid);
+            saveCartItem(databaseReference, uid);
+        }
+        getUserInfo(databaseReference, uid);
 
-        getUserInfo( databaseReference, uid);
-        getCartItem(databaseReference, uid);
-        saveCartItem(databaseReference, uid);
         getTotalPrice();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        savedate = simpleDateFormat.format(calendar.getTime());
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,26 +139,49 @@ public class Activity_Order extends AppCompatActivity {
         address = edtAddress.getText().toString();
         phoneNum = edtPhoneNumber.getText().toString();
         name = edtUserName.getText().toString();
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String savedate = simpleDateFormat.format(calendar.getTime());
-
-        Order order = new Order(autoID,uid,String.valueOf(paymentMethod),savedate,total,address,phoneNum,name,detail);
-        OrderStatus orderStatus = new OrderStatus(order.getOrder_id(),"0","", "", "");
+        Order order = new Order(autoID, uid, "0",savedate , total, address, phoneNum, name, detail);
+        OrderStatus orderStatus = new OrderStatus(order.getOrder_id(), "0", "", "", "");
         databaseReference.child("Order").child(autoID).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(Activity_Order.this, "thanh cong", Toast.LENGTH_SHORT).show();
-                        databaseReference.child("Cart").child(uid).removeValue();
-                    }
-                });
+                for (CartDetail item : detail) {
+                    DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("Products").child(item.getProduct_id());
+                    productRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                Products products = snapshot.getValue(Products.class);
+                                int newQty = Integer.parseInt(products.getQuantity()) - Integer.parseInt(item.getQty());
+                                productRef.child("quantity").setValue(String.valueOf(newQty)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        databaseReference.child("OrderStatus").child(order.getOrder_id()).setValue(orderStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                String order_id = order.getOrder_id();
+                                                Toast.makeText(Activity_Order.this, "thanh cong", Toast.LENGTH_SHORT).show();
+                                                notificationSender.sendNotificationAdmin("0", order_id);
+                                                if (!check) {
+                                                    databaseReference.child("Cart").child(uid).removeValue();
+                                                }
 
-                Intent intent = new Intent(Activity_Order.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                                            }
+                                        });
+
+                                        Intent intent = new Intent(Activity_Order.this, MainActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
 
 
             }
@@ -172,7 +215,12 @@ public class Activity_Order extends AppCompatActivity {
     }
 
     private void getTotalPrice() {
-            DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        if (check) {
+            int totalmoney = Integer.parseInt(price) * Integer.parseInt(productQty);
+            total = String.valueOf(totalmoney);
+            tvTotalPrice.setText(decimalFormat.format(totalmoney) + " Đ");
+        } else {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference reference = database.getReference("Cart").child(FirebaseAuth.getInstance().getUid());
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -180,10 +228,10 @@ public class Activity_Order extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     total = snapshot.child("total").getValue(String.class);
 //                holder.tvPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
-                    if (snapshot.exists()){
+                    if (snapshot.exists()) {
                         tvTotalPrice.setText(decimalFormat.format(Integer.valueOf(total.trim())) + " Đ");
-                    }else{
-                        tvTotalPrice.setText( "0 Đ");
+                    } else {
+                        tvTotalPrice.setText("0 Đ");
                     }
 
                 }
@@ -193,7 +241,7 @@ public class Activity_Order extends AppCompatActivity {
 
                 }
             });
-
+        }
     }
 
     private void getCartItem(DatabaseReference databaseReference, String uid) {
@@ -260,6 +308,10 @@ public class Activity_Order extends AppCompatActivity {
         tvTotalPrice = findViewById(R.id.tvOrderTotalMoney);
         setPaymentMethodSpinner();
         btnOrder = findViewById(R.id.btnOrderOrderButton);
+        orderDetailAdapter = new RecyclerView_Order(cartDetails, this, R.layout.layout_item_order);
+
+        orderDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        orderDetailRecyclerView.setAdapter(orderDetailAdapter);
     }
 
     public void setPaymentMethodSpinner(){

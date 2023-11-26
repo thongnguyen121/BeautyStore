@@ -246,9 +246,9 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                     if (order != null) {
 
                         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
-                      holder.tvOrder_number.setText(order.getOrder_id());
-                      holder.tvDatetime.setText(order.getCreate_at());
-                      holder.tvTotal_money.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
+                        holder.tvOrder_number.setText(order.getOrder_id());
+                        holder.tvDatetime.setText(order.getCreate_at());
+                        holder.tvTotal_money.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
                     }
                 }
             }
