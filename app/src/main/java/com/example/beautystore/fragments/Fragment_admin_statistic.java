@@ -159,7 +159,6 @@ public class Fragment_admin_statistic extends Fragment {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int month = extractMonth(createAt);
                     int year = extractYear(createAt);
-
                     if (month != -1 && year == currentYear) {
                         if (month == currentMonth) {
                             String dayKey = convertCreateAtToDay(createAt);
@@ -202,15 +201,32 @@ public class Fragment_admin_statistic extends Fragment {
         });
     }
 
+    private int extractDay(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.DAY_OF_MONTH); // Trả về ngày (1-31)
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
     private void displayRevenueByDay(Map<String, Integer> dailyRevenue) {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
 
-        for (String dayKey : dailyRevenue.keySet()) {
-            int revenue = dailyRevenue.getOrDefault(dayKey, 0);
-            entries.add(new Entry(Integer.parseInt(dayKey) - 1, revenue));
-            labels.add(dayKey);
+//        for (String dayKey : dailyRevenue.keySet()) {
+//            int revenue = dailyRevenue.getOrDefault(dayKey, 0);
+//            entries.add(new Entry(Integer.parseInt(dayKey) - 1, revenue));
+//            labels.add(dayKey);
+//        }
+        for (int i = 1; i <= 31; i++) {
+            int revenue = dailyRevenue.getOrDefault(String.valueOf(i), 0);
+            entries.add(new Entry(i - 1, revenue));
+            labels.add("Ngày " + i);
         }
 
         LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo ngày");
