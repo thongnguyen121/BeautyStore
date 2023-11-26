@@ -61,7 +61,13 @@ public class Fragment_order extends Fragment {
         rcOrder_customer = view.findViewById(R.id.rcOrder_customer_fr);
         searchView = view.findViewById(R.id.idsearchview_order_customer);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isSearchViewExpanded) {
+            recyclerViewOderCustomer.setFilterList(data_OrderStatus);
+        }
+    }
     private void getData_orderList() {
         recyclerViewOderCustomer = new RecyclerViewOder_Customer(requireContext(), R.layout.layout_items_orders_customer, data_OrderStatus);
         GridLayoutManager layoutManager1 = new GridLayoutManager(getContext(), 1);
@@ -77,7 +83,7 @@ public class Fragment_order extends Fragment {
         orderStatusReference.orderByChild("status").startAt("0").endAt("3").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                    data_OrderStatus.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     OrderStatus orderStatus = dataSnapshot.getValue(OrderStatus.class);
@@ -123,6 +129,7 @@ public class Fragment_order extends Fragment {
     }
     private void setSearchView()
     {
+
             searchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

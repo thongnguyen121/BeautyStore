@@ -145,5 +145,12 @@ public class Fragment_order_shipper extends Fragment {
 
         recyclerViewOrderQueue.setFilterList(filteredlist);
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        recyclerViewOrderQueue.setFilterList(data_OrderStatus);
+
+    }
 
 }

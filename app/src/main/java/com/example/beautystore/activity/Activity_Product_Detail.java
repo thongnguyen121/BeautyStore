@@ -129,7 +129,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
         reView_products();
 
         UID = FirebaseAuth.getInstance().getUid();
-
+        checkOrderStatusForRating(productId, uid);
         addOrRemoveProductToWishList();
         //intent_getData(productId);
         if (isUserLoggedin()) {
@@ -660,65 +660,50 @@ public class Activity_Product_Detail extends AppCompatActivity {
         }
 
     }
-//    private void checkOrderStatusForRating(String productId) {
-//        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference("OrderStatus");
-//
-//        orderStatusRef.orderByChild("order_id").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                boolean hasOrderWithStatus4 = false;
-//
-//                for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
-//                    OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
-//
-//                    if (orderStatus != null && orderStatus.getStatus().equals("4")) {
-//                        hasOrderWithStatus4 = true;
-//                    }
-//                }
-//
-//                if (hasOrderWithStatus4) {
-//                    checkOrderForRating(productId);
-//                } else {
-//                    showRating_byOrder();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Xử lý lỗi nếu cần
-//            }
-//        });
-//    }
+    private void checkOrderStatusForRating(String productId, String uid) {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference("OrderStatus");
 
-//    private void checkOrderForRating(String productId) {
-//        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
-//
-//        orderRef.child("items").equalTo(productId).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists()) {
-//                    for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
-//                        Order order = orderSnapshot.getValue(Order.class);
-//                        if (order != null && order.getOrder_id() != null) {
-//                            for (CartDetail item : order.getItems()) {
-//                                if (item != null && item.getProduct_id().equals(productId)) {
-//                                    reView_products();
-//                                    return;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                showRating_byOrder();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Xử lý lỗi nếu cần
-//            }
-//        });
-//    }
+        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot orderStatusSnapshot : snapshot.getChildren()) {
+                    OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
+                    if (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6")) {
+                        checkOrderForRating(orderStatus.getOrder_id(), productId, uid);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
+    private void checkOrderForRating(String order_id, String productId, String uid) {
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
+        orderRef.child(order_id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Order order = snapshot.getValue(Order.class);
+                if (order != null && order.getCustomer_id().equals(uid)) {
+                    if (order.getOrder_id() != null) {
+                        for (CartDetail item : order.getItems()) {
+                            if (item != null && item.getProduct_id().equals(productId)) {
+                                reView_products();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
 
     private void calculateAverageRating() {
         DatabaseReference ratingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId);

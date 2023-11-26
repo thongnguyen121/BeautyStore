@@ -1,9 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.HistoryTransactionShipperActivity">
+    tools:context=".activity.HistoryTransactionShipperActivity"
+    android:orientation="vertical"
+    android:background="@color/bg_pink"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/ivBack_historyShipper"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center|center_vertical"
+            android:text="History"
+            android:textColor="#F4739E"
+            android:textSize="25sp"
+             />
+    </LinearLayout>
+    <SearchView
+        android:id="@+id/idsearchview_history_shipper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_searchview"
+        android:gravity="center"
+        android:queryHint="Search"
+        android:focusable="false"
+        android:clickable="true"
+        android:layout_margin="5dp"
+        >
+    </SearchView>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/rdoGroup"
+        >
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tất cả"
+            android:layout_marginRight="10dp"
+            android:checked="true"
+            android:id="@+id/rdoAll_history_shipper"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã giao"
+            android:layout_marginRight="10dp"
+            android:id="@+id/rdoDelivered_shipper"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã hủy"
+            android:layout_marginRight="10dp"
+            android:id="@+id/rdoCancel_shipper"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RadioGroup>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lịch sử đơn hàng"
+        android:textSize="20dp"
+        android:textColor="@color/pink"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        ></TextView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:id="@+id/rcOrder_historyShipper"
+        ></androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>

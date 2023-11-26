@@ -155,16 +155,18 @@ public class Fragment_admin_statistic extends Fragment {
         orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Integer> updatedRevenue = new LinkedHashMap<>(dailyRevenue);
+
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int month = extractMonth(createAt);
                     int year = extractYear(createAt);
-
                     if (month != -1 && year == currentYear) {
                         if (month == currentMonth) {
-                            String dayKey = convertCreateAtToDay(createAt);
+                            int day = extractDay(createAt);
+                            String dayKey = (day != -1) ? String.valueOf(day) : null;
 
-                            if (dayKey != null && dailyRevenue.containsKey(dayKey)) {
+                            if (dayKey != null && updatedRevenue.containsKey(dayKey)) {
                                 String status = statusSnapshot.child("status").getValue(String.class);
 
                                 if (status != null && (status.equals("4") || status.equals("6"))) {
@@ -174,11 +176,11 @@ public class Fragment_admin_statistic extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                             String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
                                             if (totalAmount != null && !totalAmount.isEmpty()) {
-                                                int currentRevenue = dailyRevenue.get(dayKey);
+                                                int currentRevenue = updatedRevenue.get(dayKey);
                                                 int revenue = currentRevenue + Integer.parseInt(totalAmount);
-                                                dailyRevenue.put(dayKey, revenue);
+                                                updatedRevenue.put(dayKey, revenue);
+                                                displayRevenueByDay(updatedRevenue);
                                             }
-                                            displayRevenueByDay(dailyRevenue);
                                         }
 
                                         @Override
@@ -191,8 +193,16 @@ public class Fragment_admin_statistic extends Fragment {
                         }
                     }
                 }
-                // hiện khi tháng đó không có ngày nào có doanh thu
-                displayRevenueByDay(dailyRevenue);
+                displayRevenueByDay(updatedRevenue);
+                // Kiểm tra và hiển thị chỉ khi có dữ liệu mới
+                boolean hasNewData = !updatedRevenue.equals(dailyRevenue);
+                if (hasNewData) {
+                    displayRevenueByDay(updatedRevenue);
+                    // Cập nhật từng cặp key-value trong dailyRevenue với dữ liệu mới từ updatedRevenue
+                    for (Map.Entry<String, Integer> entry : updatedRevenue.entrySet()) {
+                        dailyRevenue.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
 
             @Override
@@ -202,15 +212,33 @@ public class Fragment_admin_statistic extends Fragment {
         });
     }
 
+    private int extractDay(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.DAY_OF_MONTH); // Trả về ngày (1-31)
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
     private void displayRevenueByDay(Map<String, Integer> dailyRevenue) {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
 
-        for (String dayKey : dailyRevenue.keySet()) {
-            int revenue = dailyRevenue.getOrDefault(dayKey, 0);
-            entries.add(new Entry(Integer.parseInt(dayKey) - 1, revenue));
-            labels.add(dayKey);
+//        for (String dayKey : dailyRevenue.keySet()) {
+//            int revenue = dailyRevenue.getOrDefault(dayKey, 0);
+//            entries.add(new Entry(Integer.parseInt(dayKey) - 1, revenue));
+//            labels.add(dayKey);
+//        }
+        for (int i = 1; i <= 31; i++) {
+            int revenue = dailyRevenue.getOrDefault(String.valueOf(i), 0);
+            entries.add(new Entry(i - 1, revenue));
+            labels.add("Ngày " + i);
         }
 
         LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo ngày");
@@ -276,9 +304,13 @@ public class Fragment_admin_statistic extends Fragment {
             monthlyRevenue.put(String.valueOf(i), 0);
         }
 
-        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (monthlyRevenue != null)
+                {
+                    monthlyRevenue.clear();
+                }
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int monthKey = extractByMonth(createAt);
@@ -288,7 +320,7 @@ public class Fragment_admin_statistic extends Fragment {
                         String status = statusSnapshot.child("status").getValue(String.class);
                         if (status != null && (status.equals("4") || status.equals("6"))) {
                             String orderID = statusSnapshot.child("order_id").getValue(String.class);
-                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                     String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
@@ -380,9 +412,13 @@ public class Fragment_admin_statistic extends Fragment {
 
         Map<String, Integer> yearlyRevenue = new HashMap<>();
 
-        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (yearlyRevenue != null)
+                {
+                    yearlyRevenue.clear();
+                }
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     String year = convertCreateAtToYear(createAt);
@@ -390,7 +426,7 @@ public class Fragment_admin_statistic extends Fragment {
                         String status = statusSnapshot.child("status").getValue(String.class);
                         if (status != null && (status.equals("4") || status.equals("6"))) {
                             String orderID = statusSnapshot.child("order_id").getValue(String.class);
-                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                     String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);

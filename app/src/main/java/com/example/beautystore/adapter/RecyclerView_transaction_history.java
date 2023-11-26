@@ -47,6 +47,11 @@ public class RecyclerView_transaction_history extends RecyclerView.Adapter<Recyc
         this.resource = resource;
         this.data = data;
     }
+    public void setFilterList(ArrayList<History> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
@@ -64,7 +69,7 @@ public class RecyclerView_transaction_history extends RecyclerView.Adapter<Recyc
         databaseReference = database.getReference();
         order_id = history.getOrder_id();
         loadInformation_order(holder, order_id);
-        loadInformation_status(holder, order_id);
+        loadInformation_status(holder, history.getStatus());
         setClick_Close(holder);
         getMember_name(holder, uid);
     }
