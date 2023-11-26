@@ -213,7 +213,7 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (fromUser) {
                     currentNumberStar = rating;
-                    Log.d("tag", "onRatingChanged_1: " + currentNumberStar);
+                    Log.d("tag", "onRatingChanged_1: " + rating);
                 }
             }
         });
@@ -257,7 +257,7 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-
+                        currentNumberStar = Float.parseFloat(snapshot.child("startNumber").getValue(String.class));
                         if (currentNumberStar != 0 || !TextUtils.isEmpty(commentText)) {
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(id_producst).child(UserID);
 

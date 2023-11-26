@@ -276,9 +276,13 @@ public class Fragment_admin_statistic extends Fragment {
             monthlyRevenue.put(String.valueOf(i), 0);
         }
 
-        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (monthlyRevenue != null)
+                {
+                    monthlyRevenue.clear();
+                }
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int monthKey = extractByMonth(createAt);
@@ -288,7 +292,7 @@ public class Fragment_admin_statistic extends Fragment {
                         String status = statusSnapshot.child("status").getValue(String.class);
                         if (status != null && (status.equals("4") || status.equals("6"))) {
                             String orderID = statusSnapshot.child("order_id").getValue(String.class);
-                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                     String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
@@ -380,9 +384,13 @@ public class Fragment_admin_statistic extends Fragment {
 
         Map<String, Integer> yearlyRevenue = new HashMap<>();
 
-        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (yearlyRevenue != null)
+                {
+                    yearlyRevenue.clear();
+                }
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     String year = convertCreateAtToYear(createAt);
@@ -390,7 +398,7 @@ public class Fragment_admin_statistic extends Fragment {
                         String status = statusSnapshot.child("status").getValue(String.class);
                         if (status != null && (status.equals("4") || status.equals("6"))) {
                             String orderID = statusSnapshot.child("order_id").getValue(String.class);
-                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                     String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
