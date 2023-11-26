@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.beautystore.R;
 import com.example.beautystore.adapter.RecyclerViewProgress_order;
@@ -32,6 +33,7 @@ public class Fragment_packing_order extends Fragment {
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     String uid;
+    SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,12 +43,13 @@ public class Fragment_packing_order extends Fragment {
 
        setControl(view);
        getData_orderPacking();
-
+       setSearchView();
        return view;
     }
 
     private void setControl(View view) {
         rcOrderpacking_admin = view.findViewById(R.id.rcOrder_admin_packing);
+        searchView = view.findViewById(R.id.idsearchview_orderPacking_admin);
     }
     private void getData_orderPacking()
     {
@@ -82,4 +85,55 @@ public class Fragment_packing_order extends Fragment {
             }
         });
     }
+    private void setSearchView()
+    {
+//            searchView.setOnSearchClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    isSearchViewExpanded = true;
+//                }
+//            });
+//
+//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//
+//                    if (isSearchViewExpanded) {
+//
+//                    }
+//                    return false;
+//                }
+//            });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+
+                filterList(newText);
+
+                return false;
+
+            }
+        });
+    }
+
+
+    private void filterList(String text) {
+        ArrayList<OrderStatus> filteredlist = new ArrayList<>();
+        for (OrderStatus item : data_OrderStatus) {
+            if (item.getOrder_id().toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(item);
+            }
+        }
+
+        recyclerViewOderprogress.setFilterList(filteredlist);
+    }
+
 }

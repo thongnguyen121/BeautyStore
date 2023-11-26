@@ -18,7 +18,7 @@
             android:layout_margin="8dp"
             app:iconifiedByDefault="false"
             android:layout_marginTop="20dp"
-
+            android:id="@+id/idSearch_employees"
             android:background="@drawable/bg_spinner_warehouse"
             app:queryBackground="@android:color/transparent"
             app:queryHint="Nhập tên nhân ziên"

@@ -60,6 +60,11 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         this.data = data;
     }
 
+    public void setFilterList(ArrayList<OrderStatus> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
+    }
+
     @Override
     public RecyclerViewOder_Customer.OrderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardViewItem = (CardView) LayoutInflater.from(context).inflate(viewType, parent, false);
@@ -79,15 +84,21 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
         loadInformation_order(holder, order_id);
         setClick_cancle(holder, order_id);
 
-        if (condition.equals("3"))
+        if (condition.equals("3") || condition.equals("4") || condition.equals("6") )
         {
             holder.btnCancle.setVisibility(View.GONE);
+            if (condition.equals("4") || condition.equals("6"))
+            {
+                holder.linner_transaction.setVisibility(View.VISIBLE);
+            }
+
+            holder.tvDatetime_transaction.setText(orderStatus.getCreate_at());
+
         }
         else {
             holder.btnCancle.setVisibility(View.VISIBLE);
+            holder.linner_transaction.setVisibility(View.GONE);
         }
-
-
 
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +183,7 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final HashMap<String, Object> orderStatuslist = new HashMap<>();
-                        OrderStatus orderStatus = new OrderStatus(order_id, "5", "","",savedate);
+                        OrderStatus orderStatus = new OrderStatus(order_id, "7", "","",savedate);
                         orderStatuslist.put("order_id", orderStatus.getOrder_id());
                         orderStatuslist.put("status", orderStatus.getStatus());
                         orderStatuslist.put("member_id", orderStatus.getMember_id());
@@ -269,9 +280,9 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
 
     public static class OrderHolder extends RecyclerView.ViewHolder {
 
-        TextView tvOrder_number, tvDatetime, tvCondition, tvClick, tvTotal_money, tvClose;
+        TextView tvOrder_number, tvDatetime, tvCondition, tvClick, tvTotal_money, tvClose, tvDatetime_transaction;
         RecyclerView rcOrderDetail;
-        LinearLayout linearLayout;
+        LinearLayout linearLayout, linner_transaction;
         Button btnCancle;
         public OrderHolder(@NonNull View itemView) {
             super(itemView);
@@ -283,6 +294,8 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
             rcOrderDetail = itemView.findViewById(R.id.rcOrder_list_customer);
             linearLayout = itemView.findViewById(R.id.liner_order_customer);
             tvClose = itemView.findViewById(R.id.tvClose_order_customer);
+            tvDatetime_transaction = itemView.findViewById(R.id.tvDatime_transaction_customer);
+            linner_transaction = itemView.findViewById(R.id.linner_transaction_customer);
             btnCancle = itemView.findViewById(R.id.btn_cancel_order_customer);
         }
     }

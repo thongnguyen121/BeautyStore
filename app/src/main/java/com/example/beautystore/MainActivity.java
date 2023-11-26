@@ -195,6 +195,11 @@ public class MainActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
+                else if (idItem == R.id.fragment_transaction_history)
+                {
+                    controller.navigate(R.id.fragment_transaction_history);
+                    return true;
+                }
                 return false;
             }
         });

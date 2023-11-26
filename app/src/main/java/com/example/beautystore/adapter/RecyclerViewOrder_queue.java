@@ -1,5 +1,7 @@
 package com.example.beautystore.adapter;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,7 +28,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
+import com.example.beautystore.activity.Activity_Order;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.History;
 import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
@@ -45,7 +49,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import okhttp3.Call;
@@ -73,6 +79,9 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     Button btnSave;
     EditText edtNote;
     String note = "";
+    String autoId_history = "";
+    String customer_id = "";
+
 NotificationSender notificationSender;
 
 
@@ -80,6 +89,10 @@ NotificationSender notificationSender;
         this.context = context;
         this.resource = resource;
         this.data = data;
+    }
+    public void setFilterList(ArrayList<OrderStatus> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -103,14 +116,16 @@ NotificationSender notificationSender;
         create_at = orderStatus.getCreate_at();
         note = orderStatus.getNote();
 
+
+
         getCartItem(databaseReference, order_id, holder);
         loadInformation_status(holder, status);
         loadInformation_order(holder, order_id);
         setClick_Close(holder);
-        getRole_member(uid, holder);
+        getRole_member(uid, holder, status);
         getMember_name(holder, orderStatus.getMember_id());
         setClick_ConfirmShipper(holder, order_id);
-        click_confirmStatus(holder);
+        click_confirmStatus(holder, order_id, status);
         getNote(holder, order_id);
 
         if (note.equals(""))
@@ -150,6 +165,7 @@ NotificationSender notificationSender;
             }
         });
     }
+
     private void setClick_Close(RecyclerViewOrder_queue.QueueHolder holder){
 
         holder.tvClick.setOnClickListener(new View.OnClickListener() {
@@ -240,22 +256,44 @@ NotificationSender notificationSender;
         }
 
     }
-    private void click_confirmStatus(RecyclerViewOrder_queue.QueueHolder holder){
-
+    private void click_confirmStatus(RecyclerViewOrder_queue.QueueHolder holder, String order_id, String status){
         holder.btnConfirm_queue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.btnConfirm_queue.setVisibility(View.GONE);
                 if (status.equals("4"))
                 {
-                    showAlreadyReviewedDialog();
+                    databaseReference.child("OrderStatus").child(order_id).child("status").setValue("6").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(context, "Xác nhạn đơn hàng đã giao", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Thất bại", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+
                 }
                 else if (status.equals("5"))
                 {
-                    showAlreadyReviewedDialog_cancel();
+                    databaseReference.child("OrderStatus").child(order_id).child("status").setValue("7").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(context, "Xác nhận hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Thất bại", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
                 }
+
             }
         });
+
+
     }
 
     private void openDialog_update_status(int gravity) {
@@ -274,7 +312,7 @@ NotificationSender notificationSender;
 
         edtNote = dialog.findViewById(R.id.edt_Note);
         btnSave = dialog.findViewById(R.id.btn_save_dialogNote);
-
+        edtNote.setEnabled(false);
         btnSave.setVisibility(View.GONE);
         dialog.show();
 
@@ -368,7 +406,7 @@ NotificationSender notificationSender;
 
 
     }
-    private void getRole_member(String uid, RecyclerViewOrder_queue.QueueHolder holder)
+    private void getRole_member(String uid, RecyclerViewOrder_queue.QueueHolder holder, String status)
     {
         databaseReference.child("Member").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -385,6 +423,18 @@ NotificationSender notificationSender;
                         else {
                             holder.btnConfirm_shipper.setVisibility(View.GONE);
                             holder.btnConfirm_queue.setVisibility(View.VISIBLE);
+                            if (status.equals("6"))
+                            {
+                                holder.btnConfirm_queue.setVisibility(View.GONE);
+                                holder.linner_note.setVisibility(View.VISIBLE);
+                                holder.tvTile_status.setText("Ngày giao dịch: ");
+                            }
+                            else if (status.equals("7"))
+                            {
+                                holder.linner_note.setVisibility(View.VISIBLE);
+                                holder.tvTile_status.setText("Ngày hoàn trả: ");
+                                holder.btnConfirm_queue.setVisibility(View.GONE);
+                            }
                         }
                     }
                 }
@@ -426,6 +476,9 @@ NotificationSender notificationSender;
             }
         });
     }
+
+
+
     @Override
     public int getItemViewType(int position) {
         return resource;

@@ -56,6 +56,10 @@ public class RecyclerViewProgress_order extends RecyclerView.Adapter<RecyclerVie
         this.resource = resource;
         this.data = data;
     }
+    public void setFilterList(ArrayList<OrderStatus> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override

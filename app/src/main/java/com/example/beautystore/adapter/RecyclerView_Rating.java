@@ -204,6 +204,7 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
             @Override
             public void onClick(View v) {
                 editReview();
+                dialog.dismiss();
 
             }
         });

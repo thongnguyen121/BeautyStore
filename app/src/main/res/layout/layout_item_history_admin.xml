@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardCornerRadius="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="5dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DH01"
-                    android:id="@+id/tvOrdernumber_admin"
+                    android:id="@+id/tvOrdernumberqueue_history_admin"
                     android:textColor="@color/black"
                     android:textSize="20dp"></TextView>
             </LinearLayout>
@@ -45,7 +45,7 @@
                 android:layout_weight="5"
                 android:text="15/5/2020"
                 android:textSize="17dp"
-                android:id="@+id/tvDatetime_order_admin"
+                android:id="@+id/tvDatetime_orderHistory_admin"
                 >
             </TextView>
         </LinearLayout>
@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ức Văn Bình"
-                android:id="@+id/tvCustomer_name_order_admin"
+                android:id="@+id/tvCustomer_name_orderHistory_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -85,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0358350740"
-                android:id="@+id/tvPhone_order_admin"
+                android:id="@+id/tvPhone_orderHistory_admin"
                 android:textSize="17dp"></TextView>
         </LinearLayout>
 
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:text="153,Đ 339, Phường Phươc Long B - TP. Thủ Đức"
                 android:textSize="17dp"
-                android:id="@+id/tvAddresses_order_admin"
+                android:id="@+id/tvAddresses_orderHistory_admin"
                 ></TextView>
         </LinearLayout>
 
@@ -127,7 +127,7 @@
                 android:text="Click xem chi tiết đơn hàng"
                 android:textStyle="italic"
                 android:textSize="20dp"
-                android:id="@+id/tvClick_detail_order_admin"
+                android:id="@+id/tvClick_detailorder_history_admin"
                 android:textColor="@color/red"
                 ></TextView>
             <TextView
@@ -137,7 +137,7 @@
                 android:textSize="20dp"
                 android:visibility="gone"
                 android:textStyle="italic"
-                android:id="@+id/tvClose_order_admin"
+                android:id="@+id/tvClose_orderHistory_admin"
                 android:textColor="@color/red"
                 ></TextView>
         </LinearLayout>
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            android:id="@+id/linner_orderDetail_admin"
+            android:id="@+id/linner_orderDetailhistory_admin"
             >
 
             <LinearLayout
@@ -186,18 +186,43 @@
 
                 </TextView>
             </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcOrder_list_admin"
+                android:id="@+id/rcOrder_queue_history_admin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 ></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trạng thái: "
+                android:textColor="@color/btn_blue_shipper"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bla"
+                android:textSize="18dp"
+                android:textColor="@color/btn_blue_shipper"
+                android:id="@+id/tvTotal_StatusHistory_admin"
+                ></TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -212,54 +237,55 @@
                 android:layout_height="wrap_content"
                 android:text="200.000Đ"
                 android:textSize="20dp"
-                android:id="@+id/tvTotal_money_admin"
+                android:id="@+id/tvTotal_moneyHistory_admin"
                 ></TextView>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/bg_pink"
-            android:gravity="center"
             android:orientation="horizontal"
-            android:id="@+id/linner_button_order_admin"
+            android:layout_marginLeft="5dp"
             >
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="150dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/bg_btn"
-                android:backgroundTint="@color/red"
-                android:text="Hủy"
-                android:textColor="@color/white"
-                android:id="@+id/btnCacel_order_admin"
-                ></androidx.appcompat.widget.AppCompatButton>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="150dp"
+                android:text="Người giao hàng: "
+                android:textSize="17dp"
+                ></TextView>
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/bg_btn"
-                android:backgroundTint="@color/btn_blue"
-                android:text="Xác Nhận"
-                android:textColor="@color/white"
-                android:id="@+id/btnConfirm_order_admin"
-                ></androidx.appcompat.widget.AppCompatButton>
+                android:text="bla"
+                android:textSize="17dp"
+                android:id="@+id/tvShipper_history"
+                ></TextView>
         </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_btn"
-            android:backgroundTint="@color/btn_blue"
-            android:text="Xác Nhận"
-            android:textColor="@color/white"
-            android:textSize="17dp"
-            android:visibility="gone"
-            android:id="@+id/btnConfirm_order_admin_packing"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:id="@+id/linner_note"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày giao dịch:"
+                android:textStyle="italic"
+                android:textSize="17dp"
+                android:id="@+id/tvstatusTitle_history"
+                ></TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15/05/2023"
+                android:textSize="17dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="italic"
+                android:id="@+id/tvDatime_history"
+                ></TextView>
+        </LinearLayout>
 
-            ></androidx.appcompat.widget.AppCompatButton>
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

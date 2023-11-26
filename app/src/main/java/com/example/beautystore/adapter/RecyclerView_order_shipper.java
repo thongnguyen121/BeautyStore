@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.model.CartDetail;
+import com.example.beautystore.model.History;
 import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
@@ -72,14 +73,18 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
     String member_id = "";
     Button btnSave;
     EditText edtNote;
+    String autoId_history = "";
+    String shipper_id = "";
     NotificationSender notificationSender;
-
     public RecyclerView_order_shipper(Context context, int resource, ArrayList<OrderStatus> data) {
         this.context = context;
         this.resource = resource;
         this.data = data;
     }
-
+    public void setFilterList(ArrayList<OrderStatus> filterlist) {
+        this.data = filterlist;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public RecyclerView_order_shipper.ShipperHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -101,7 +106,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
         getCartItem(databaseReference, order_id, holder);
         loadInformation_order(holder, order_id);
         setClick_Close(holder);
-        setClick_Status(holder);
+        setClick_Status(holder, order_id, uid);
 
     }
 
@@ -132,8 +137,29 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
             }
         });
     }
-    private void setClick_Status(RecyclerView_order_shipper.ShipperHolder holder)
+    private void setClick_Status(RecyclerView_order_shipper.ShipperHolder holder, String order_id, String uid)
     {
+        getIDHistory();
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String savedate = simpleDateFormat.format(calendar.getTime());
+
+        databaseReference.child("Member").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Members members = snapshot.getValue(Members.class);
+                    if (members != null) {
+                        shipper_id = members.getId();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         holder.btnCancel_order.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +174,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
 
                         final HashMap<String, Object> orderStatuslist = new HashMap<>();
                         OrderStatus orderStatus = new OrderStatus(order_id, "2", "","", "");
+                        History history = new History(autoId_history,"7",order_id, member_id, savedate);
                         orderStatuslist.put("order_id", orderStatus.getOrder_id());
                         orderStatuslist.put("status", orderStatus.getStatus());
                         orderStatuslist.put("member_id", orderStatus.getMember_id());
@@ -156,12 +183,17 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                         databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
+                                databaseReference.child("History").child(autoId_history).setValue(history).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                       if (task.isSuccessful()) {
                                     Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
                                     notificationSender.sendNotificationShipper("2", order_id);
                                 } else {
                                     Toast.makeText(context, "Hủy đơn hàng thất bại", Toast.LENGTH_SHORT).show();
                                 }
+                                    }
+                                });
                             }
                         });
                     }
@@ -197,15 +229,12 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
             }
         });
 
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String savedate = simpleDateFormat.format(calendar.getTime());
         holder.btnConfirm_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final HashMap<String, Object> orderStatuslist = new HashMap<>();
                 OrderStatus orderStatus = new OrderStatus(order_id, "4", member_id,"", savedate);
+                History history = new History(autoId_history,"6",order_id, member_id, savedate);
                 orderStatuslist.put("order_id", orderStatus.getOrder_id());
                 orderStatuslist.put("status", orderStatus.getStatus());
                 orderStatuslist.put("member_id", orderStatus.getMember_id());
@@ -214,14 +243,56 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                 databaseReference.child("OrderStatus").child(order_id).setValue(orderStatuslist).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
+                        databaseReference.child("History").child(autoId_history).setValue(history).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                               if (task.isSuccessful()) {
                             Toast.makeText(context, "Đơn hàng đã được giao", Toast.LENGTH_SHORT).show();
                             notificationSender.sendNotificationAdmin("4", order_id);
                         } else {
                             Toast.makeText(context, "không thành công", Toast.LENGTH_SHORT).show();
                         }
+                            }
+                        });
                     }
                 });
+            }
+        });
+    }
+
+    public void getIDHistory() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child("History");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<String> dsUser = new ArrayList<>();
+                if (snapshot.exists()){
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        dsUser.add(dataSnapshot.getKey());
+                    }
+                    String[] temp = dsUser.get(dsUser.size() - 1).split("HT");
+                    String id = "";
+                    int idNumber = Integer.parseInt(temp[1])+1;
+                    if (idNumber < 10) {
+                        id = "HT0" + idNumber;
+                    } else {
+                        id = "HT" + idNumber;
+                    }
+                    autoId_history = id;
+
+                }else {
+
+                    autoId_history = "HT01";
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -263,6 +334,7 @@ public class RecyclerView_order_shipper extends RecyclerView.Adapter<RecyclerVie
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(context, "Hoàn trả đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                                 notificationSender.sendNotification("5",order_id);
                                 notificationSender.sendNotificationAdmin("5",order_id);
                             } else {
