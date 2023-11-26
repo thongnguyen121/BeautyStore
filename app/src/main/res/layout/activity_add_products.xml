@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/id_scrollView"
@@ -8,374 +8,398 @@
     android:background="@color/background_admin"
     tools:context=".activity.Activity_Add_Products">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_header"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/img_back_addProducts_screen"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/back"></ImageView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/abeezeeregular"
-                android:gravity="center"
-                android:text="@string/add_sanpham"
-                android:textColor="@color/pink"
-                android:textSize="25dp"></TextView>
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_products_name"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            app:cardCornerRadius="20dp"
-            app:strokeWidth="1dp">
-
-            <EditText
-                android:id="@+id/edt_products_name"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/bg_edittext"
-                android:fontFamily="@font/abeezeeregular"
-                android:hint="@string/edit_text_product_name"
-                android:paddingLeft="15dp"></EditText>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_edt_products_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp">
-
-            <Spinner
-                android:id="@+id/spn_Cate_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"></Spinner>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_spn_cate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp">
-
-            <Spinner
-
-                android:id="@+id/spn_Brands_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"></Spinner>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_spn_brands"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_products_quantity"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            app:cardCornerRadius="20dp"
-            app:strokeWidth="1dp">
-
-            <EditText
-                android:id="@+id/edt_products_quatity"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/bg_edittext"
-                android:fontFamily="@font/abeezeeregular"
-                android:hint="@string/edit_text_qauntity"
-                android:inputType="number"
-                android:paddingLeft="15dp"></EditText>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_edit_products_quantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_products_price"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            app:cardCornerRadius="20dp"
-            app:strokeWidth="1dp">
-
-            <EditText
-                android:id="@+id/edt_products_price"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/bg_edittext"
-                android:fontFamily="@font/abeezeeregular"
-                android:hint="@string/edit_text_price"
-                android:inputType="number"
-                android:paddingLeft="15dp"></EditText>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_edit_products_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_products_description"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            app:cardCornerRadius="20dp"
-            app:strokeWidth="1dp">
-
-            <EditText
-                android:id="@+id/edt_products_descirption"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:background="@drawable/bg_edittext"
-                android:fontFamily="@font/abeezeeregular"
-                android:gravity="top"
-                android:hint="@string/edit_text_description"
-                android:paddingLeft="15dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:paddingRight="10dp"
-                ></EditText>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tv_edit_products_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingLeft="10dp"
-            android:text="dasd"
-            android:textColor="@color/red"
-            android:visibility="gone"></TextView>
-
-        <!--            <ImageView-->
-        <!--                android:id="@+id/img_Gallery"-->
-        <!--                android:layout_marginTop="10dp"-->
-        <!--                android:layout_width="50dp"-->
-        <!--                android:layout_height="50dp"-->
-        <!--                android:layout_marginLeft="10dp"-->
-        <!--                android:src="@drawable/library"></ImageView>-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Chọn ảnh:"
-            android:textColor="@color/black"
-            android:textSize="20dp"></TextView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:text="Ảnh 1"
-                    android:textColor="@color/black"
-                    android:textSize="15dp"></TextView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardUseCompatPadding="false"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/img_products_add_1"
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
-                        android:src="@color/white"></ImageView>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:text="Ảnh 2"
-                    android:textColor="@color/black"
-                    android:textSize="15dp"></TextView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardUseCompatPadding="false"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/img_products_add_2"
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
-                        android:src="@color/white"></ImageView>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:text="Ảnh 3"
-                    android:textColor="@color/black"
-                    android:textSize="15dp"></TextView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardUseCompatPadding="false"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="2dp"
-
-                    >
-
-                    <ImageView
-                        android:id="@+id/img_products_add_3"
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
-                        android:src="@color/white"></ImageView>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="15dp"
-
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnAdd_products"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/bg_btn_add_products"
-                android:fontFamily="@font/abeezeeregular"
-                android:text="@string/btn_them"
-                android:textAllCaps="false"
-                android:textSize="25dp"></Button>
+                android:background="@drawable/bg_header"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnEdit_products"
+                <ImageView
+                    android:id="@+id/img_back_addProducts_screen"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/back"></ImageView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:gravity="center"
+                    android:text="@string/add_sanpham"
+                    android:textColor="@color/pink"
+                    android:textSize="25dp"></TextView>
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_products_name"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/bg_btn_add_products"
-                android:fontFamily="@font/abeezeeregular"
-                android:text="@string/btn_sua"
-                android:textAllCaps="false"
-                android:textSize="25dp"></Button>
+                app:cardCornerRadius="20dp"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:id="@+id/edt_products_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_edittext"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:hint="@string/edit_text_product_name"
+                    android:paddingLeft="15dp"></EditText>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_edt_products_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp">
+
+                <Spinner
+                    android:id="@+id/spn_Cate_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"></Spinner>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_spn_cate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp">
+
+                <Spinner
+
+                    android:id="@+id/spn_Brands_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"></Spinner>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_spn_brands"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_products_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="20dp"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:id="@+id/edt_products_quatity"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_edittext"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:hint="@string/edit_text_qauntity"
+                    android:inputType="number"
+                    android:paddingLeft="15dp"></EditText>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_edit_products_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_products_price"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="20dp"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:id="@+id/edt_products_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_edittext"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:hint="@string/edit_text_price"
+                    android:inputType="number"
+                    android:paddingLeft="15dp"></EditText>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_edit_products_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_products_description"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                app:cardCornerRadius="20dp"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:id="@+id/edt_products_descirption"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/bg_edittext"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:gravity="top"
+                    android:hint="@string/edit_text_description"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp"></EditText>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_edit_products_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="dasd"
+                android:textColor="@color/red"
+                android:visibility="gone"></TextView>
+
+            <!--            <ImageView-->
+            <!--                android:id="@+id/img_Gallery"-->
+            <!--                android:layout_marginTop="10dp"-->
+            <!--                android:layout_width="50dp"-->
+            <!--                android:layout_height="50dp"-->
+            <!--                android:layout_marginLeft="10dp"-->
+            <!--                android:src="@drawable/library"></ImageView>-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Chọn ảnh:"
+                android:textColor="@color/black"
+                android:textSize="20dp"></TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:text="Ảnh 1"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"></TextView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardUseCompatPadding="false"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="2dp">
+
+                        <ImageView
+                            android:id="@+id/img_products_add_1"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:src="@color/white"></ImageView>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:text="Ảnh 2"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"></TextView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardUseCompatPadding="false"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="2dp">
+
+                        <ImageView
+                            android:id="@+id/img_products_add_2"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:src="@color/white"></ImageView>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:text="Ảnh 3"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"></TextView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardUseCompatPadding="false"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="2dp"
+
+                        >
+
+                        <ImageView
+                            android:id="@+id/img_products_add_3"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:src="@color/white"></ImageView>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="15dp"
+
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnAdd_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/bg_btn_add_products"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:text="@string/btn_them"
+                    android:textAllCaps="false"
+                    android:textSize="25dp"></Button>
+
+                <Button
+                    android:id="@+id/btnEdit_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/bg_btn_add_products"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:text="@string/btn_sua"
+                    android:textAllCaps="false"
+                    android:textSize="25dp"></Button>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kitProduct"
+            style="@style/SpinKitView.Large.FoldingCube"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:SpinKit_Color="@color/darwer_use_home" />
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

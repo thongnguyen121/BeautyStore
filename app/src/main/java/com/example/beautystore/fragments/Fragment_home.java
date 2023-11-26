@@ -268,6 +268,11 @@ public class Fragment_home extends Fragment {
             getData_categories();
             RecyclerViewBrands.selectedPosition_brands= -1;
             RecyclerViewCategories.selectedPosition_cate= -1;
+            rcBrans.setVisibility(View.VISIBLE);
+            rcCategories.setVisibility(View.VISIBLE);
+            tvTitle_categories.setVisibility(View.VISIBLE);
+            tvTitle_brands.setVisibility(View.VISIBLE);
+            viewFlipper.setVisibility(View.VISIBLE);
             Fragment_home.recylerViewCategories.notifyDataSetChanged();
             Fragment_home.recyclerViewBands.notifyDataSetChanged();
             return true;

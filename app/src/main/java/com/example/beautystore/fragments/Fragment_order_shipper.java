@@ -22,6 +22,8 @@ import com.example.beautystore.R;
 import com.example.beautystore.activity.Shipper_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewOrder_queue;
 import com.example.beautystore.model.OrderStatus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,8 +42,6 @@ public class Fragment_order_shipper extends Fragment {
     DatabaseReference databaseReference;
     String uid;
 
-    public static final String SHARE_PREFS = "sharedPrefs";
-    Button btnLogout;
     View view;
     SearchView searchView;
     @Override
@@ -71,7 +71,6 @@ public class Fragment_order_shipper extends Fragment {
     }
 
     private void setControl(View view) {
-        btnLogout = view.findViewById(R.id.btnShipperLogout);
         rcOrderqueue_shipper = view.findViewById(R.id.rcOrder_shipper);
         searchView = view.findViewById(R.id.idsearchview_orderShipper);
 

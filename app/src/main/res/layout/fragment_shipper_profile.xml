@@ -1,14 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.Fragment_shipper_profile">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/profile_background">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvImage"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_centerInParent="true"
+                    app:cardCornerRadius="100dp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="2dp">
+
+                    <ImageView
+                        android:id="@+id/imgAnhShipper"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/profile_default" />
+                </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/tvNameShipper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cvImage"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:text="Email"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvEmailShipper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvNameShipper"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="bottom|center"
+                    android:fontFamily="@font/abeezeeregular"
+                    android:paddingBottom="10dp"
+                    android:text="Email"
+                    android:textSize="17sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnEditProfileShipper"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            android:text="Sửa profile"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="20dp"
+            android:fontFamily="@font/abeezeeregular" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"/>
+        <Button
+            android:id="@+id/btnEditProfileChangePassword"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            android:text="Đổi mật khẩu"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="20dp"
+            android:fontFamily="@font/abeezeeregular" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"/>
+        <Button
+            android:id="@+id/btnHistoryTransactionShipper"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            android:text="Lịch sử giao dịch"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="20dp"
+            android:fontFamily="@font/abeezeeregular" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"/>
+        <Button
+            android:id="@+id/btnLogoutShipper"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            android:text="Đăng xuất"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            android:textSize="20dp"
+            android:fontFamily="@font/abeezeeregular" />
+    </LinearLayout>
 
 </FrameLayout>

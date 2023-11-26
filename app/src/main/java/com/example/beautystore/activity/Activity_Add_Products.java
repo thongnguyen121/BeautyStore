@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -14,7 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -37,6 +38,7 @@ import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
 import com.example.beautystore.model.Products;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,7 +72,7 @@ public class Activity_Add_Products extends AppCompatActivity {
             cardView_products_description, cardView_cate, cardView_brands;
     private TextView tv_products_name, tv_products_price, tv_products_quantity, tv_products_description,
             tv_categories, tv_brands;
-    private ScrollView scrollView;
+    private ConstraintLayout scrollView;
     ActivityResultLauncher<Intent> resultLaucher_1, resultLauncher_2, resultLauncher_3;
     Uri imageUri_1, imageUri_2, imageUri_3;
     String id_cate_spn = "";
@@ -78,6 +80,7 @@ public class Activity_Add_Products extends AppCompatActivity {
     int pos;
     String categoryId = "";
     String brandsID = "";
+    SpinKitView spinKitView;
 
     private String products_id = "", categories_id = "", brands_id = "", autoId_products;
 
@@ -130,6 +133,7 @@ public class Activity_Add_Products extends AppCompatActivity {
         img_products_1 = findViewById(R.id.img_products_add_1);
         img_products_2 = findViewById(R.id.img_products_add_2);
         img_products_3 = findViewById(R.id.img_products_add_3);
+        spinKitView = findViewById(R.id.spin_kitProduct);
 
         btn_add = findViewById(R.id.btnAdd_products);
         btn_edit = findViewById(R.id.btnEdit_products);
@@ -715,6 +719,8 @@ public class Activity_Add_Products extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 if (imageUri_1 == null || imageUri_2 == null || imageUri_3 == null || TextUtils.isEmpty(edt_products_name.getText()) || TextUtils.isEmpty(edt_products_price.getText())
                         || TextUtils.isEmpty(edt_products_quantity.getText()) || TextUtils.isEmpty(edt_products_description.getText())) {
                     Toast.makeText(Activity_Add_Products.this, "Vui lòng cung cấp đầy đủ thông tin", Toast.LENGTH_SHORT).show();
@@ -755,6 +761,8 @@ public class Activity_Add_Products extends AppCompatActivity {
 
                                             databaseReference.setValue(products);
                                             Toast.makeText(Activity_Add_Products.this, "Thêm sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                                            setEnable(true);
+                                            spinKitView.setVisibility(View.GONE);
                                             onBackPressed();
                                         });
                                     });
@@ -765,6 +773,21 @@ public class Activity_Add_Products extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setEnable(boolean b) {
+        imgBack.setEnabled(b);
+        edt_products_name.setEnabled(b);
+        spinner_brands.setEnabled(b);
+        spinner_categories.setEnabled(b);
+        edt_products_quantity.setEnabled(b);
+        edt_products_price.setEnabled(b);
+        edt_products_description.setEnabled(b);
+        img_products_1.setEnabled(b);
+        img_products_2.setEnabled(b);
+        img_products_3.setEnabled(b);
+        btn_add.setEnabled(b);
+        btn_edit.setEnabled(b);
     }
 
 
@@ -799,6 +822,8 @@ public class Activity_Add_Products extends AppCompatActivity {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setEnable(false);
+                spinKitView.setVisibility(View.VISIBLE);
                 try {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products/" + products_id);
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProducts").child(products_id);
@@ -849,8 +874,6 @@ public class Activity_Add_Products extends AppCompatActivity {
                                                     imageRef3.getDownloadUrl().addOnSuccessListener(uri3 -> {
                                                         String imageUrl3 = uri3.toString();
                                                         updates.put("imgProducts_3", imageUrl3);
-
-
                                                         updateProductInDatabase(databaseReference, updates);
                                                     });
                                                 });
@@ -921,6 +944,8 @@ public class Activity_Add_Products extends AppCompatActivity {
         try {
             databaseReference.updateChildren(updates).addOnSuccessListener(unused -> {
                 Toast.makeText(Activity_Add_Products.this, "Chỉnh sửa sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                setEnable(true);
+                spinKitView.setVisibility(View.GONE);
             });
         } catch (Exception e) {
             // Handle the exception, e.g., log it or show an error message to the user.

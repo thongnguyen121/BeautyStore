@@ -3,7 +3,6 @@ pluginManagement {
         google()
         jcenter()
         gradlePluginPortal()
-
     }
 }
 dependencyResolutionManagement {

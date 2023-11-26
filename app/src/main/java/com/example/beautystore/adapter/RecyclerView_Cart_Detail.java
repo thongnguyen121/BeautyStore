@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,14 +34,14 @@ import java.util.List;
 
 public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_Cart_Detail.CartDetailViewHolder> {
     private ArrayList<CartDetail> data;
-    private Fragment_cart context;
+    private Context context;
     int resource;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     public static boolean isDeleteCartItem = false;
     int maxQty;
 
-    public RecyclerView_Cart_Detail(ArrayList<CartDetail> data, Fragment_cart context, int resource) {
+    public RecyclerView_Cart_Detail(ArrayList<CartDetail> data, Context context, int resource) {
         this.data = data;
         this.context = context;
         this.resource = resource;
@@ -51,7 +52,7 @@ public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_
     @NonNull
     @Override
     public CartDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context.getContext());
+        LayoutInflater inflater = LayoutInflater.from(context);
         View cartDetailView = inflater.inflate(R.layout.layout_item_cart_detail, parent, false);
 //        CardView cardView = (CardView) context.getLayoutInflater().inflate(viewType, parent, false);
         return new CartDetailViewHolder(cartDetailView);
@@ -63,28 +64,7 @@ public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_
         String product_id = cartDetail.getProduct_id();
         int qty = Integer.parseInt(cartDetail.getQty());
         loadDataProduct(holder, product_id, cartDetail.getQty());
-        holder.ivDeceaseQty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (qty == 1){
-                    holder.ivDeceaseQty.setEnabled(false);
-                }else{
-                    holder.ivDeceaseQty.setEnabled(true);
-                    updateQty(product_id, qty-1);
-                }
-            }
-        });
-        holder.ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (qty == maxQty){
-                    holder.ivIncreaseQty.setEnabled(false);
-                }else{
-                    holder.ivIncreaseQty.setEnabled(true);
-                    updateQty(product_id, qty+1);
-                }
-            }
-        });
+
         holder.ivClearBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,7 +187,27 @@ public class RecyclerView_Cart_Detail extends RecyclerView.Adapter<RecyclerView_
                         holder.tvProductQty.setText(qty);
                         holder.tvProductPrice.setText(decimalFormat.format(Integer.valueOf(products.getPrice().trim()))+ " Đ");
                         maxQty = Integer.parseInt(products.getQuantity());
-                        Glide.with(context).load(products.getImgProducts_1()).into(holder.ivProductImage);
+                        Glide.with(context.getApplicationContext()).load(products.getImgProducts_1()).into(holder.ivProductImage);
+                        holder.ivDeceaseQty.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (Integer.parseInt(qty) > 1) {
+                                    holder.ivDeceaseQty.setEnabled(Integer.parseInt(qty) > 1);
+                                    holder.ivIncreaseQty.setEnabled(Integer.parseInt(qty) <= Integer.parseInt(products.getQuantity()));
+                                    updateQty(productId, Integer.parseInt(qty)-1);
+                                }
+                            }
+                        });
+                        holder.ivIncreaseQty.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (Integer.parseInt(qty) < Integer.parseInt(products.getQuantity())) {
+                                    holder.ivIncreaseQty.setEnabled(Integer.parseInt(qty) <= Integer.parseInt(products.getQuantity()));
+                                    holder.ivDeceaseQty.setEnabled(Integer.parseInt(qty) >= 1);
+                                    updateQty(productId, Integer.parseInt(qty)+1);
+                                }
+                            }
+                        });
                     }
                 }
             }

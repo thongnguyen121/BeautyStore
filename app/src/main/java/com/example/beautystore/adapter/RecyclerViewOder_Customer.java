@@ -193,7 +193,43 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                    databaseReference.child("Order").child(order_id).child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot item: snapshot.getChildren()){
+                                                CartDetail cartDetail = item.getValue(CartDetail.class);
+                                                DatabaseReference reference = database.getReference("Products").child(cartDetail.getProduct_id());
+                                                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        if (snapshot.exists()){
+                                                            Products products = snapshot.getValue(Products.class);
+                                                            int newQty = Integer.parseInt(products.getQuantity())+Integer.parseInt(cartDetail.getQty());
+                                                            reference.child("quantity").setValue(String.valueOf(newQty)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()){
+                                                                        Toast.makeText(context, "Hủy đơn hàng thành công", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
                                 } else {
                                     Toast.makeText(context, "Hủy đơn hàng không thành công", Toast.LENGTH_SHORT).show();
                                 }
@@ -221,9 +257,9 @@ public class RecyclerViewOder_Customer extends RecyclerView.Adapter<RecyclerView
                     if (order != null) {
 
                         DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
-                      holder.tvOrder_number.setText(order.getOrder_id());
-                      holder.tvDatetime.setText(order.getCreate_at());
-                      holder.tvTotal_money.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
+                        holder.tvOrder_number.setText(order.getOrder_id());
+                        holder.tvDatetime.setText(order.getCreate_at());
+                        holder.tvTotal_money.setText(decimalFormat.format(Integer.valueOf(order.getTotal_amount().trim()))+ " Đ");
                     }
                 }
             }

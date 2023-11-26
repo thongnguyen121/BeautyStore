@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -63,6 +64,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -146,10 +148,13 @@ public class Fragment_editProfile extends Fragment {
     }
 
     private void saveInfo() {
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle("Uploading...");
+        progressDialog.show();
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("imgProfile").child(uid);
         Log.d(TAG, "storage hinha nh: " + storageReference);
-        spinKitView.setVisibility(View.VISIBLE);
-        setViewEnable(false);
+//        spinKitView.setVisibility(View.VISIBLE);
+//        setViewEnable(false);
         storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -157,16 +162,20 @@ public class Fragment_editProfile extends Fragment {
                 while (!uriTask.isComplete()) ;
                 imageUri = uriTask.getResult();
                 updateAccountIntoFirebase();
-                spinKitView.setVisibility(View.GONE);
-                setViewEnable(true);
-                Toast.makeText(getContext(), "co the" + imageUri, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "co the: " + imageUri);
+                progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getContext(), "khong the" + e, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "khong the: " + e);
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress = (100.0 * snapshot.getBytesTransferred() / snapshot
+                        .getTotalByteCount());
+                progressDialog.setMessage("Uploaded " + (int) progress + "%");
             }
         });
     }
@@ -199,7 +208,9 @@ public class Fragment_editProfile extends Fragment {
                     databaseReference.updateChildren(updates);
 
                     Toast.makeText(getContext(), "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
-
+                    Intent intent = new Intent(getContext(), MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(getContext(), "Toang", Toast.LENGTH_SHORT).show();
                 }

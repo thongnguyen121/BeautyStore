@@ -26,10 +26,12 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.beautystore.NotificationSender;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Order;
 import com.example.beautystore.model.CartDetail;
 import com.example.beautystore.model.History;
+import com.example.beautystore.model.Customer;
 import com.example.beautystore.model.Members;
 import com.example.beautystore.model.Order;
 import com.example.beautystore.model.OrderStatus;
@@ -43,11 +45,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOrder_queue.QueueHolder> {
 
@@ -69,6 +82,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     String autoId_history = "";
     String customer_id = "";
 
+NotificationSender notificationSender;
 
 
     public RecyclerViewOrder_queue(Context context, int resource, ArrayList<OrderStatus> data) {
@@ -91,6 +105,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewOrder_queue.QueueHolder holder, int position) {
         OrderStatus orderStatus = data.get(position);
+        notificationSender = new NotificationSender(context.getApplicationContext());
         holder.tvDatetime_transaction.setText(orderStatus.getCreate_at());
         uid = FirebaseAuth.getInstance().getUid();
         database = FirebaseDatabase.getInstance();
@@ -373,6 +388,7 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(context, "Bạn đã nhận đơn", Toast.LENGTH_SHORT).show();
+                            notificationSender.sendNotification("3",order_id);
                         } else {
                             Toast.makeText(context, "Nhận đơn hàng thất bãi", Toast.LENGTH_SHORT).show();
                         }
@@ -383,6 +399,9 @@ public class RecyclerViewOrder_queue extends RecyclerView.Adapter<RecyclerViewOr
         if (status.equals("3"))
         {
             holder.btnConfirm_shipper.setEnabled(false);
+        }
+        else{
+            holder.btnConfirm_shipper.setEnabled(true);
         }
 
 

@@ -103,52 +103,6 @@
             android:textSize="@dimen/button_textsize"
             android:id="@+id/tvForgetPassword"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:fontFamily="@font/abeezeeregular"
-                android:text="@string/loginWith"
-                android:textSize="@dimen/button_textsize"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="#123456"
-                android:fontFamily="@font/abeezeeregular" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:background="@drawable/other_login_background"
-                android:padding="15dp"
-                android:src="@drawable/google" />
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="@dimen/margin_login_layout"
-                android:background="@drawable/other_login_background"
-                android:padding="15dp"
-                android:src="@drawable/facebook" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
