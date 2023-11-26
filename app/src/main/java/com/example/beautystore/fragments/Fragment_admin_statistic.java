@@ -155,15 +155,18 @@ public class Fragment_admin_statistic extends Fragment {
         orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Integer> updatedRevenue = new LinkedHashMap<>(dailyRevenue);
+
                 for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int month = extractMonth(createAt);
                     int year = extractYear(createAt);
                     if (month != -1 && year == currentYear) {
                         if (month == currentMonth) {
-                            String dayKey = convertCreateAtToDay(createAt);
+                            int day = extractDay(createAt);
+                            String dayKey = (day != -1) ? String.valueOf(day) : null;
 
-                            if (dayKey != null && dailyRevenue.containsKey(dayKey)) {
+                            if (dayKey != null && updatedRevenue.containsKey(dayKey)) {
                                 String status = statusSnapshot.child("status").getValue(String.class);
 
                                 if (status != null && (status.equals("4") || status.equals("6"))) {
@@ -173,11 +176,11 @@ public class Fragment_admin_statistic extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
                                             String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
                                             if (totalAmount != null && !totalAmount.isEmpty()) {
-                                                int currentRevenue = dailyRevenue.get(dayKey);
+                                                int currentRevenue = updatedRevenue.get(dayKey);
                                                 int revenue = currentRevenue + Integer.parseInt(totalAmount);
-                                                dailyRevenue.put(dayKey, revenue);
+                                                updatedRevenue.put(dayKey, revenue);
+                                                displayRevenueByDay(updatedRevenue);
                                             }
-                                            displayRevenueByDay(dailyRevenue);
                                         }
 
                                         @Override
@@ -190,8 +193,16 @@ public class Fragment_admin_statistic extends Fragment {
                         }
                     }
                 }
-                // hiện khi tháng đó không có ngày nào có doanh thu
-                displayRevenueByDay(dailyRevenue);
+                displayRevenueByDay(updatedRevenue);
+                // Kiểm tra và hiển thị chỉ khi có dữ liệu mới
+                boolean hasNewData = !updatedRevenue.equals(dailyRevenue);
+                if (hasNewData) {
+                    displayRevenueByDay(updatedRevenue);
+                    // Cập nhật từng cặp key-value trong dailyRevenue với dữ liệu mới từ updatedRevenue
+                    for (Map.Entry<String, Integer> entry : updatedRevenue.entrySet()) {
+                        dailyRevenue.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
 
             @Override
@@ -214,6 +225,7 @@ public class Fragment_admin_statistic extends Fragment {
             return -1;
         }
     }
+
     private void displayRevenueByDay(Map<String, Integer> dailyRevenue) {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
