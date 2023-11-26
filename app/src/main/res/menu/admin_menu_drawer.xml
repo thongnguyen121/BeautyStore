@@ -6,10 +6,6 @@
     <group
         android:checkableBehavior="single"
         >
-
-        <item android:id="@+id/fragment_customer_list"
-            android:title="@string/customer_list"
-            ></item>
         <item android:id="@+id/fragment_order_in_progress"
             android:title="@string/order_in_progress"
             ></item>

@@ -30,6 +30,7 @@ import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerView_Member;
 import com.example.beautystore.model.Members;
 import com.example.beautystore.model.OrderStatus;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,6 +59,7 @@ public class Fragment_admin_employees extends Fragment {
     private List<String> selectedRoles = new ArrayList<>();
     public static  boolean statusEmployee = true;
     private boolean isSearchViewExpanded = false;
+    SpinKitView spinKitView;
     SearchView searchView;
 
 
@@ -142,7 +144,6 @@ public class Fragment_admin_employees extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.appBar_home){
-            Toast.makeText(getContext(), "asd", Toast.LENGTH_SHORT).show();
             statusEmployee = true;
             Intent intent = new Intent(getContext(), Activity_add_members.class);
             startActivity(intent);
@@ -161,6 +162,8 @@ public class Fragment_admin_employees extends Fragment {
                     }
 
                 }
+                recyclerView.setVisibility(View.VISIBLE);
+                spinKitView.setVisibility(View.GONE);
                 memberAdapter.notifyDataSetChanged();
             }
 
@@ -171,7 +174,13 @@ public class Fragment_admin_employees extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        memberAdapter.setFilterList(data);
+
+    }
     private void getData() {
         memberAdapter = new RecyclerView_Member(requireContext(), data);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
@@ -212,9 +221,11 @@ public class Fragment_admin_employees extends Fragment {
                     reference.child(members.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            recyclerView.setVisibility(View.GONE);
+                            spinKitView.setVisibility(View.VISIBLE);
                             Members members1 = snapshot.getValue(Members.class);
                             final String[] status = {""};
-                            Toast.makeText(getContext(), "Khóa" +members1.getId(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Đã khóa " +members1.getId(), Toast.LENGTH_SHORT).show();
 //                            changeStatusMember(members1.getId(), members1.getStatus());
                             reference.child(members1.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -235,16 +246,50 @@ public class Fragment_admin_employees extends Fragment {
                                             public void onSuccess(Void unused) {
                                                 members.setStatus(status[0]);
                                                 Log.d("TAG", "role : " + status[0]);
-                                                memberAdapter.notifyItemChanged(pos);
+                                                if (rdoAll.isChecked()){
+                                                    recyclerView.setVisibility(View.VISIBLE);
+                                                    spinKitView.setVisibility(View.GONE);
+                                                    memberAdapter.notifyDataSetChanged();
+                                                }
+                                                else if (rdoShipper.isChecked()){
+                                                    data.clear();
+                                                    getShipperList("1");
+                                                } else if (rdoTVV.isChecked()) {
+                                                    data.clear();
+                                                    getShipperList("2");
+                                                }
+                                                else{
+                                                    data.clear();
+                                                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                                                                Members member = dataSnapshot.getValue(Members.class);
+                                                                if (member.getStatus().equals("1"))
+                                                                    data.add(member);
+                                                            }
+                                                            recyclerView.setVisibility(View.VISIBLE);
+                                                            spinKitView.setVisibility(View.GONE);
+                                                            memberAdapter.notifyDataSetChanged();
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                        }
+                                                    });
+                                                }
+
                                             }
                                         });
-                                        Toast.makeText(getContext(), "thanh cong" + update, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Thành công ", Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-                                    Toast.makeText(getContext(), "khong thanh cong", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "không thành công", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -300,13 +345,13 @@ public class Fragment_admin_employees extends Fragment {
 
                         }
                     });
-                    Toast.makeText(getContext(), "thanh cong" + update, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Thành công" , Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "khong thanh cong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -369,5 +414,6 @@ public static String removeDiacritics(String input) {
         rdoTVV = view.findViewById(R.id.rdoTVV);
         rdoLock = view.findViewById(R.id.rdoLock);
         searchView = view.findViewById(R.id.idSearch_employees);
+        spinKitView = view.findViewById(R.id.spin_kitFilter);
     }
 }

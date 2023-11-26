@@ -136,13 +136,10 @@ public class EditProfileShipperActivity extends AppCompatActivity {
                 updateAccountIntoFirebase();
                 spinKitView.setVisibility(View.GONE);
                 setViewEnable(true);
-                Toast.makeText(EditProfileShipperActivity.this, "co the" + imageUri, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "co the: " + imageUri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(EditProfileShipperActivity.this, "khong the" + e, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "khong the: " + e);
             }
         });
@@ -167,17 +164,17 @@ public class EditProfileShipperActivity extends AppCompatActivity {
                     // Cập nhật dữ liệu
                     databaseReference.updateChildren(updates);
 
-                    Toast.makeText(EditProfileShipperActivity.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileShipperActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     onBackPressed();
 
                 } else {
-                    Toast.makeText(EditProfileShipperActivity.this, "Toang", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileShipperActivity.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditProfileShipperActivity.this, "Toang", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfileShipperActivity.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -203,17 +200,17 @@ public class EditProfileShipperActivity extends AppCompatActivity {
                     databaseReference.updateChildren(updates);
                     spinKitView.setVisibility(View.GONE);
                     setViewEnable(true);
-                    Toast.makeText(EditProfileShipperActivity.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileShipperActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     onBackPressed();
 
                 } else {
-                    Toast.makeText(EditProfileShipperActivity.this, "Cap nhat khong thang cong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileShipperActivity.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditProfileShipperActivity.this, "Cap nhat khong thanh cong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfileShipperActivity.this, "Cập nhật không thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
