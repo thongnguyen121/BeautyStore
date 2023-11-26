@@ -1,5 +1,6 @@
 package com.example.beautystore.adapter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.MenuItem;
@@ -8,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +24,11 @@ import com.example.beautystore.fragments.Fragment_home;
 import com.example.beautystore.fragments.Fragment_warehouse_list;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.Categories;
+import com.example.beautystore.model.History;
+import com.example.beautystore.model.OrderStatus;
 import com.example.beautystore.model.Products;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +38,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Brands_WH.HolderBrand_WH> {
@@ -114,7 +122,7 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
                     context.startActivity(intent);
                     Fragment_warehouse_list.statusBrands = false;
                 } else if (id == R.id.Delete) {
-
+                    checkDelete(brand_id_wh);
                 }
 
 
@@ -182,6 +190,68 @@ public class RecyclerView_Brands_WH extends RecyclerView.Adapter<RecyclerView_Br
 
             }
         });
+    }
+    private void checkDelete(String brand_id) {
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean check = false;
+                for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
+                    Products products = dataSnapshot.getValue(Products.class);
+                    String cateID = products.getBrands_id();
+                    if(cateID.equals(brand_id))
+                    {
+                        check = true;
+
+                    }
+                }
+                if (check){
+                    Toast.makeText(context.requireContext(), "Bạn không thể xóa hãng này", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    AlertDialog.Builder myDialog = new AlertDialog.Builder(context.requireContext());
+                    myDialog.setTitle("Question");
+                    myDialog.setMessage("Bạn có chắc muốn hủy đơn hàng này?");
+                    myDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference("Brands").child(brand_id);
+                            databaseReference1.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(context.requireContext(), "Xóa thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+                    });
+                    myDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    myDialog.create().show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void showAlreadyReviewedDialog_note() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context.requireContext());
+        builder.setTitle("Thông báo");
+        builder.setMessage("Bạn không thể xóa hãng sản phẩm này");
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
 
     @Override

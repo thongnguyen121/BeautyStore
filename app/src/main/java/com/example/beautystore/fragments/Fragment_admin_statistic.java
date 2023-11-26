@@ -1,66 +1,513 @@
 package com.example.beautystore.fragments;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.beautystore.R;
+import com.example.beautystore.model.OrderStatus;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Fragment_admin_statistic#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Fragment_admin_statistic extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Fragment_admin_statistic() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Fragment_admin_statistic.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Fragment_admin_statistic newInstance(String param1, String param2) {
-        Fragment_admin_statistic fragment = new Fragment_admin_statistic();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    View view;
+    ArrayList lineArray;
+    LineChart lineChart_day, lineChart_month;
+    BarChart barChart_year;
+    RadioButton rdNgay, rdThang, rdNam;
+    ImageView ivdateTimePicker;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_statistic, container, false);
+        view = inflater.inflate(R.layout.fragment_admin_statistic, container, false);
+
+        setControl(view);
+        Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH) + 1; // Tháng hiện tại
+        int currentYear = calendar.get(Calendar.YEAR); // Năm hiện tại
+        calculateRevenue(currentMonth, currentYear);
+        rdNgay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isChecked()){
+                    lineChart_month.setVisibility(View.GONE);
+                    lineChart_day.setVisibility(View.VISIBLE);
+                    barChart_year.setVisibility(View.GONE);
+                   calculateRevenue(currentMonth, currentYear);
+
+                }
+
+            }
+        });
+        rdThang.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isChecked()){
+                    lineChart_month.setVisibility(View.VISIBLE);
+                    lineChart_day.setVisibility(View.GONE);
+                    barChart_year.setVisibility(View.GONE);
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR);
+
+                    calculateRevenueByYearAndMonth(currentYear);
+                }
+            }
+        });
+        rdNam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isChecked()){
+                    barChart_year.setVisibility(View.VISIBLE);
+                    lineChart_month.setVisibility(View.GONE);
+                    lineChart_day.setVisibility(View.GONE);
+//                    setBarChart_year();
+                    calculateRevenueByYear();
+                }
+
+            }
+        });
+
+
+        ivdateTimePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMonthYearPickerDialog();
+            }
+        });
+        return view;
+    }
+
+    private void setControl(View view) {
+        lineChart_day = view.findViewById(R.id.lineChart_date);
+        lineChart_month = view.findViewById(R.id.lineChart_month);
+        rdNgay = view.findViewById(R.id.rd_doanhthu_ngay);
+        rdThang = view.findViewById(R.id.rd_doanhthu_thang);
+        rdNam = view.findViewById(R.id.rd_doanhthu_nam);
+        barChart_year = view.findViewById(R.id.barChart_year);
+        ivdateTimePicker = view.findViewById(R.id.ivDatetiemPicker);
+    }
+
+
+    // Thống kê doanh thu của ngày trong tháng hiện tại và năm hiện tại
+
+    private void calculateRevenue(int currentMonth, int currentYear) {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
+
+        Map<String, Integer> dailyRevenue = new LinkedHashMap<>();
+
+        for (int i = 1; i <= 31; i++) {
+            dailyRevenue.put(String.valueOf(i), 0);
+        }
+
+        orderStatusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
+                    String createAt = statusSnapshot.child("create_at").getValue(String.class);
+                    int month = extractMonth(createAt);
+                    int year = extractYear(createAt);
+
+                    if (month != -1 && year == currentYear) {
+                        if (month == currentMonth) {
+                            String dayKey = convertCreateAtToDay(createAt);
+
+                            if (dayKey != null && dailyRevenue.containsKey(dayKey)) {
+                                String status = statusSnapshot.child("status").getValue(String.class);
+
+                                if (status != null && (status.equals("4") || status.equals("6"))) {
+                                    String orderID = statusSnapshot.child("order_id").getValue(String.class);
+                                    orderRef.child(orderID).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                            String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
+                                            if (totalAmount != null && !totalAmount.isEmpty()) {
+                                                int currentRevenue = dailyRevenue.get(dayKey);
+                                                int revenue = currentRevenue + Integer.parseInt(totalAmount);
+                                                dailyRevenue.put(dayKey, revenue);
+                                            }
+                                            displayRevenueByDay(dailyRevenue);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            // Xử lý lỗi nếu cần
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                // hiện khi tháng đó không có ngày nào có doanh thu
+                displayRevenueByDay(dailyRevenue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
+
+
+    private void displayRevenueByDay(Map<String, Integer> dailyRevenue) {
+        ArrayList<Entry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        for (String dayKey : dailyRevenue.keySet()) {
+            int revenue = dailyRevenue.getOrDefault(dayKey, 0);
+            entries.add(new Entry(Integer.parseInt(dayKey) - 1, revenue));
+            labels.add(dayKey);
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo ngày");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextColor(Color.BLACK);
+
+        LineData lineData = new LineData(dataSet);
+
+        lineChart_day.setData(lineData);
+        lineChart_day.getDescription().setEnabled(false);
+        lineChart_day.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        lineChart_day.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        lineChart_day.animateY(1000);
+        lineChart_day.invalidate();
+    }
+    private int extractYear(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.YEAR);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    private int extractMonth(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.MONTH) + 1;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    private String convertCreateAtToDay(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Thống kê thang theo năm hiện tại
+    private Map<String, Integer> calculateRevenueByYearAndMonth(int currentYear) {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
+
+        Map<String, Integer> monthlyRevenue = new HashMap<>();
+
+        for (int i = 1; i <= 12; i++) {
+            monthlyRevenue.put(String.valueOf(i), 0);
+        }
+
+        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
+                    String createAt = statusSnapshot.child("create_at").getValue(String.class);
+                    int monthKey = extractByMonth(createAt);
+                    int year = extractByYear(createAt);
+
+                    if (monthKey != -1 && year == currentYear) {
+                        String status = statusSnapshot.child("status").getValue(String.class);
+                        if (status != null && (status.equals("4") || status.equals("6"))) {
+                            String orderID = statusSnapshot.child("order_id").getValue(String.class);
+                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                    String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
+                                    int currentRevenue = monthlyRevenue.getOrDefault(String.valueOf(monthKey), 0);
+                                    int revenue = currentRevenue + (totalAmount != null ? Integer.parseInt(totalAmount) : 0);
+                                    monthlyRevenue.put(String.valueOf(monthKey), revenue);
+
+                                    displayRevenueByMonth(monthlyRevenue);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Xử lý lỗi nếu cần
+                                }
+                            });
+                        }
+                    }
+                }
+
+                // hiện tháng có doanh thu không doanh thu
+                displayRevenueByMonth(monthlyRevenue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi nếu cần
+            }
+
+        });
+
+        return monthlyRevenue;
+    }
+
+    private int extractByYear(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.YEAR); // Trả về năm
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    private int extractByMonth(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(Calendar.MONTH) + 1; // Trả về tháng (1-12)
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    private void displayRevenueByMonth(Map<String, Integer> monthlyRevenue) {
+        ArrayList<Entry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        for (int i = 1; i <= 12; i++) {
+            int revenue = monthlyRevenue.getOrDefault(String.valueOf(i), 0);
+            entries.add(new Entry(i - 1, revenue));
+            labels.add("Tháng " + i);
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Doanh thu theo tháng");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextColor(Color.BLACK);
+
+        LineData lineData = new LineData(dataSet);
+
+        lineChart_month.setData(lineData);
+        lineChart_month.getDescription().setEnabled(false);
+        lineChart_month.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        lineChart_month.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        lineChart_month.animateY(1000);
+        lineChart_month.invalidate();
+    }
+
+    // Thông kê tổng doanh thu các năm
+
+    private void calculateRevenueByYear() {
+        DatabaseReference orderStatusRef = FirebaseDatabase.getInstance().getReference().child("OrderStatus");
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference().child("Order");
+
+        Map<String, Integer> yearlyRevenue = new HashMap<>();
+
+        orderStatusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot statusSnapshot : dataSnapshot.getChildren()) {
+                    String createAt = statusSnapshot.child("create_at").getValue(String.class);
+                    String year = convertCreateAtToYear(createAt);
+                    if (year != null) {
+                        String status = statusSnapshot.child("status").getValue(String.class);
+                        if (status != null && (status.equals("4") || status.equals("6"))) {
+                            String orderID = statusSnapshot.child("order_id").getValue(String.class);
+                            orderRef.child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot orderSnapshot) {
+                                    String totalAmount = orderSnapshot.child("total_amount").getValue(String.class);
+                                    int currentYearlyRevenue = yearlyRevenue.getOrDefault(year, 0);
+                                    int revenue = currentYearlyRevenue + (totalAmount != null ? Integer.parseInt(totalAmount) : 0);
+                                    yearlyRevenue.put(year, revenue);
+                                    displayRevenueByYear(yearlyRevenue);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Xử lý lỗi nếu cần
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
+
+
+    private void displayRevenueByYear(Map<String, Integer> yearlyRevenue) {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(yearlyRevenue.entrySet());
+        Collections.sort(sortedList, (o1, o2) -> {
+            try {
+                return Integer.parseInt(o1.getKey()) - Integer.parseInt(o2.getKey());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        });
+
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : sortedList) {
+            String year = entry.getKey();
+            int revenue = entry.getValue();
+            entries.add(new BarEntry(index, revenue));
+            labels.add(year);
+            index++;
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Doanh thu theo năm");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        BarData barData = new BarData(dataSet);
+
+        barChart_year.setData(barData);
+        barChart_year.getDescription().setEnabled(false);
+        barChart_year.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        barChart_year.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        barChart_year.animateY(1000);
+        barChart_year.invalidate();
+    }
+    private String convertCreateAtToYear(String createAt) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(createAt);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private void showMonthYearPickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
+                        String selectedDate = (selectedMonth + 1) + "/" + selectedYear;
+                        calculateRevenue(selectedMonth + 1, selectedYear);
+                        calculateRevenueByYearAndMonth(selectedYear);
+
+                    }
+                },
+                currentYear,
+                currentMonth,
+                1
+        );
+
+        // Ẩn cột ngày
+        try {
+            Field datePickerDialogField = datePickerDialog.getClass().getDeclaredField("mDatePicker");
+            datePickerDialogField.setAccessible(true);
+            DatePicker datePicker = (DatePicker) datePickerDialogField.get(datePickerDialog);
+
+            Field[] datePickerFields = datePickerDialogField.getType().getDeclaredFields();
+            for (Field datePickerField : datePickerFields) {
+                if ("mDaySpinner".equals(datePickerField.getName())) {
+                    datePickerField.setAccessible(true);
+                    View daySpinner = (View) datePickerField.get(datePicker);
+                    daySpinner.setVisibility(View.GONE);
+                }
+            }
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        datePickerDialog.setTitle("Chọn tháng và năm");
+        datePickerDialog.show();
     }
 }
+

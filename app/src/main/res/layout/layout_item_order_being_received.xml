@@ -164,7 +164,7 @@
                     android:background="@drawable/bg_btn"
                     android:layout_marginTop="10dp"
                     android:backgroundTint="@color/btn_blue_shipper"
-                    android:text="Hoàn Hoàng"
+                    android:text="Hoàn Hàng"
                     android:textColor="@color/white"
                     android:id="@+id/btnReturns_order_shipper"
                     ></androidx.appcompat.widget.AppCompatButton>
@@ -173,26 +173,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_margin="5dp"
             >
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Click xem chi tiết đơn hàng"
                 android:textStyle="italic"
-                android:textSize="17dp"
+                android:textSize="20dp"
                 android:id="@+id/tvClick_detail_order_shipper"
+                android:textColor="@color/red"
                 ></TextView>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Click đóng chi tiết đơn hàng"
-                android:textSize="17dp"
-                android:gravity="end"
+                android:textSize="20dp"
                 android:visibility="gone"
                 android:textStyle="italic"
                 android:id="@+id/tvClose_order_shipper"
+                android:textColor="@color/red"
                 ></TextView>
         </LinearLayout>
         <LinearLayout
@@ -208,25 +209,32 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="95dp"
+                    android:layout_marginRight="80dp"
                     android:text="Tên SP"
                     android:textSize="17dp">
 
                 </TextView>
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="wrap_content"
-                    android:text="Số lượng"
+                    android:text="SL"
+                    android:gravity="center"
                     android:textSize="17dp">
 
                 </TextView>
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="95dp"
+                    android:layout_marginLeft="80dp"
                     android:text="Đơn giá"
                     android:textSize="17dp">
 

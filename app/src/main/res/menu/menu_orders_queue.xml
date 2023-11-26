@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/All_order"
+        android:title="Chọn tất cả"
+        ></item>
+    <item android:id="@+id/Order_awaiting_shipping"
+        android:title="Đang chờ vận chuyển"
+        ></item>
+    <item android:id="@+id/Order_being_received"
+        android:title="Đang vận chuyển"
+        ></item>
+    <item android:id="@+id/Order_canceled"
+        android:title="Đơn hàng đã hủy"
+        ></item>
+    <item android:id="@+id/Order_received"
+        android:title="Đơn hàng đã nhận"
+        ></item>
+</menu>

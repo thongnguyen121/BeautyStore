@@ -23,7 +23,7 @@
             >
 
             <SearchView
-                android:id="@+id/idsearchview_Home_user"
+                android:id="@+id/idsearchview_order_queue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -39,7 +39,7 @@
 
 
             <ImageView
-                android:id="@+id/btnFileter"
+                android:id="@+id/btnFileter_orderQueue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"

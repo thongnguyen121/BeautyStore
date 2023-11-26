@@ -3,74 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.Fragment_order_shipper"
     android:background="@color/bg_pink"
-    >
+    tools:context=".fragments.Fragment_order_shipper">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:layout_margin="5dp"
+            android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_margin="5dp"
-                    >
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="10dp"
-                            >
+            <SearchView
+                android:id="@+id/idsearchview_orderShipper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_searchview"
+                android:clickable="true"
+                android:focusable="false"
+                android:gravity="center"
+                android:queryHint="Search">
 
-                                <SearchView
-                                    android:id="@+id/idsearchview_Home_user"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="9"
-                                    android:background="@drawable/bg_searchview"
-                                    android:gravity="center"
-                                    android:queryHint="Search"
-                                    android:focusable="false"
-                                    android:clickable="true"
-                                    >
+            </SearchView>
 
-                                </SearchView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:text="Danh sách đơn hàng"
+                android:textColor="@color/pink"
+                android:textSize="20dp"></TextView>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcOrder_shipper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
-                                <ImageView
-                                    android:id="@+id/btnFileter"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="end"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_weight="1"
-                                    android:src="@drawable/filter"
-
-                                    ></ImageView>
-
-                        </LinearLayout>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Danh sách đơn hàng"
-                            android:textSize="20dp"
-                            android:textColor="@color/pink"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            ></TextView>
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/rcOrder_shipper"
-                            ></androidx.recyclerview.widget.RecyclerView>
-
-                </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
 </FrameLayout>
