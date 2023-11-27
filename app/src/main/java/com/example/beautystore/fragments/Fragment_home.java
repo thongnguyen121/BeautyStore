@@ -194,21 +194,21 @@ public class Fragment_home extends Fragment {
             }
         });
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-
-                if (isSearchViewExpanded) {
-                    setVisibityhome();
-                    getData_brands();
-                    getData_categories();
-                    getProducts();
-                    rcSearch.setVisibility(View.GONE);
-                    isSearchViewExpanded = false;
-                }
-                return false;
-            }
-        });
+//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//
+//                if (isSearchViewExpanded) {
+//                    setVisibityhome();
+//                    getData_brands();
+//                    getData_categories();
+//                    getProducts();
+//                    rcSearch.setVisibility(View.GONE);
+//                    isSearchViewExpanded = false;
+//                }
+//                return false;
+//            }
+//        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -219,9 +219,9 @@ public class Fragment_home extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                String searchTerm = removeDiacritics(newText);
+//                String searchTerm = removeDiacritics(newText);
 
-                filterList(searchTerm);
+                filterList(newText);
 
                 return false;
 
@@ -367,6 +367,9 @@ public class Fragment_home extends Fragment {
                     tvTitle_categories.setVisibility(View.GONE);
                     tvTitle_brands.setVisibility(View.GONE);
                     imageSlider.setVisibility(View.GONE);
+
+                    searchView.clearFocus();
+                    searchView.setIconified(true);
                     getProducts();
                     showPopupMenu(v);
 
@@ -458,13 +461,22 @@ public class Fragment_home extends Fragment {
 
     private void filterList(String text) {
         ArrayList<Products> filteredlist = new ArrayList<>();
-        for (Products item : data_products) {
-            if (item.getProducts_name().toLowerCase().contains(text.toLowerCase())) {
+        for(Products item : data_products)
+        {
+            if(item.getProducts_name().toLowerCase().contains(text.toLowerCase()))
+            {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewProducts.setFilterList_Products(filteredlist);
+        }
+        else
+        {
+
+            recyclerViewProducts.setFilterList_Products(filteredlist);
+        }
     }
 
     private void setGonehome() {
@@ -475,7 +487,6 @@ public class Fragment_home extends Fragment {
         tvTitle_categories.setVisibility(View.GONE);
         tvTitle_brands.setVisibility(View.GONE);
         MainActivity.bottomNavigationView.setVisibility(View.GONE);
-        MainActivity.toolbar.setVisibility(View.GONE);
 
     }
 
@@ -503,7 +514,6 @@ private void setVisibityhome() {
     else {
         MainActivity.bottomNavigationView.setVisibility(View.GONE);
     }
-    MainActivity.toolbar.setVisibility(View.VISIBLE);
 }
     private boolean isUserLoggedin() {
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARE_PREFS, Context.MODE_PRIVATE);

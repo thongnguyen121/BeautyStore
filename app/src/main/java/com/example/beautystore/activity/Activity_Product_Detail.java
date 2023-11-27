@@ -62,7 +62,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -100,6 +99,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
     private ArrayList<Products> data_products = new ArrayList<>();
 
     private String user_id = "";
+    boolean check = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,11 +125,10 @@ public class Activity_Product_Detail extends AppCompatActivity {
         getData_DSLienquan(cate_id);
         createRatingsList();
         checkProductExistInCart();
-//        checkOrderForRating(productId);
-        reView_products();
 
         UID = FirebaseAuth.getInstance().getUid();
         checkOrderStatusForRating(productId, uid);
+
         addOrRemoveProductToWishList();
         //intent_getData(productId);
         if (isUserLoggedin()) {
@@ -609,6 +608,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     if (numberStar == 0 || TextUtils.isEmpty(edtComment.getText())) {
                         showRating_empty();
                     } else {
+
                         DatabaseReference userRatingRef = FirebaseDatabase.getInstance().getReference("Rating").child(productId).child(UserID);
                         userRatingRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -671,6 +671,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     if (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6")) {
                         checkOrderForRating(orderStatus.getOrder_id(), productId, uid);
                     }
+                    else {
+                        ivComment.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(Activity_Product_Detail.this, "Sảm phẩm này bạn chưa mua", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
             }
 
@@ -690,6 +698,7 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     if (order.getOrder_id() != null) {
                         for (CartDetail item : order.getItems()) {
                             if (item != null && item.getProduct_id().equals(productId)) {
+
                                 reView_products();
                                 return;
                             }
