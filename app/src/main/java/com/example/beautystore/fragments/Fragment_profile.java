@@ -35,21 +35,28 @@ public class Fragment_profile extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         chatNotiRecyclerView = view.findViewById(R.id.rvFragmentNotification);
-
         chatNotis = new ArrayList<>();
+        chatNotiAdapter = new RecyclerView_ChatNotification(chatNotis, getContext());
+        chatNotiRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true);
+        chatNotiRecyclerView.setLayoutManager(linearLayoutManager);
+        chatNotiRecyclerView.setAdapter(chatNotiAdapter);
+
         DatabaseReference chatNotiRef = FirebaseDatabase.getInstance().getReference().child("ChatNoti");
         chatNotiRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                chatNotis.clear();
                 if (snapshot.exists()){
-                    chatNotis.clear();
+
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                         ChatNoti chatNoti = dataSnapshot.getValue(ChatNoti.class);
                         chatNotis.add(chatNoti);
-                        chatNotiAdapter = new RecyclerView_ChatNotification(chatNotis, getContext());
-                        chatNotiRecyclerView.setAdapter(chatNotiAdapter);
+
                     }
                 }
+                chatNotiAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -58,10 +65,7 @@ public class Fragment_profile extends Fragment {
             }
         });
 
-        chatNotiRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(true);
-        chatNotiRecyclerView.setLayoutManager(linearLayoutManager);
+
         return view;
     }
 }

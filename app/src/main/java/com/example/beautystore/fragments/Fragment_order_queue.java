@@ -199,7 +199,15 @@ public class Fragment_order_queue extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+
+
     }
 }

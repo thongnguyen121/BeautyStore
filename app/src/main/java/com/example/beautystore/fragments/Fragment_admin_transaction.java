@@ -18,6 +18,7 @@ import com.example.beautystore.R;
 import com.example.beautystore.activity.Admin_MainActivity;
 import com.example.beautystore.adapter.RecyclerViewOrder_queue;
 import com.example.beautystore.model.OrderStatus;
+import com.example.beautystore.model.Products;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -228,7 +229,15 @@ public class Fragment_admin_transaction extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+
     }
+   
 }

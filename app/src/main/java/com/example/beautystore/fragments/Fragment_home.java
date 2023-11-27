@@ -2,6 +2,10 @@ package com.example.beautystore.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
@@ -281,6 +286,15 @@ public class Fragment_home extends Fragment {
             imageSlider.setVisibility(View.VISIBLE);
             Fragment_home.recylerViewCategories.notifyDataSetChanged();
             Fragment_home.recyclerViewBands.notifyDataSetChanged();
+            searchView.setIconified(true);
+            searchView.clearFocus();
+            searchView.setIconified(true);
+            if (isUserLoggedin()){
+                MainActivity.bottomNavigationView.setVisibility(View.VISIBLE);
+            }
+            else {
+                MainActivity.bottomNavigationView.setVisibility(View.GONE);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -366,7 +380,7 @@ public class Fragment_home extends Fragment {
                     tvTitle_categories.setVisibility(View.GONE);
                     tvTitle_brands.setVisibility(View.GONE);
                     imageSlider.setVisibility(View.GONE);
-
+                    searchView.setIconified(true);
                     searchView.clearFocus();
                     searchView.setIconified(true);
                     getProducts();

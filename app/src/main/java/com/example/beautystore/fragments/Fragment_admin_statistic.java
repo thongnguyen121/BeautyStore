@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -67,6 +69,8 @@ public class Fragment_admin_statistic extends Fragment {
     BarChart barChart_year;
     RadioButton rdNgay, rdThang, rdNam;
     ImageView ivdateTimePicker;
+    TextView tvTitle, tvDatetime, tvTileYear, tvDatetimeYear;
+    LinearLayout layout_year, layout_monthYear;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class Fragment_admin_statistic extends Fragment {
         Calendar calendar = Calendar.getInstance();
         int currentMonth = calendar.get(Calendar.MONTH) + 1; // Tháng hiện tại
         int currentYear = calendar.get(Calendar.YEAR); // Năm hiện tại
+
         calculateRevenue(currentMonth, currentYear);
         rdNgay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -85,7 +90,10 @@ public class Fragment_admin_statistic extends Fragment {
                     lineChart_month.setVisibility(View.GONE);
                     lineChart_day.setVisibility(View.VISIBLE);
                     barChart_year.setVisibility(View.GONE);
-                   calculateRevenue(currentMonth, currentYear);
+                    calculateRevenue(currentMonth, currentYear);
+
+                    layout_monthYear.setVisibility(View.VISIBLE);
+                    layout_year.setVisibility(View.GONE);
 
                 }
 
@@ -102,6 +110,10 @@ public class Fragment_admin_statistic extends Fragment {
                     int currentYear = calendar.get(Calendar.YEAR);
 
                     calculateRevenueByYearAndMonth(currentYear);
+                    layout_monthYear.setVisibility(View.GONE);
+                    layout_year.setVisibility(View.VISIBLE);
+
+
                 }
             }
         });
@@ -114,6 +126,8 @@ public class Fragment_admin_statistic extends Fragment {
                     lineChart_day.setVisibility(View.GONE);
 //                    setBarChart_year();
                     calculateRevenueByYear();
+                    layout_monthYear.setVisibility(View.GONE);
+                    layout_year.setVisibility(View.GONE);
                 }
 
             }
@@ -137,6 +151,12 @@ public class Fragment_admin_statistic extends Fragment {
         rdNam = view.findViewById(R.id.rd_doanhthu_nam);
         barChart_year = view.findViewById(R.id.barChart_year);
         ivdateTimePicker = view.findViewById(R.id.ivDatetiemPicker);
+        tvDatetime = view.findViewById(R.id.tvDatetime_statistic);
+        tvTitle = view.findViewById(R.id.tvTitle_datetime);
+        tvTileYear = view.findViewById(R.id.tvTitle_datetime_year);
+        tvDatetimeYear = view.findViewById(R.id.tvDatetimeYear_statistic);
+        layout_year = view.findViewById(R.id.linnerYear);
+        layout_monthYear = view.findViewById(R.id.linner_monthYear);
     }
 
 
@@ -151,7 +171,8 @@ public class Fragment_admin_statistic extends Fragment {
         for (int i = 1; i <= 31; i++) {
             dailyRevenue.put(String.valueOf(i), 0);
         }
-
+        tvTitle.setText("Tháng/Năm: ");
+        tvDatetime.setText(String.valueOf(currentMonth) + "/" + String.valueOf(currentYear));
         orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -161,6 +182,7 @@ public class Fragment_admin_statistic extends Fragment {
                     String createAt = statusSnapshot.child("create_at").getValue(String.class);
                     int month = extractMonth(createAt);
                     int year = extractYear(createAt);
+
                     if (month != -1 && year == currentYear) {
                         if (month == currentMonth) {
                             int day = extractDay(createAt);
@@ -303,6 +325,8 @@ public class Fragment_admin_statistic extends Fragment {
         for (int i = 1; i <= 12; i++) {
             monthlyRevenue.put(String.valueOf(i), 0);
         }
+        tvTileYear.setText("Năm: ");
+        tvDatetimeYear.setText(String.valueOf(currentYear));
 
         orderStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -317,6 +341,8 @@ public class Fragment_admin_statistic extends Fragment {
                     int year = extractByYear(createAt);
 
                     if (monthKey != -1 && year == currentYear) {
+
+                        Log.d("", "onDataChange: "+ year);
                         String status = statusSnapshot.child("status").getValue(String.class);
                         if (status != null && (status.equals("4") || status.equals("6"))) {
                             String orderID = statusSnapshot.child("order_id").getValue(String.class);
@@ -515,8 +541,8 @@ public class Fragment_admin_statistic extends Fragment {
                     @Override
                     public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
                         String selectedDate = (selectedMonth + 1) + "/" + selectedYear;
-                        calculateRevenue(selectedMonth + 1, selectedYear);
                         calculateRevenueByYearAndMonth(selectedYear);
+                        calculateRevenue(selectedMonth + 1, selectedYear);
 
                     }
                 },
