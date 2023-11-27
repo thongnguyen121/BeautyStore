@@ -243,6 +243,9 @@ public class Fragment_editProfile extends Fragment {
                     spinKitView.setVisibility(View.GONE);
                     setViewEnable(true);
                     Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
 
                 } else {
                     Toast.makeText(getContext(), "Cập nhật không thành công", Toast.LENGTH_SHORT).show();

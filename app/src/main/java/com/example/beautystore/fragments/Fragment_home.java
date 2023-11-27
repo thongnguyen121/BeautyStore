@@ -338,6 +338,7 @@ public class Fragment_home extends Fragment {
         litsviewlippers.add(new SlideModel("https://intphcm.com/data/upload/banner-my-pham-dep.jpg", ScaleTypes.FIT));
         litsviewlippers.add(new SlideModel("https://thegioidohoa.com/wp-content/uploads/2018/12/thi%E1%BA%BFt-k%E1%BA%BF-banner-m%E1%BB%B9-ph%E1%BA%A9m-6.png", ScaleTypes.FIT));
         litsviewlippers.add(new SlideModel("https://topprint.vn/wp-content/uploads/2021/07/banner-my-pham-dep-10.png", ScaleTypes.FIT));
+        litsviewlippers.add(new SlideModel("https://youthvietnam.vn/wp-content/uploads/2021/05/banner-my-pham-noi-tieng.jpg", ScaleTypes.FIT));
         imageSlider.setImageList(litsviewlippers, ScaleTypes.FIT);
         imageSlider.setSlideAnimation(AnimationTypes.ZOOM_OUT);
 //        litsviewlippers.add("https://intphcm.com/data/upload/banner-my-pham-dep.jpg");
