@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/fragment_consultant_message_list" android:title="Danh sách tin nhắn" android:icon="@drawable/baseline_assignment_24"></item>
-    <item android:id="@+id/fragment_consultant_profile" android:title="profile"  android:icon="@drawable/baseline_home_24"></item>
+    <item android:id="@+id/fragment_consultant_message_list" android:title="Danh sách tin nhắn" android:icon="@drawable/baseline_message_24"></item>
+    <item android:id="@+id/fragment_consultant_profile" android:title="profile"  android:icon="@drawable/baseline_person_24"></item>
 </menu>

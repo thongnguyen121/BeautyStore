@@ -22,6 +22,7 @@ import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.example.beautystore.MainActivity;
 import com.example.beautystore.R;
 import com.example.beautystore.activity.Activity_Add_Products;
 import com.example.beautystore.activity.Activity_add_Brands;
@@ -128,6 +129,9 @@ public class Fragment_warehouse_list extends Fragment {
             getData_categories();
             RecyclerView_Brands_WH.selectedPosition_brands= -1;
             RecyclerView_cate_WH.selectedPosition_cate= -1;
+            searchView.setIconified(true);
+            searchView.clearFocus();
+            searchView.setIconified(true);
             Fragment_warehouse_list.recyclerView_cate_wh.notifyDataSetChanged();
             Fragment_warehouse_list.recyclerViewProductsWh.notifyDataSetChanged();
             return true;
@@ -252,11 +256,6 @@ public class Fragment_warehouse_list extends Fragment {
     }
     private void setSearchView() {
 
-        recyclerViewProductsWh = new RecyclerViewProducts_WH(this, R.layout.layout_products_item_warehouse, data_products);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        layoutManager.setOrientation(RecyclerView.VERTICAL);
-        rcProducst.setLayoutManager(layoutManager);
-        rcProducst.setAdapter(recyclerViewProductsWh);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("Products");
 
@@ -289,47 +288,42 @@ public class Fragment_warehouse_list extends Fragment {
             }
         });
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
 
-                if (isSearchViewExpanded) {
-                    setVisibityhome();
-                    getData_brands();
-                    getData_categories();
-                    getProducts();
-                    isSearchViewExpanded = false;
-                }
-                return false;
-            }
-        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                removeDiacritics(query);
 
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                String searchTerm = removeDiacritics(newText);
-                filterList(searchTerm);
+                filterList(newText);
 
                 return false;
 
             }
         });
     }
+
     private void filterList(String text) {
         ArrayList<Products> filteredlist = new ArrayList<>();
-        for (Products item : data_products) {
-            if (item.getProducts_name().toLowerCase().contains(text.toLowerCase()) || item.getProducts_id().toLowerCase().contains(text.toLowerCase())) {
+        for(Products item : data_products)
+        {
+            if(item.getProducts_name().toLowerCase().contains(text.toLowerCase()) || item.getProducts_id().toLowerCase().contains(text.toLowerCase()))
+            {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewProductsWh.setFilterList_Products(filteredlist);
+        }
+        else
+        {
+
+            recyclerViewProductsWh.setFilterList_Products(filteredlist);
+        }
     }
     private void getFilter_price(View view)
     {
@@ -338,6 +332,9 @@ public class Fragment_warehouse_list extends Fragment {
             public void onClick(View v) {
 
                 setGonehome();
+                searchView.setIconified(true);
+                searchView.clearFocus();
+                searchView.setIconified(true);
                 getProducts();
                 showPopupMenu(v);
 

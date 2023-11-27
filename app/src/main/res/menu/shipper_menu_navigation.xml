@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/fragment_order_shipper" android:title="Danh sách đơn hàng" android:icon="@drawable/baseline_assignment_24"></item>
-    <item android:id="@+id/fragment_list_order_memberShipper" android:title="Đơn hàng đã nhận" android:icon="@drawable/baseline_notifications_24"></item>
-    <item android:id="@+id/fragment_shipper_profile" android:title="profile"  android:icon="@drawable/baseline_home_24"></item>
+    <item android:id="@+id/fragment_list_order_memberShipper" android:title="Đơn hàng đã nhận" android:icon="@drawable/baseline_library_books_24"></item>
+    <item android:id="@+id/fragment_shipper_profile" android:title="profile"  android:icon="@drawable/baseline_person_24"></item>
 </menu>

@@ -142,8 +142,16 @@ public class Fragment_order_shipper extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewOrderQueue.setFilterList(filteredlist);
+        }
+
+
     }
     @Override
     public void onResume() {
