@@ -37,23 +37,32 @@ public class Fragment_consultant_message_list extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_consultant_message_list, container, false);
-        messageRecyclerView = view.findViewById(R.id.rvConsultantMessageList);
-        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         chatGroups = new ArrayList<>();
+        messageRecyclerView = view.findViewById(R.id.rvConsultantMessageList);
+        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        messageAdapter = new RecyclerView_Consultant_Message(chatGroups, getContext());
+
+        messageRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(false);
+        messageRecyclerView.setLayoutManager(linearLayoutManager);
+        messageRecyclerView.setAdapter(messageAdapter);
+
         databaseReference = FirebaseDatabase.getInstance().getReference("ChatGroup");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatGroups.clear();
                 if (dataSnapshot.exists()){
-                    chatGroups.clear();
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         ChatGroup chatGroup = snapshot.getValue(ChatGroup.class);
                         chatGroups.add(chatGroup);
-                        messageAdapter = new RecyclerView_Consultant_Message(chatGroups, getContext());
-                        messageRecyclerView.setAdapter(messageAdapter);
+
                     }
                 }
+                messageAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -61,13 +70,8 @@ public class Fragment_consultant_message_list extends Fragment {
 
             }
         });
-        messageAdapter = new RecyclerView_Consultant_Message(chatGroups, getContext());
-        messageRecyclerView.setAdapter(messageAdapter);
 
-        messageRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(false);
-        messageRecyclerView.setLayoutManager(linearLayoutManager);
+
     return view;
     }
 }

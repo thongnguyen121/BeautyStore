@@ -384,9 +384,7 @@ public class Fragment_admin_employees extends Fragment {
 
           @Override
           public boolean onQueryTextChange(String newText) {
-
-              String searchTerm = removeDiacritics(newText);
-              filterList(searchTerm);
+              filterList(newText);
               return false;
           }
       });
@@ -403,9 +401,19 @@ public static String removeDiacritics(String input) {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        memberAdapter.setFilterList(filteredlist);
+        }
+        else
+        {
+            memberAdapter.setFilterList(filteredlist);
+        }
+
+
     }
+
+
     private void setControl(View view) {
         recyclerView = view.findViewById(R.id.rcMember);
         radioGroup = view.findViewById(R.id.rdoGroup);

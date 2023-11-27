@@ -134,7 +134,15 @@ public class Fragment_order_in_progress extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOderprogress.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewOderprogress.setFilterList(filteredlist);
+        }
+
+
     }
 }

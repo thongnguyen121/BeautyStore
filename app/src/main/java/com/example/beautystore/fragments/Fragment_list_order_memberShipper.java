@@ -139,7 +139,16 @@ public class Fragment_list_order_memberShipper extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOrderShipper.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewOrderShipper.setFilterList(filteredlist);
+
+        }
+
+
     }
 }

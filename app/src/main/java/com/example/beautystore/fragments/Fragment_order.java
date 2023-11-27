@@ -178,7 +178,16 @@ public class Fragment_order extends Fragment {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewOderCustomer.setFilterList(filteredlist);
+        }
+        else
+        {
+
+            recyclerViewOderCustomer.setFilterList(filteredlist);
+        }
+
+
     }
 }

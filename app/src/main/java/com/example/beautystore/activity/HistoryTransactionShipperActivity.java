@@ -40,7 +40,6 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_transaction_shipper);
         setControl();
-
         getData_history();
         setSearchView();
         rdoAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -91,7 +90,7 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
 
         recyclerViewTransactionHistory = new RecyclerView_transaction_history(this, R.layout.layout_item_history_admin, data_History);
         GridLayoutManager layoutManager2 = new GridLayoutManager(this, 1);
-        layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
+        layoutManager2.setOrientation(RecyclerView.VERTICAL);
         rcHistoryShipper.setLayoutManager(layoutManager2);
         rcHistoryShipper.setAdapter(recyclerViewTransactionHistory);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -121,7 +120,7 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
 
         recyclerViewTransactionHistory = new RecyclerView_transaction_history(this, R.layout.layout_item_history_admin, data_History);
         GridLayoutManager layoutManager2 = new GridLayoutManager(this, 1);
-        layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
+        layoutManager2.setOrientation(RecyclerView.VERTICAL);
         rcHistoryShipper.setLayoutManager(layoutManager2);
         rcHistoryShipper.setAdapter(recyclerViewTransactionHistory);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -180,8 +179,16 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
                 filteredlist.add(item);
             }
         }
+        if(filteredlist.isEmpty())
+        {
 
-        recyclerViewTransactionHistory.setFilterList(filteredlist);
+        }
+        else
+        {
+            recyclerViewTransactionHistory.setFilterList(filteredlist);
+        }
+
+
     }
     @Override
     public void onResume() {

@@ -43,23 +43,32 @@ public class Fragment_wishlist extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
-        wishlistRecyclerView = view.findViewById(R.id.rvFragmentWishList);
-
-
         wishLists = new ArrayList<>();
+        wishlistRecyclerView = view.findViewById(R.id.rvFragmentWishList);
+        wishlistAdapter = new RecyclerView_WishList(wishLists, getContext());
+        wishlistRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true);
+        wishlistRecyclerView.setLayoutManager(linearLayoutManager);
+        wishlistRecyclerView.setAdapter(wishlistAdapter);
+
+
         databaseReference = FirebaseDatabase.getInstance().getReference("WishList");
         databaseReference.child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                wishLists.clear();
                 if (dataSnapshot.exists()){
-                    wishLists.clear();
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         WishList wishList = snapshot.getValue(WishList.class);
                         wishLists.add(wishList);
-                        wishlistAdapter = new RecyclerView_WishList(wishLists, getContext());
-                        wishlistRecyclerView.setAdapter(wishlistAdapter);
+
                     }
+
                 }
+                wishlistAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -68,10 +77,7 @@ public class Fragment_wishlist extends Fragment {
             }
         });
 
-        wishlistRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(true);
-        wishlistRecyclerView.setLayoutManager(linearLayoutManager);
+
 
         return view;
     }

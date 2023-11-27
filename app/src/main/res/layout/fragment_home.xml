@@ -37,8 +37,7 @@
                     android:background="@drawable/bg_searchview"
                     android:gravity="center"
                     android:queryHint="Search"
-                    android:focusable="false"
-                    android:clickable="true"
+
                     >
 
                 </SearchView>
