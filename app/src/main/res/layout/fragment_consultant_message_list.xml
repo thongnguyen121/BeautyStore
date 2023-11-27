@@ -6,6 +6,7 @@
     tools:context=".fragments.Fragment_consultant_message_list">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:padding="10dp"
         android:id="@+id/rvConsultantMessageList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

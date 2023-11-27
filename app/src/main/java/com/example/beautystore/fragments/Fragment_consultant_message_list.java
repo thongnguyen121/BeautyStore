@@ -42,7 +42,6 @@ public class Fragment_consultant_message_list extends Fragment {
         messageRecyclerView = view.findViewById(R.id.rvConsultantMessageList);
         String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         messageAdapter = new RecyclerView_Consultant_Message(chatGroups, getContext());
-
         messageRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setStackFromEnd(false);
@@ -59,7 +58,6 @@ public class Fragment_consultant_message_list extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         ChatGroup chatGroup = snapshot.getValue(ChatGroup.class);
                         chatGroups.add(chatGroup);
-
                     }
                 }
                 messageAdapter.notifyDataSetChanged();

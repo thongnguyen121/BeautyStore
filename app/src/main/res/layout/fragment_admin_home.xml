@@ -16,14 +16,27 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Review products"
+                android:textSize="25dp"
 
+                android:textColor="@color/pink"
+                ></TextView>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcNew_rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"></androidx.recyclerview.widget.RecyclerView>
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Store status"
+                android:textSize="25dp"
+                android:textColor="@color/pink"
+                ></TextView>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
