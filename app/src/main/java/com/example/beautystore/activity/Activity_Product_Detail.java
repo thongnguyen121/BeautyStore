@@ -670,8 +670,14 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     OrderStatus orderStatus = orderStatusSnapshot.getValue(OrderStatus.class);
                     if (orderStatus.getStatus().equals("4") || orderStatus.getStatus().equals("6")) {
                         checkOrderForRating(orderStatus.getOrder_id(), productId, uid);
-                        check = true;
-
+                    }
+                    else {
+                        ivComment.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(Activity_Product_Detail.this, "Sảm phẩm này bạn chưa mua", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             }
@@ -692,16 +698,9 @@ public class Activity_Product_Detail extends AppCompatActivity {
                     if (order.getOrder_id() != null) {
                         for (CartDetail item : order.getItems()) {
                             if (item != null && item.getProduct_id().equals(productId)) {
+
                                 reView_products();
-                                ivComment.setVisibility(View.VISIBLE);
-                                edtComment.setVisibility(View.VISIBLE);
-                                rbUserRating.setVisibility(View.VISIBLE);
                                 return;
-                            }
-                            else {
-                                ivComment.setVisibility(View.GONE);
-                                edtComment.setVisibility(View.GONE);
-                                rbUserRating.setVisibility(View.GONE);
                             }
                         }
                     }
