@@ -257,7 +257,6 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        currentNumberStar = Float.parseFloat(snapshot.child("startNumber").getValue(String.class));
                         if (currentNumberStar != 0 || !TextUtils.isEmpty(commentText)) {
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating").child(id_producst).child(UserID);
 

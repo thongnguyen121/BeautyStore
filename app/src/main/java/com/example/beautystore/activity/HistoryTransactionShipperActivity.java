@@ -18,6 +18,7 @@ import com.example.beautystore.adapter.RecyclerView_transaction_history;
 import com.example.beautystore.model.Brands;
 import com.example.beautystore.model.History;
 import com.example.beautystore.model.OrderStatus;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,7 +96,7 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
         rcHistoryShipper.setAdapter(recyclerViewTransactionHistory);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("History");
-
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -105,7 +106,11 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     History history = dataSnapshot.getValue(History.class);
-                    data_History.add(history);
+                    if (history.getShipper_id().equals(currentUserId))
+                    {
+                        data_History.add(history);
+                    }
+
                 }
                 recyclerViewTransactionHistory.notifyDataSetChanged();
             }
@@ -125,6 +130,7 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
         rcHistoryShipper.setAdapter(recyclerViewTransactionHistory);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("History");
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         databaseReference.addValueEventListener(new ValueEventListener() {
 
@@ -135,10 +141,15 @@ public class HistoryTransactionShipperActivity extends AppCompatActivity {
                 }
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     History history = dataSnapshot.getValue(History.class);
-                    if(history.getStatus().equals(status))
+                    if (history.getShipper_id().equals(currentUserId))
                     {
-                        data_History.add(history);
+                        if(history.getStatus().equals(status))
+                        {
+                            data_History.add(history);
+                        }
                     }
+
+
 
                 }
                 recyclerViewTransactionHistory.notifyDataSetChanged();
