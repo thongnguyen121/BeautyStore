@@ -266,7 +266,7 @@ public class RecyclerView_Rating extends RecyclerView.Adapter<RecyclerView_Ratin
                             ratinglist.put("product_id", id_producst);
                             ratinglist.put("customer_id", UserID);
                             ratinglist.put("comment", rating.getComment());
-                            ratinglist.put("startNumber", rating.getStartNumber());
+                            ratinglist.put("startNumber", String.valueOf(ratingDialog.getRating()));
                             ratinglist.put("create_at", savedate);
 
                             reference.setValue(ratinglist).addOnCompleteListener(new OnCompleteListener<Void>() {
