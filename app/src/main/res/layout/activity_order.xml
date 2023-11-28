@@ -160,7 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnOrderOrderButton"
             android:background="@drawable/bg_product_detail_button"
             android:layout_width="match_parent"

@@ -129,11 +129,11 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
         if (phoneNum.length() < 10){
-            edtSDT.setError("Độ dài tối thiểu của số điện thoại là 8");
+            edtSDT.setError("Số điện thoại có 10 số");
             edtSDT.requestFocus();
             return;
         }if (phoneNum.length() >10){
-            edtSDT.setError("Độ dài tối đa của số điện thoại là 10");
+            edtSDT.setError("Số điện thoại có 10 số");
             edtSDT.requestFocus();
             return;
         }

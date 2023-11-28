@@ -15,7 +15,7 @@
     <string name="hang">Hãng</string>
     <string name="loai">Loại sản phẩm</string>
     <string name="sanpham">Sản phẩm</string>
-    <string name="add_sanpham">Thêm sản phẩm</string>
+    <string name="add_sanpham">Thông tin sản phẩm</string>
     <string name="edit_text_product_name">Nhập tên sản phẩm</string>
     <string name="spinner_categories">Chon loại sản phẩm</string>
     <string name="spinner_brands">Chọn hãng sản phẩm</string>
@@ -66,7 +66,7 @@
     <string name="order_in_progress">Danh sách đơn hàng chưa xử lý</string>
     <string name="packing_order">Đơn hàng đóng gói</string>
     <string name="order_queue">Đơn hàng giao và nhận</string>
-    <string name="add_employee">Thêm nhân viên</string>
+    <string name="add_employee">Thông tin nhân viên</string>
     <string name="enter_address">Nhập địa chỉ</string>
     <string name="role">Vai trò</string>
     <string name="cccd">Số CCCD</string>
